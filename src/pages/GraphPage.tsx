@@ -342,6 +342,21 @@ export function GraphPage() {
   )
 }
 
+/** Compact waveform pulse — aligns with home “sound wave” / orchestration steps */
+function GraphStepLoader() {
+  return (
+    <div
+      className="graph-step-loader flex items-end justify-center gap-[3px]"
+      role="status"
+      aria-label="Step in progress"
+    >
+      <span className="graph-step-loader__bar inline-block" />
+      <span className="graph-step-loader__bar inline-block" />
+      <span className="graph-step-loader__bar inline-block" />
+    </div>
+  )
+}
+
 function GraphStepRow({
   title,
   icon,
@@ -394,12 +409,7 @@ function GraphStepRow({
       </div>
       <div className="flex size-[20px] shrink-0 items-center justify-center pt-0.5">
         {done && <img alt="" className="size-[16.67px]" src={imgCheck} />}
-        {loading && (
-          <div
-            className="size-5 rounded-full border-2 border-[rgba(78,222,163,0.6)] border-t-transparent animate-spin"
-            aria-hidden
-          />
-        )}
+        {loading && <GraphStepLoader />}
         {pending && <img alt="" className="size-[16.67px] opacity-70" src={imgEllipsis} />}
       </div>
     </li>
