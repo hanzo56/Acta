@@ -1,0 +1,128 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100svh;
+  background: #0a0a0a;
+}
+
+/* Home: listening sound wave — scale from bottom */
+@keyframes acta-wave-bar {
+  0%,
+  100% {
+    transform: scaleY(0.22);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.acta-wave-bar {
+  transform-origin: bottom center;
+  animation-name: acta-wave-bar;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+.acta-mic-button-glow {
+  animation: acta-mic-glow 2.2s ease-in-out infinite;
+}
+
+/* Home: mic button glow */
+@keyframes acta-mic-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 24px rgba(78, 222, 163, 0.28),
+      0 0 48px rgba(78, 222, 163, 0.12);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow:
+      0 0 40px rgba(78, 222, 163, 0.45),
+      0 0 72px rgba(78, 222, 163, 0.22);
+    transform: scale(1.04);
+  }
+}
+
+/* Pulsing ring behind mic */
+@keyframes acta-mic-ring {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+.acta-mic-pulse-ring {
+  animation: acta-mic-ring 1.8s ease-out infinite;
+}
+
+.acta-mic-pulse-ring-delayed {
+  animation: acta-mic-ring 1.8s ease-out infinite;
+  animation-delay: 0.9s;
+}
+
+/* Mic icon subtle pulse */
+@keyframes acta-mic-icon {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 0.95;
+  }
+}
+
+.acta-mic-icon-animate {
+  animation: acta-mic-icon 1.4s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* LISTENING label */
+@keyframes acta-listening-shimmer {
+  0%,
+  100% {
+    opacity: 0.65;
+    letter-spacing: 2.4px;
+  }
+  50% {
+    opacity: 1;
+    letter-spacing: 3px;
+  }
+}
+
+.acta-listening-text {
+  animation: acta-listening-shimmer 2s ease-in-out infinite;
+}
+
+/* Graph: calendar invite card entrance */
+@keyframes graph-calendar-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.graph-calendar-enter {
+  animation: graph-calendar-enter 0.5s ease-out forwards;
+}
