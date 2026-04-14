@@ -96,7 +96,7 @@ export function PreviewPage() {
       <div className="fixed bottom-0 left-1/2 w-full max-w-[390px] -translate-x-1/2 bg-[rgba(19,19,19,0.8)] px-6 pb-12 pt-6 backdrop-blur-[20px]">
         <button
           type="button"
-          onClick={() => navigate('/graph')}
+          onClick={() => navigate('/graph', { state: { fromPreviewApprove: true } })}
           className="relative w-full rounded-2xl bg-[#4edea3] py-5 shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)]"
         >
           <span className="text-[16px] font-bold leading-6 text-[#00422b]">Approve</span>

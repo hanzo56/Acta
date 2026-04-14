@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { readGraphFlowComplete, writeGraphFlowComplete } from '../graphFlowStorage'
+import { Link, useLocation } from 'react-router-dom'
+import {
+  clearGraphFlowComplete,
+  readGraphFlowComplete,
+  writeGraphFlowComplete,
+} from '../graphFlowStorage'
 
 const imgUserProfile =
   'https://www.figma.com/api/mcp/asset/62a50c2d-ed0c-46b1-a196-24ef5cc6c4b9'
@@ -91,15 +95,27 @@ function tomorrowLabel() {
   })
 }
 
+function initialStepStatuses(fromPreviewApprove: boolean): StepStatus[] {
+  if (fromPreviewApprove) {
+    clearGraphFlowComplete()
+    return Array.from({ length: STEPS.length }, (_, i) => (i === 0 ? 'loading' : 'pending'))
+  }
+  if (readGraphFlowComplete()) {
+    return STEPS.map(() => 'done')
+  }
+  return Array.from({ length: STEPS.length }, (_, i) => (i === 0 ? 'loading' : 'pending'))
+}
+
 export function GraphPage() {
+  const location = useLocation()
+  const fromPreviewApprove =
+    (location.state as { fromPreviewApprove?: boolean } | null)?.fromPreviewApprove === true
+
   const [toriPhotoIndex, setToriPhotoIndex] = useState(0)
 
-  const [stepStatuses, setStepStatuses] = useState<StepStatus[]>(() => {
-    if (readGraphFlowComplete()) {
-      return STEPS.map(() => 'done')
-    }
-    return Array.from({ length: STEPS.length }, (_, i) => (i === 0 ? 'loading' : 'pending'))
-  })
+  const [stepStatuses, setStepStatuses] = useState<StepStatus[]>(() =>
+    initialStepStatuses(fromPreviewApprove),
+  )
 
   useEffect(() => {
     if (readGraphFlowComplete()) return

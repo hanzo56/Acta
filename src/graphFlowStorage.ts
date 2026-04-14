@@ -16,3 +16,11 @@ export function writeGraphFlowComplete() {
     /* ignore private mode / quota */
   }
 }
+
+export function clearGraphFlowComplete() {
+  try {
+    sessionStorage.removeItem(GRAPH_FLOW_STORAGE_KEY)
+  } catch {
+    /* ignore */
+  }
+}
