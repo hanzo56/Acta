@@ -167,10 +167,8 @@ export function GraphPage() {
 
   return (
     <div className="acta-shell text-[#e5e2e1]">
-      <main
-        className="acta-graph-body mx-auto flex w-full max-w-[672px] flex-col gap-8 px-6 pb-6"
-        aria-label="Graph flow"
-      >
+      <main className="acta-graph-body" aria-label="Graph flow">
+        <div className="mx-auto flex w-full max-w-[672px] flex-col gap-8 px-6 pb-[max(2rem,calc(1.25rem+env(safe-area-inset-bottom,0px)))]">
           <header className="flex flex-col gap-1">
             <p className="text-[14px] font-normal leading-5 tracking-[0.35px] text-[#4edea3]">
               {allDone ? 'Complete' : 'Running'}
@@ -321,6 +319,7 @@ export function GraphPage() {
               </div>
             </div>
           )}
+        </div>
       </main>
 
       <header className="acta-header-fixed flex h-16 items-center justify-between bg-[#131313] px-6">
