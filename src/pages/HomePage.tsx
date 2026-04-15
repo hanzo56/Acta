@@ -129,7 +129,7 @@ export function HomePage() {
       >
         <div className="relative mx-auto h-20 w-full max-w-[390px]">
           <div
-            className={`absolute left-1/2 top-0 z-50 flex w-[min(100%,220px)] -translate-x-1/2 -translate-y-[42%] flex-col items-center gap-1 ${!micListening ? 'acta-nav-mic--idle' : ''}`}
+            className={`pointer-events-none absolute left-1/2 top-0 z-50 flex w-[min(100%,220px)] -translate-x-1/2 -translate-y-[42%] flex-col items-center gap-1 ${!micListening ? 'acta-nav-mic--idle' : ''}`}
           >
             <div
               className="flex h-8 w-full max-w-[200px] items-end justify-center gap-1"
@@ -151,7 +151,7 @@ export function HomePage() {
               aria-pressed={micListening}
               aria-label={micListening ? 'Microphone on, listening' : 'Microphone off, tap to listen'}
               onClick={() => setMicListening((v) => !v)}
-              className="relative flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]"
+              className="pointer-events-auto relative flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]"
             >
               <div
                 className="acta-mic-pulse-ring pointer-events-none absolute aspect-square w-[4.5rem] rounded-full border border-[rgba(78,222,163,0.35)]"
