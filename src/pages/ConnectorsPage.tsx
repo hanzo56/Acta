@@ -48,8 +48,8 @@ export function ConnectorsPage() {
   const [notion, setNotion] = useState(true)
 
   return (
-    <div className="relative mx-auto min-h-[100svh] w-full max-w-[390px] bg-[#131313] pb-24 text-[#e5e2e1]">
-      <header className="absolute left-0 top-0 z-10 flex h-16 w-full max-w-[390px] items-center justify-between bg-[#131313] px-6">
+    <div className="acta-shell text-[#e5e2e1]">
+      <header className="acta-header-fixed z-10 flex h-16 items-center justify-between bg-[#131313] px-6">
         <div className="size-8 overflow-hidden rounded-full bg-[#2a2a2a]">
           <img alt="" className="size-full object-cover" src={imgUser} />
         </div>
@@ -58,7 +58,7 @@ export function ConnectorsPage() {
         </button>
       </header>
 
-      <main className="max-w-[672px] px-6 pb-32 pt-24">
+      <main className="acta-main acta-main--inset-both max-w-[672px] px-6 pb-6">
         <div className="mb-10 flex flex-col gap-[7px]">
           <h1 className="text-[32px] font-bold leading-[48px] tracking-[-1.6px] text-[#e5e2e1]">
             Connectors
@@ -141,7 +141,7 @@ export function ConnectorsPage() {
       </main>
 
       <nav
-        className="absolute bottom-0 left-0 flex h-20 w-full max-w-[390px] items-center justify-between bg-[rgba(19,19,19,0.9)] px-4 backdrop-blur-[12px]"
+        className="acta-nav-fixed flex h-20 items-center justify-between bg-[rgba(19,19,19,0.9)] px-4 backdrop-blur-[12px]"
         aria-label="Primary"
       >
         <Link to="/" className="flex items-center justify-center p-3">

@@ -11,8 +11,8 @@ export function PreviewPage() {
   const navigate = useNavigate()
 
   return (
-    <div className="relative mx-auto min-h-[100svh] w-full max-w-[390px] bg-[#131313] pb-52 text-[#e5e2e1]">
-      <main className="flex w-full max-w-[672px] flex-col gap-12 px-6 pt-12">
+    <div className="acta-shell bg-[#131313] text-[#e5e2e1]">
+      <main className="acta-main acta-main--inset-preview flex w-full max-w-[672px] flex-col gap-12 px-6">
         <header className="flex flex-col gap-2">
           <p className="text-[10px] font-bold uppercase leading-[15px] tracking-[2px] text-[#bbcabf]">
             PREVIEW
@@ -93,7 +93,7 @@ export function PreviewPage() {
         </div>
       </main>
 
-      <div className="fixed bottom-0 left-1/2 w-full max-w-[390px] -translate-x-1/2 bg-[rgba(19,19,19,0.8)] px-6 pb-12 pt-6 backdrop-blur-[20px]">
+      <div className="acta-preview-footer-fixed bg-[rgba(19,19,19,0.8)] px-6 pb-12 pt-6 backdrop-blur-[20px]">
         <button
           type="button"
           onClick={() => navigate('/graph', { state: { fromPreviewApprove: true } })}

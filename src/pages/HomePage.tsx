@@ -26,8 +26,8 @@ const bars = [
 
 export function HomePage() {
   return (
-    <div className="relative mx-auto min-h-[100svh] w-full max-w-[390px] overflow-hidden bg-[#131313] text-[#e5e2e1]">
-      <div className="pointer-events-none absolute inset-0 flex flex-col items-start justify-center overflow-hidden opacity-40 blur-[20px]">
+    <div className="acta-shell text-[#e5e2e1]">
+      <div className="pointer-events-none absolute inset-0 z-0 flex flex-col items-start justify-center overflow-hidden opacity-40 blur-[20px]">
         <div className="pointer-events-none absolute inset-0 bg-white mix-blend-saturation" aria-hidden />
         <div className="grid w-full flex-1 grid-cols-1 gap-8 p-8">
           <div className="flex flex-col gap-6">
@@ -41,8 +41,8 @@ export function HomePage() {
         </div>
       </div>
 
-      <div className="relative flex min-h-[974px] flex-col items-center justify-center px-6">
-        <div className="flex w-full max-w-[768px] flex-col items-center gap-8">
+      <main className="acta-main acta-main--inset-both relative z-[1] px-6">
+        <div className="flex w-full max-w-[768px] flex-col items-center gap-8 py-6">
           <div className="flex w-full flex-col items-center gap-8">
             <div
               className="flex h-16 w-full items-end justify-center gap-1.5"
@@ -146,9 +146,9 @@ export function HomePage() {
             </p>
           </div>
         </div>
-      </div>
+      </main>
 
-      <header className="absolute left-0 top-0 flex w-full max-w-[390px] items-center justify-between bg-[rgba(19,19,19,0.6)] px-6 py-4 backdrop-blur-[12px]">
+      <header className="acta-header-fixed flex h-16 items-center justify-between bg-[rgba(19,19,19,0.6)] px-6 backdrop-blur-[12px]">
         <span className="text-[20px] font-bold leading-7 tracking-[-1px] text-[#e5e2e1]">
           Acta AI
         </span>
@@ -163,7 +163,7 @@ export function HomePage() {
       </header>
 
       <nav
-        className="absolute bottom-0 left-0 w-full max-w-[390px] bg-[rgba(19,19,19,0.9)] backdrop-blur-[12px]"
+        className="acta-nav-fixed h-20 bg-[rgba(19,19,19,0.9)] backdrop-blur-[12px]"
         aria-label="Primary"
       >
         <div className="relative h-20 w-full">

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   clearGraphFlowComplete,
@@ -111,6 +111,7 @@ export function GraphPage() {
   const fromPreviewApprove =
     (location.state as { fromPreviewApprove?: boolean } | null)?.fromPreviewApprove === true
 
+  const calendarCardRef = useRef<HTMLDivElement>(null)
   const [toriPhotoIndex, setToriPhotoIndex] = useState(0)
 
   const [stepStatuses, setStepStatuses] = useState<StepStatus[]>(() =>
@@ -154,11 +155,22 @@ export function GraphPage() {
   const allDone = stepStatuses.every((s) => s === 'done')
   const openTableDone = stepStatuses[3] === 'done'
   const confirmationDone = stepStatuses[4] === 'done'
+  const inviteAcceptedDone = stepStatuses[STEPS.length - 1] === 'done'
+
+  useEffect(() => {
+    if (!inviteAcceptedDone || !confirmationDone) return
+    const id = window.setTimeout(() => {
+      calendarCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 120)
+    return () => window.clearTimeout(id)
+  }, [inviteAcceptedDone, confirmationDone])
 
   return (
-    <div className="relative mx-auto min-h-[100svh] w-full max-w-[390px] bg-[#131313] text-[#e5e2e1]">
-      <div className="pb-20 pt-24">
-        <main className="flex max-w-[672px] flex-col gap-8 px-6 pb-32">
+    <div className="acta-shell text-[#e5e2e1]">
+      <main
+        className="acta-graph-body mx-auto flex w-full max-w-[672px] flex-col gap-8 px-6 pb-6"
+        aria-label="Graph flow"
+      >
           <header className="flex flex-col gap-1">
             <p className="text-[14px] font-normal leading-5 tracking-[0.35px] text-[#4edea3]">
               {allDone ? 'Complete' : 'Running'}
@@ -271,7 +283,11 @@ export function GraphPage() {
           </div>
 
           {confirmationDone && (
-            <div className="graph-calendar-enter overflow-hidden rounded-2xl border border-[rgba(60,74,66,0.15)] bg-[#1c1b1b]">
+            <div
+              ref={calendarCardRef}
+              id="graph-calendar-card"
+              className="graph-calendar-enter scroll-mt-3 overflow-hidden rounded-2xl border border-[rgba(60,74,66,0.15)] bg-[#1c1b1b]"
+            >
               <div className="border-b border-[rgba(60,74,66,0.1)] bg-[rgba(78,222,163,0.06)] px-5 py-3">
                 <div className="flex items-center gap-2">
                   <div className="flex size-8 items-center justify-center rounded-lg bg-[rgba(78,222,163,0.12)]">
@@ -305,10 +321,9 @@ export function GraphPage() {
               </div>
             </div>
           )}
-        </main>
-      </div>
+      </main>
 
-      <header className="absolute left-0 top-0 flex h-16 w-full max-w-[390px] items-center justify-between bg-[#131313] px-6">
+      <header className="acta-header-fixed flex h-16 items-center justify-between bg-[#131313] px-6">
         <div className="size-8 overflow-hidden rounded-full bg-[#2a2a2a]">
           <img alt="" className="size-full object-cover" src={imgUserProfile} />
         </div>
@@ -318,7 +333,7 @@ export function GraphPage() {
       </header>
 
       <nav
-        className="absolute bottom-0 left-0 flex h-20 w-full max-w-[390px] items-center justify-between bg-[rgba(19,19,19,0.9)] px-8 backdrop-blur-[12px]"
+        className="acta-nav-fixed flex h-20 items-center justify-between bg-[rgba(19,19,19,0.9)] px-8 backdrop-blur-[12px]"
         aria-label="Primary"
       >
         <Link to="/" className="flex items-center justify-center p-3">
