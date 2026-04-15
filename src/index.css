@@ -4,21 +4,36 @@
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
-html,
-body {
+/*
+ * iOS Safari: 100vh / 100dvh alone often leave a gap vs the visible screen.
+ * Chain height: 100% + min-height: -webkit-fill-available fills edge-to-edge with viewport-fit=cover.
+ */
+html {
   height: 100%;
+  height: -webkit-fill-available;
+  background-color: #000;
+}
+
+body {
   margin: 0;
+  height: 100%;
+  min-height: -webkit-fill-available;
+  width: 100%;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  /* Keep scroll inside .acta-main so mobile doesn’t “trap” pan on the document */
   overflow: hidden;
+  background-color: #000;
 }
 
 #root {
-  min-height: 100%;
-  height: 100dvh;
+  height: 100%;
+  width: 100%;
+  min-width: 100%;
+  /* Fallback when the % chain is quirky; WebKit uses fill-available below */
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
   overflow: hidden;
-  background: #0a0a0a;
+  background-color: #000;
 }
 
 /* Mobile shell: content scrolls between fixed header + bottom nav */
@@ -34,13 +49,16 @@ body {
   margin-left: auto;
   margin-right: auto;
   display: flex;
-  height: 100dvh;
-  max-height: 100dvh;
+  box-sizing: border-box;
   width: 100%;
   max-width: 390px;
   flex-direction: column;
   overflow: hidden;
-  background: #131313;
+  isolation: isolate;
+  background-color: #000;
+  height: 100%;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
 }
 
 .acta-main {
@@ -228,6 +246,31 @@ body {
 
 .acta-listening-text {
   animation: acta-listening-shimmer 2s ease-in-out infinite;
+}
+
+/* Bottom-nav mic: motion off until user toggles listen */
+.acta-nav-mic--idle .acta-wave-bar {
+  animation: none;
+  transform: scaleY(0.22);
+}
+.acta-nav-mic--idle .acta-mic-button-glow {
+  animation: none;
+  box-shadow: 0 0 12px rgba(78, 222, 163, 0.12);
+}
+.acta-nav-mic--idle .acta-mic-pulse-ring,
+.acta-nav-mic--idle .acta-mic-pulse-ring-delayed {
+  animation: none;
+  opacity: 0;
+}
+.acta-nav-mic--idle .acta-mic-icon-animate {
+  animation: none;
+}
+.acta-nav-mic--idle .acta-nav-mic-status {
+  animation: none;
+}
+
+.acta-nav-home {
+  overflow: visible;
 }
 
 /* Graph: calendar invite card entrance */
