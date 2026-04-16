@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 const imgUser =
   "https://www.figma.com/api/mcp/asset/94be4414-cc9e-4d5c-b29e-04dae21dab43";
@@ -188,6 +188,35 @@ function initialToggles(): Record<ConnectorKey, boolean> {
   ) as Record<ConnectorKey, boolean>;
 }
 
+const STORAGE_CONNECTOR_TOGGLES = "acta.settings.connectorToggles";
+
+function loadConnectorToggles(): Record<ConnectorKey, boolean> {
+  const defaults = initialToggles();
+  try {
+    const raw = localStorage.getItem(STORAGE_CONNECTOR_TOGGLES);
+    if (!raw) return defaults;
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    if (typeof parsed !== "object" || parsed === null) return defaults;
+    const next = { ...defaults };
+    for (const key of Object.keys(next) as ConnectorKey[]) {
+      if (typeof parsed[key] === "boolean") {
+        next[key] = parsed[key];
+      }
+    }
+    return next;
+  } catch {
+    return defaults;
+  }
+}
+
+function saveConnectorToggles(toggles: Record<ConnectorKey, boolean>) {
+  try {
+    localStorage.setItem(STORAGE_CONNECTOR_TOGGLES, JSON.stringify(toggles));
+  } catch {
+    /* quota / private mode */
+  }
+}
+
 function Toggle({
   on,
   onChange,
@@ -214,7 +243,12 @@ function Toggle({
 }
 
 export function ConnectorsPage() {
-  const [toggles, setToggles] = useState(initialToggles);
+  const { pathname } = useLocation();
+  const [toggles, setToggles] = useState(loadConnectorToggles);
+
+  useEffect(() => {
+    saveConnectorToggles(toggles);
+  }, [toggles]);
 
   return (
     <div className="acta-shell text-[#e5e2e1]">
@@ -279,19 +313,27 @@ export function ConnectorsPage() {
         <Link to="/" className="flex items-center justify-center p-3">
           <img alt="" className="h-[18px] w-4" src={imgNavHome} />
         </Link>
-        <div className="flex items-center justify-center p-3">
-          <img alt="" className="size-[19.3px]" src={imgNavApps} />
-        </div>
+        <Link
+          to="/connectors"
+          className="flex items-center justify-center p-3"
+          aria-current={pathname === "/connectors" ? "page" : undefined}
+        >
+          <img
+            alt=""
+            className={`size-[19.3px] ${pathname === "/connectors" ? "drop-shadow-[0_0_8px_rgba(78,222,163,0.85)]" : ""}`}
+            src={imgNavApps}
+          />
+        </Link>
         <Link to="/graph" className="flex items-center justify-center p-3">
           <img alt="" className="h-[23px] w-6" src={imgNavGraph} />
         </Link>
-        <div className="flex items-center justify-center p-3">
+        <Link to="/settings" className="flex items-center justify-center p-3">
           <img
             alt=""
-            className="h-5 w-[20.1px] drop-shadow-[0_0_8px_rgba(78,222,163,0.9)]"
+            className={`h-5 w-[20.1px] ${pathname === "/settings" ? "drop-shadow-[0_0_8px_rgba(78,222,163,0.9)]" : ""}`}
             src={imgNavSettings}
           />
-        </div>
+        </Link>
       </nav>
     </div>
   );

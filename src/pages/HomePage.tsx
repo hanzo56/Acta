@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 import { useMicWaveLevels } from '../hooks/useMicWaveLevels'
 import { useSpeechDictation } from '../hooks/useSpeechDictation'
@@ -30,6 +30,7 @@ const bars = [
 
 export function HomePage() {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const [micListening, setMicListening] = useState(false)
   const silenceNavigatedRef = useRef(false)
 
@@ -195,9 +196,13 @@ export function HomePage() {
           Acta AI
         </span>
         <div className="flex items-center gap-4">
-          <div className="relative h-9 w-[36.1px] shrink-0">
+          <Link
+            to="/settings"
+            className="relative block h-9 w-[36.1px] shrink-0"
+            aria-label="Settings"
+          >
             <img alt="" className="absolute inset-0 size-full max-w-none" src={imgSettingsHeader} />
-          </div>
+          </Link>
           <div className="size-8 overflow-hidden rounded-full border border-[rgba(60,74,66,0.2)] bg-[#2a2a2a] p-px">
             <img alt="" className="size-full object-cover" src={imgUserProfileAvatar} />
           </div>
@@ -281,7 +286,9 @@ export function HomePage() {
               <div className="relative h-[18px] w-4">
                 <img alt="" className="absolute inset-0 size-full max-w-none" src={imgNavHome} />
               </div>
-              <span className="text-[8px] font-bold uppercase leading-3 tracking-[0.8px] text-[#4edea3]">
+              <span
+                className={`text-[8px] font-bold uppercase leading-3 tracking-[0.8px] ${pathname === '/' ? 'text-[#4edea3]' : 'text-[rgba(185,199,224,0.5)]'}`}
+              >
                 HOME
               </span>
             </Link>
@@ -290,9 +297,15 @@ export function HomePage() {
               className="flex flex-col items-center justify-end gap-1 pb-0.5"
             >
               <div className="relative size-[19.3px]">
-                <img alt="" className="absolute inset-0 size-full max-w-none" src={imgNavApps} />
+                <img
+                  alt=""
+                  className={`absolute inset-0 size-full max-w-none ${pathname === '/connectors' ? 'drop-shadow-[0_0_8px_rgba(78,222,163,0.75)]' : ''}`}
+                  src={imgNavApps}
+                />
               </div>
-              <span className="text-[8px] font-bold uppercase leading-3 tracking-[0.8px] text-[rgba(185,199,224,0.5)]">
+              <span
+                className={`text-[8px] font-bold uppercase leading-3 tracking-[0.8px] ${pathname === '/connectors' ? 'text-[#4edea3]' : 'text-[rgba(185,199,224,0.5)]'}`}
+              >
                 APPS
               </span>
             </Link>
@@ -302,20 +315,32 @@ export function HomePage() {
               className="flex flex-col items-center justify-end gap-1 pb-0.5"
             >
               <div className="relative h-[23px] w-6">
-                <img alt="" className="absolute inset-0 size-full max-w-none" src={imgNavGraph} />
+                <img
+                  alt=""
+                  className={`absolute inset-0 size-full max-w-none ${pathname === '/graph' ? 'drop-shadow-[0_0_10px_rgba(78,222,163,0.85)]' : ''}`}
+                  src={imgNavGraph}
+                />
               </div>
-              <span className="text-[8px] font-bold uppercase leading-3 tracking-[0.8px] text-[rgba(185,199,224,0.5)]">
+              <span
+                className={`text-[8px] font-bold uppercase leading-3 tracking-[0.8px] ${pathname === '/graph' ? 'text-[#4edea3]' : 'text-[rgba(185,199,224,0.5)]'}`}
+              >
                 GRAPH
               </span>
             </Link>
             <Link
-              to="/connectors"
+              to="/settings"
               className="flex flex-col items-center justify-end gap-1 pb-0.5"
             >
               <div className="relative h-5 w-[20.1px]">
-                <img alt="" className="absolute inset-0 size-full max-w-none" src={imgNavSettings} />
+                <img
+                  alt=""
+                  className={`absolute inset-0 size-full max-w-none ${pathname === '/settings' ? 'drop-shadow-[0_0_8px_rgba(78,222,163,0.9)]' : ''}`}
+                  src={imgNavSettings}
+                />
               </div>
-              <span className="text-[8px] font-bold uppercase leading-3 tracking-[0.8px] text-[rgba(185,199,224,0.5)]">
+              <span
+                className={`text-[8px] font-bold uppercase leading-3 tracking-[0.8px] ${pathname === '/settings' ? 'text-[#4edea3]' : 'text-[rgba(185,199,224,0.5)]'}`}
+              >
                 SETTINGS
               </span>
             </Link>
