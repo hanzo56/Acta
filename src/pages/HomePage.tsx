@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
+import { useMicWaveLevels } from '../hooks/useMicWaveLevels'
 import { useSpeechDictation } from '../hooks/useSpeechDictation'
 
 const imgUserProfileAvatar =
@@ -40,7 +41,7 @@ export function HomePage() {
 
   const speechDictationOptions = useMemo(
     () => ({
-      silenceMs: 3500,
+      silenceMs: 5000,
       onSilence: handleDictationSilence,
     }),
     [handleDictationSilence],
@@ -50,6 +51,9 @@ export function HomePage() {
     micListening,
     speechDictationOptions,
   )
+
+  const waveLevels = useMicWaveLevels(micListening)
+  const waveLive = micListening && waveLevels !== null
 
   return (
     <div className="acta-shell text-[#e5e2e1]">
@@ -212,16 +216,28 @@ export function HomePage() {
               className="flex h-8 w-full max-w-[200px] items-end justify-center gap-1"
               aria-hidden
             >
-              {bars.map((b, i) => (
-                <div
-                  key={i}
-                  className={`acta-wave-bar w-1 shrink-0 rounded-full ${b.bg} ${b.h}`}
-                  style={{
-                    animationDelay: `${b.delayMs}ms`,
-                    animationDuration: `${b.durationMs}ms`,
-                  }}
-                />
-              ))}
+              {waveLive
+                ? waveLevels.map((level, i) => {
+                    const b = bars[i] ?? bars[0]
+                    const y = 0.12 + level * 0.88
+                    return (
+                      <div
+                        key={i}
+                        className={`h-8 w-1 shrink-0 origin-bottom rounded-full will-change-transform ${b.bg}`}
+                        style={{ transform: `scaleY(${Math.max(0.1, Math.min(1, y))})` }}
+                      />
+                    )
+                  })
+                : bars.map((b, i) => (
+                    <div
+                      key={i}
+                      className={`acta-wave-bar w-1 shrink-0 rounded-full ${b.bg} ${b.h}`}
+                      style={{
+                        animationDelay: `${b.delayMs}ms`,
+                        animationDuration: `${b.durationMs}ms`,
+                      }}
+                    />
+                  ))}
             </div>
             <button
               type="button"

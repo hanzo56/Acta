@@ -46,7 +46,7 @@ type StepConfig = {
 
 const STEPS: StepConfig[] = [
   {
-    title: 'Found Sarah in Messages',
+    title: 'Found Sarah in your favorite contacts',
     icon: imgMessages,
     iconSize: 'size-5',
     doneDetail: '08:42:01 AM',
