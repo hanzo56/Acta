@@ -1,5 +1,7 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useCallback, useMemo, useRef, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+
+import { useSpeechDictation } from '../hooks/useSpeechDictation'
 
 const imgUserProfileAvatar =
   'https://www.figma.com/api/mcp/asset/b319f404-f6b1-4efb-b193-ec0f12841a6a'
@@ -26,7 +28,28 @@ const bars = [
 ] as const
 
 export function HomePage() {
+  const navigate = useNavigate()
   const [micListening, setMicListening] = useState(false)
+  const silenceNavigatedRef = useRef(false)
+
+  const handleDictationSilence = useCallback(() => {
+    if (silenceNavigatedRef.current) return
+    silenceNavigatedRef.current = true
+    navigate('/preview')
+  }, [navigate])
+
+  const speechDictationOptions = useMemo(
+    () => ({
+      silenceMs: 3500,
+      onSilence: handleDictationSilence,
+    }),
+    [handleDictationSilence],
+  )
+
+  const { finalText, interimText, status: dictationStatus } = useSpeechDictation(
+    micListening,
+    speechDictationOptions,
+  )
 
   return (
     <div className="acta-shell text-[#e5e2e1]">
@@ -58,6 +81,60 @@ export function HomePage() {
                 <p>your next task.</p>
               </div>
             </div>
+
+            <section
+              aria-label="Voice dictation"
+              className="box-border w-full min-h-[7.5rem] max-h-[min(40vh,18rem)] rounded-2xl border border-[rgba(60,74,66,0.1)] bg-[#1c1b1b] px-4 py-3"
+            >
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <p className="text-[11px] font-bold uppercase leading-4 tracking-[1.2px] text-[rgba(185,199,224,0.55)]">
+                  Voice input
+                </p>
+                {micListening && dictationStatus === 'listening' ? (
+                  <span className="text-[10px] font-bold uppercase leading-4 tracking-[0.12em] text-[#4edea3]">
+                    Live
+                  </span>
+                ) : null}
+              </div>
+              <div
+                className="max-h-[min(32vh,15rem)] overflow-y-auto text-left text-[15px] leading-6 tracking-[0.2px]"
+                aria-live="polite"
+                aria-relevant="additions text"
+              >
+                {dictationStatus === 'unsupported' ? (
+                  <p className="text-[rgba(187,202,191,0.78)]">
+                    Speech recognition isn’t available in this browser. Try Chrome on desktop.
+                  </p>
+                ) : null}
+                {dictationStatus === 'denied' ? (
+                  <p className="text-[rgba(187,202,191,0.78)]">
+                    Microphone access was blocked. Allow the microphone for this site in your browser
+                    settings, then try again.
+                  </p>
+                ) : null}
+                {dictationStatus !== 'unsupported' && dictationStatus !== 'denied' ? (
+                  <>
+                    {!finalText && !interimText && !micListening ? (
+                      <p className="text-[rgba(187,202,191,0.5)]">
+                        Tap the microphone below to dictate. Your words will appear here.
+                      </p>
+                    ) : null}
+                    {!finalText &&
+                    !interimText &&
+                    micListening &&
+                    dictationStatus === 'listening' ? (
+                      <p className="text-[rgba(187,202,191,0.55)]">Listening… speak now.</p>
+                    ) : null}
+                    {finalText || interimText ? (
+                      <p className="whitespace-pre-wrap break-words text-[#e5e2e1]">
+                        <span>{finalText}</span>
+                        <span className="text-[rgba(229,226,225,0.78)]">{interimText}</span>
+                      </p>
+                    ) : null}
+                  </>
+                ) : null}
+              </div>
+            </section>
           </div>
 
           <div className="flex w-full flex-col items-center gap-3">
