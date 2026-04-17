@@ -130,7 +130,8 @@ export function useSpeechDictation(active: boolean, options?: UseSpeechDictation
 
     try {
       recognition.start()
-      scheduleSilence()
+      /* Silence countdown starts only after `onresult` — not on mic open — so we don’t navigate
+       * until the user has spoken and then stops for `silenceMs`. */
     } catch {
       clearSilenceTimer()
       queueMicrotask(() => {

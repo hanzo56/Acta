@@ -46,7 +46,7 @@ type StepConfig = {
 
 const STEPS: StepConfig[] = [
   {
-    title: 'Found Sarah in Messages',
+    title: 'Found Sarah in your favorite contacts',
     icon: imgMessages,
     iconSize: 'size-5',
     doneDetail: '08:42:01 AM',
@@ -348,7 +348,7 @@ export function GraphPage() {
             src={imgNavGraph}
           />
         </div>
-        <Link to="/connectors" className="flex items-center justify-center p-3">
+        <Link to="/settings" className="flex items-center justify-center p-3">
           <img alt="" className="h-5 w-[20.1px]" src={imgNavSettings} />
         </Link>
       </nav>
