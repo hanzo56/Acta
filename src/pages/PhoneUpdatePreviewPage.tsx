@@ -36,8 +36,9 @@ export function PhoneUpdatePreviewPage() {
               Phone activity update
             </h1>
             <p className="text-[16px] font-normal leading-6 text-[#bbcabf]">
-              I’ll check for recent activities on your phone — messages, calls, voicemails, and school
-              notifications — then prepare a summary you can review before I take any action.
+              I’ll check for recent activities on your phone — messages, calls, voicemails, school
+              notifications, and email activity — then prepare a summary you can review before I take
+              any action.
             </p>
           </header>
         ) : null}
@@ -55,7 +56,7 @@ export function PhoneUpdatePreviewPage() {
                   <>
                     Read recent SMS, call logs, voicemail transcriptions,
                     <br />
-                    and priority caller IDs from the last 48 hours.
+                    priority caller IDs, and verify email activity from the last 48 hours.
                   </>
                 }
                 tag="SCOPE:"
