@@ -91,6 +91,15 @@ const STEPS: StepConfig[] = [
   },
 ];
 
+function formatStepCompletedTime(ms: number) {
+  return new Date(ms).toLocaleTimeString(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
+}
+
 function initialStepCompletedAt(
   fromPreviewApprove: boolean,
 ): (number | null)[] {
@@ -235,16 +244,22 @@ export function GraphPage() {
           </header>
 
           <ul className="flex flex-col gap-4">
-            {STEPS.map((step, i) => (
-              <GraphStepRow
-                key={step.title}
-                title={step.title}
-                icon={step.icon}
-                iconSizeClass={step.iconSize}
-                status={stepStatuses[i] ?? "pending"}
-                doneSubtitle={step.doneDetail}
-              />
-            ))}
+            {STEPS.map((step, i) => {
+              const t = stepCompletedAt[i];
+              const doneSubtitle =
+                step.doneMessage ??
+                (t != null ? formatStepCompletedTime(t) : "");
+              return (
+                <GraphStepRow
+                  key={step.title}
+                  title={step.title}
+                  icon={step.icon}
+                  iconSizeClass={step.iconSize}
+                  status={stepStatuses[i] ?? "pending"}
+                  doneSubtitle={doneSubtitle}
+                />
+              );
+            })}
           </ul>
 
           <div
