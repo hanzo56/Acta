@@ -91,15 +91,6 @@ const STEPS: StepConfig[] = [
   },
 ];
 
-function formatStepCompletedTime(ms: number) {
-  return new Date(ms).toLocaleTimeString(undefined, {
-    hour: "numeric",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  });
-}
-
 function initialStepCompletedAt(
   fromPreviewApprove: boolean,
 ): (number | null)[] {

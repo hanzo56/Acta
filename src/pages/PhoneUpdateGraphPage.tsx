@@ -152,21 +152,26 @@ export function PhoneUpdateGraphPage() {
               Activity timeline
             </h2>
             <ul className="flex flex-col gap-4">
-              {AUTO_STEPS.map((step, i) => (
-                <PhoneGraphStepRow
-                  key={step.title}
-                  title={step.title}
-                  icon={step.icon}
-                  iconSizeClass={step.iconSize}
-                  status={stepStatuses[i] ?? 'pending'}
-                  doneSubtitle={doneSubtitleForStep(i)}
-                  loadingClock={
-                    (stepStatuses[i] ?? 'pending') === 'loading'
-                      ? formatStepCompletedTime(clockNowMs)
-                      : undefined
-                  }
-                />
-              ))}
+              {AUTO_STEPS.map((step, i) => {
+                const status = stepStatuses[i] ?? 'pending'
+                const revealed =
+                  oooDoneInitially || status === 'loading' || status === 'done'
+                if (!revealed) return null
+
+                return (
+                  <PhoneGraphStepRow
+                    key={step.title}
+                    title={step.title}
+                    icon={step.icon}
+                    iconSizeClass={step.iconSize}
+                    status={status}
+                    doneSubtitle={doneSubtitleForStep(i)}
+                    loadingClock={
+                      status === 'loading' ? formatStepCompletedTime(clockNowMs) : undefined
+                    }
+                  />
+                )
+              })}
             </ul>
           </section>
 
