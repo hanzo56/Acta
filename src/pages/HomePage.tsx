@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 import { useMicWaveLevels } from '../hooks/useMicWaveLevels'
@@ -28,21 +28,46 @@ const bars = [
   { h: 'h-7', bg: 'bg-[#4edea3]', delayMs: 60, durationMs: 560 },
 ] as const
 
+const SILENCE_MS = 3000
+const PROCESSING_BEFORE_NAV_MS = 2000
+
+/** Spoken intent → phone-activity preview instead of dinner preview */
+const PHONE_UPDATE_INTENT =
+  /\b(give me an update|give (me )?(an )?update|provide (me )?(an )?update|phone update|activity update|check my phone)\b/i
+
 export function HomePage() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const [micListening, setMicListening] = useState(false)
+  const [silenceProcessing, setSilenceProcessing] = useState(false)
   const silenceNavigatedRef = useRef(false)
+  const processingNavTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const dictationSnapshotRef = useRef('')
 
   const handleDictationSilence = useCallback(() => {
     if (silenceNavigatedRef.current) return
     silenceNavigatedRef.current = true
-    navigate('/preview')
+    setMicListening(false)
+    setSilenceProcessing(true)
+    processingNavTimeoutRef.current = window.setTimeout(() => {
+      processingNavTimeoutRef.current = null
+      const t = dictationSnapshotRef.current
+      const goPhoneUpdate = PHONE_UPDATE_INTENT.test(t)
+      navigate(goPhoneUpdate ? '/preview/update' : '/preview')
+    }, PROCESSING_BEFORE_NAV_MS)
   }, [navigate])
+
+  useEffect(() => {
+    return () => {
+      if (processingNavTimeoutRef.current) {
+        clearTimeout(processingNavTimeoutRef.current)
+      }
+    }
+  }, [])
 
   const speechDictationOptions = useMemo(
     () => ({
-      silenceMs: 5000,
+      silenceMs: SILENCE_MS,
       onSilence: handleDictationSilence,
     }),
     [handleDictationSilence],
@@ -53,8 +78,13 @@ export function HomePage() {
     speechDictationOptions,
   )
 
+  useEffect(() => {
+    dictationSnapshotRef.current = `${finalText} ${interimText}`.trim()
+  }, [finalText, interimText])
+
   const waveLevels = useMicWaveLevels(micListening)
   const waveLive = micListening && waveLevels !== null
+  const micClusterIdle = !micListening && !silenceProcessing
 
   return (
     <div className="acta-shell text-[#e5e2e1]">
@@ -215,66 +245,87 @@ export function HomePage() {
       >
         <div className="relative mx-auto h-20 w-full max-w-[390px]">
           <div
-            className={`pointer-events-none absolute left-1/2 top-0 z-50 flex w-[min(100%,220px)] -translate-x-1/2 -translate-y-[42%] flex-col items-center gap-1 ${!micListening ? 'acta-nav-mic--idle' : ''}`}
+            className={`pointer-events-none absolute left-1/2 top-0 z-50 flex w-[min(100%,220px)] -translate-x-1/2 -translate-y-[42%] flex-col items-center gap-1 ${micClusterIdle ? 'acta-nav-mic--idle' : ''}`}
           >
             <div
               className="flex h-8 w-full max-w-[200px] items-end justify-center gap-1"
               aria-hidden
             >
-              {waveLive
-                ? waveLevels.map((level, i) => {
-                    const b = bars[i] ?? bars[0]
-                    const y = 0.12 + level * 0.88
-                    return (
-                      <div
-                        key={i}
-                        className={`h-8 w-1 shrink-0 origin-bottom rounded-full will-change-transform ${b.bg}`}
-                        style={{ transform: `scaleY(${Math.max(0.1, Math.min(1, y))})` }}
-                      />
-                    )
-                  })
-                : bars.map((b, i) => (
+              {silenceProcessing ? (
+                <div className="h-8 w-full max-w-[200px]" aria-hidden />
+              ) : waveLive ? (
+                waveLevels.map((level, i) => {
+                  const b = bars[i] ?? bars[0]
+                  const y = 0.12 + level * 0.88
+                  return (
                     <div
                       key={i}
-                      className={`acta-wave-bar w-1 shrink-0 rounded-full ${b.bg} ${b.h}`}
-                      style={{
-                        animationDelay: `${b.delayMs}ms`,
-                        animationDuration: `${b.durationMs}ms`,
-                      }}
+                      className={`h-8 w-1 shrink-0 origin-bottom rounded-full will-change-transform ${b.bg}`}
+                      style={{ transform: `scaleY(${Math.max(0.1, Math.min(1, y))})` }}
                     />
-                  ))}
-            </div>
-            <button
-              type="button"
-              aria-pressed={micListening}
-              aria-label={micListening ? 'Microphone on, listening' : 'Microphone off, tap to listen'}
-              onClick={() => setMicListening((v) => !v)}
-              className="pointer-events-auto relative flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]"
-            >
-              <div
-                className="acta-mic-pulse-ring pointer-events-none absolute aspect-square w-[4.5rem] rounded-full border border-[rgba(78,222,163,0.35)]"
-                aria-hidden
-              />
-              <div
-                className="acta-mic-pulse-ring-delayed pointer-events-none absolute aspect-square w-[4.5rem] rounded-full border border-[rgba(78,222,163,0.25)]"
-                aria-hidden
-              />
-              <div className="acta-mic-button-glow relative flex items-center justify-center rounded-full bg-[rgba(78,222,163,0.2)] p-4 shadow-[0px_0px_28px_0px_rgba(78,222,163,0.28)]">
-                <div className="pointer-events-none absolute inset-0 rounded-full bg-[rgba(78,222,163,0.3)] opacity-20" />
-                <div className="pointer-events-none absolute inset-0 rounded-full bg-[rgba(78,222,163,0.1)]" />
-                <div className="relative h-7 w-5 shrink-0">
-                  <img
-                    alt=""
-                    className="acta-mic-icon-animate absolute inset-0 size-full max-w-none"
-                    src={imgMic}
+                  )
+                })
+              ) : (
+                bars.map((b, i) => (
+                  <div
+                    key={i}
+                    className={`acta-wave-bar w-1 shrink-0 rounded-full ${b.bg} ${b.h}`}
+                    style={{
+                      animationDelay: `${b.delayMs}ms`,
+                      animationDuration: `${b.durationMs}ms`,
+                    }}
                   />
-                </div>
+                ))
+              )}
+            </div>
+            {silenceProcessing ? (
+              <div
+                className="pointer-events-auto relative flex size-[4.5rem] items-center justify-center rounded-full bg-[rgba(78,222,163,0.15)] shadow-[0px_0px_20px_0px_rgba(78,222,163,0.2)]"
+                role="status"
+                aria-live="polite"
+                aria-label="Processing"
+              >
+                <div className="size-9 rounded-full border-2 border-[rgba(78,222,163,0.3)] border-t-[#4edea3] animate-spin" />
               </div>
-            </button>
+            ) : (
+              <button
+                type="button"
+                aria-pressed={micListening}
+                aria-label={micListening ? 'Microphone on, listening' : 'Microphone off, tap to listen'}
+                onClick={() => setMicListening((v) => !v)}
+                className="pointer-events-auto relative flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]"
+              >
+                <div
+                  className="acta-mic-pulse-ring pointer-events-none absolute aspect-square w-[4.5rem] rounded-full border border-[rgba(78,222,163,0.35)]"
+                  aria-hidden
+                />
+                <div
+                  className="acta-mic-pulse-ring-delayed pointer-events-none absolute aspect-square w-[4.5rem] rounded-full border border-[rgba(78,222,163,0.25)]"
+                  aria-hidden
+                />
+                <div className="acta-mic-button-glow relative flex items-center justify-center rounded-full bg-[rgba(78,222,163,0.2)] p-4 shadow-[0px_0px_28px_0px_rgba(78,222,163,0.28)]">
+                  <div className="pointer-events-none absolute inset-0 rounded-full bg-[rgba(78,222,163,0.3)] opacity-20" />
+                  <div className="pointer-events-none absolute inset-0 rounded-full bg-[rgba(78,222,163,0.1)]" />
+                  <div className="relative h-7 w-5 shrink-0">
+                    <img
+                      alt=""
+                      className="acta-mic-icon-animate absolute inset-0 size-full max-w-none"
+                      src={imgMic}
+                    />
+                  </div>
+                </div>
+              </button>
+            )}
             <p
-              className={`acta-nav-mic-status mt-0.5 text-center text-[8px] font-bold uppercase leading-3 tracking-[1.6px] ${micListening ? 'acta-listening-text text-[#4edea3]' : 'text-[rgba(185,199,224,0.5)]'}`}
+              className={`acta-nav-mic-status mt-0.5 text-center text-[8px] font-bold uppercase leading-3 tracking-[1.6px] ${
+                silenceProcessing
+                  ? 'text-[#4edea3]'
+                  : micListening
+                    ? 'acta-listening-text text-[#4edea3]'
+                    : 'text-[rgba(185,199,224,0.5)]'
+              }`}
             >
-              {micListening ? 'LISTENING' : 'MIC OFF'}
+              {silenceProcessing ? 'PROCESSING' : micListening ? 'LISTENING' : 'MIC OFF'}
             </p>
           </div>
 
@@ -293,20 +344,20 @@ export function HomePage() {
               </span>
             </Link>
             <Link
-              to="/connectors"
+              to="/tasks"
               className="flex flex-col items-center justify-end gap-1 pb-0.5"
             >
               <div className="relative size-[19.3px]">
                 <img
                   alt=""
-                  className={`absolute inset-0 size-full max-w-none ${pathname === '/connectors' ? 'drop-shadow-[0_0_8px_rgba(78,222,163,0.75)]' : ''}`}
+                  className={`absolute inset-0 size-full max-w-none ${pathname === '/tasks' ? 'drop-shadow-[0_0_8px_rgba(78,222,163,0.75)]' : ''}`}
                   src={imgNavApps}
                 />
               </div>
               <span
-                className={`text-[8px] font-bold uppercase leading-3 tracking-[0.8px] ${pathname === '/connectors' ? 'text-[#4edea3]' : 'text-[rgba(185,199,224,0.5)]'}`}
+                className={`text-[8px] font-bold uppercase leading-3 tracking-[0.8px] ${pathname === '/tasks' ? 'text-[#4edea3]' : 'text-[rgba(185,199,224,0.5)]'}`}
               >
-                APPS
+                TASKS
               </span>
             </Link>
             <div className="flex justify-center" aria-hidden />
