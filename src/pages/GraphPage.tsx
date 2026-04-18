@@ -5,7 +5,9 @@ import { AppBottomNav } from '../components/AppBottomNav'
 import {
   clearGraphFlowComplete,
   readGraphFlowComplete,
+  readGraphStepTimes,
   writeGraphFlowComplete,
+  writeGraphStepTimes,
 } from '../graphFlowStorage'
 
 const imgUserProfile =
@@ -38,7 +40,8 @@ type StepConfig = {
   iconSize: 'size-5' | 'h-5 w-[18px]' | 'h-5 w-[15px]' | 'h-[20px] w-5'
   /** Override loading duration (ms). New Sarah message step uses 3× default. */
   loadDurationMs?: number
-  doneDetail: string
+  /** When set, shown instead of a completion timestamp (e.g. status text). */
+  doneMessage?: string
 }
 
 const STEPS: StepConfig[] = [
@@ -46,41 +49,61 @@ const STEPS: StepConfig[] = [
     title: 'Found Sarah in your favorite contacts',
     icon: imgMessages,
     iconSize: 'size-5',
-    doneDetail: '08:42:01 AM',
   },
   {
     title: 'Checked calendar availability',
     icon: imgCalendar,
     iconSize: 'h-5 w-[18px]',
-    doneDetail: '08:42:05 AM',
   },
   {
     title: 'Sent message to Sarah to confirm availability for 7PM tomorrow',
     icon: imgMessages,
     iconSize: 'size-5',
     loadDurationMs: STEP_LOAD_MS * 3,
-    doneDetail: 'Sarah confirmed',
+    doneMessage: 'Sarah confirmed',
   },
   {
     title: 'Booking table via OpenTable',
     icon: imgForkKnife,
     iconSize: 'h-5 w-[15px]',
-    doneDetail: '08:42:22 AM',
   },
   {
     title: 'Send confirmation message',
     icon: imgBell,
     iconSize: 'h-[20px] w-5',
-    doneDetail: '08:42:28 AM',
   },
   {
     title: 'Sarah Jenkins accepted the invite',
     icon: imgCalendar,
     iconSize: 'h-5 w-[18px]',
     loadDurationMs: 10_000,
-    doneDetail: 'Invite accepted',
+    doneMessage: 'Invite accepted',
   },
 ]
+
+function formatStepCompletedTime(ms: number) {
+  return new Date(ms).toLocaleTimeString(undefined, {
+    hour: 'numeric',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,
+  })
+}
+
+function initialStepCompletedAt(fromPreviewApprove: boolean): (number | null)[] {
+  if (fromPreviewApprove) {
+    return Array.from({ length: STEPS.length }, () => null)
+  }
+  if (readGraphFlowComplete()) {
+    const stored = readGraphStepTimes(STEPS.length)
+    if (stored) {
+      return [...stored]
+    }
+    const now = Date.now()
+    return STEPS.map((_, i) => now - (STEPS.length - 1 - i) * 2500)
+  }
+  return Array.from({ length: STEPS.length }, () => null)
+}
 
 /** Dinner reservation date (calendar card) */
 function reservationDateLabel() {
@@ -114,6 +137,16 @@ export function GraphPage() {
   const [stepStatuses, setStepStatuses] = useState<StepStatus[]>(() =>
     initialStepStatuses(fromPreviewApprove),
   )
+  const [stepCompletedAt, setStepCompletedAt] = useState<(number | null)[]>(() =>
+    initialStepCompletedAt(fromPreviewApprove),
+  )
+
+  /** Updates every second so the loading step can show a live clock without calling Date.now() in render. */
+  const [clockNowMs, setClockNowMs] = useState(() => Date.now())
+  useEffect(() => {
+    const id = window.setInterval(() => setClockNowMs(Date.now()), 1000)
+    return () => clearInterval(id)
+  }, [])
 
   useEffect(() => {
     if (readGraphFlowComplete()) return
@@ -125,12 +158,18 @@ export function GraphPage() {
       const delay = STEPS[index].loadDurationMs ?? STEP_LOAD_MS
       timeouts.push(
         setTimeout(() => {
+          const completedAt = Date.now()
           setStepStatuses((prev) => {
             const next = [...prev] as StepStatus[]
             next[index] = 'done'
             if (index + 1 < STEPS.length) {
               next[index + 1] = 'loading'
             }
+            return next
+          })
+          setStepCompletedAt((prev) => {
+            const next = [...prev]
+            next[index] = completedAt
             return next
           })
           advance(index + 1)
@@ -144,15 +183,24 @@ export function GraphPage() {
   }, [])
 
   useEffect(() => {
-    if (stepStatuses.length && stepStatuses.every((s) => s === 'done')) {
-      writeGraphFlowComplete()
+    if (!stepStatuses.length || !stepStatuses.every((s) => s === 'done')) return
+    writeGraphFlowComplete()
+    if (stepCompletedAt.every((t): t is number => t != null)) {
+      writeGraphStepTimes(stepCompletedAt)
     }
-  }, [stepStatuses])
+  }, [stepStatuses, stepCompletedAt])
 
   const allDone = stepStatuses.every((s) => s === 'done')
   const openTableDone = stepStatuses[3] === 'done'
   const confirmationDone = stepStatuses[4] === 'done'
   const inviteAcceptedDone = stepStatuses[STEPS.length - 1] === 'done'
+
+  const doneSubtitleForStep = (i: number) => {
+    const step = STEPS[i]
+    if (step.doneMessage) return step.doneMessage
+    const t = stepCompletedAt[i]
+    return t != null ? formatStepCompletedTime(t) : ''
+  }
 
   useEffect(() => {
     if (!inviteAcceptedDone || !confirmationDone) return
@@ -188,7 +236,12 @@ export function GraphPage() {
                 icon={step.icon}
                 iconSizeClass={step.iconSize}
                 status={stepStatuses[i] ?? 'pending'}
-                doneSubtitle={step.doneDetail}
+                doneSubtitle={doneSubtitleForStep(i)}
+                loadingClock={
+                  (stepStatuses[i] ?? 'pending') === 'loading'
+                    ? formatStepCompletedTime(clockNowMs)
+                    : undefined
+                }
               />
             ))}
           </ul>
@@ -354,12 +407,14 @@ function GraphStepRow({
   iconSizeClass,
   status,
   doneSubtitle,
+  loadingClock,
 }: {
   title: string
   icon: string
   iconSizeClass: string
   status: StepStatus
   doneSubtitle: string
+  loadingClock?: string
 }) {
   const pending = status === 'pending'
   const loading = status === 'loading'
@@ -389,7 +444,7 @@ function GraphStepRow({
         )}
         {loading && (
           <p className="mt-0.5 text-[11px] uppercase leading-[16.5px] text-[rgba(78,222,163,0.8)]">
-            IN PROGRESS...
+            IN PROGRESS · {loadingClock ?? '—'}
           </p>
         )}
         {pending && (

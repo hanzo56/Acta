@@ -2,6 +2,8 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { ConnectorsPage } from './pages/ConnectorsPage'
 import { GraphMenuPage } from './pages/GraphMenuPage'
 import { GraphPage } from './pages/GraphPage'
+import { DraftResearchMemoGraphPage } from './pages/DraftResearchMemoGraphPage'
+import { InvestorCallsGraphPage } from './pages/InvestorCallsGraphPage'
 import { HomePage } from './pages/HomePage'
 import { PreviewPage } from './pages/PreviewPage'
 import { SettingsPage } from './pages/SettingsPage'
@@ -13,6 +15,8 @@ export default function App() {
       <Route path="/" element={<HomePage />} />
       <Route path="/preview" element={<PreviewPage />} />
       <Route path="/graph" element={<GraphPage />} />
+      <Route path="/graph/investor-calls" element={<InvestorCallsGraphPage />} />
+      <Route path="/graph/draft-research-memo" element={<DraftResearchMemoGraphPage />} />
       <Route path="/graph/menu" element={<GraphMenuPage />} />
       <Route path="/tasks" element={<TasksPage />} />
       <Route path="/settings" element={<SettingsPage />} />

@@ -1,3 +1,4 @@
+import { useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { AppBottomNav } from '../components/AppBottomNav'
@@ -6,8 +7,6 @@ import { readGraphFlowComplete } from '../graphFlowStorage'
 /** Figma node 21:3 — Tasks / Ready to delegate */
 const imgUserProfilePhoto =
   'https://www.figma.com/api/mcp/asset/c988cd55-c214-4dc8-9942-ff9b97114f3d'
-const imgInputSparkle =
-  'https://www.figma.com/api/mcp/asset/a208f51a-7592-426d-9485-cd9a184c4721'
 const imgTaskMail =
   'https://www.figma.com/api/mcp/asset/e44116c1-1090-4324-b585-1e9613865c84'
 const imgTaskCalendar =
@@ -21,44 +20,71 @@ const imgFabPlus =
 const imgHeaderSearch =
   'https://www.figma.com/api/mcp/asset/2d5f8865-edc4-4921-8675-5a7b1f7a1981'
 
+/** Lowercase haystack; every non-empty word in the query must appear somewhere (AND). */
+function matchesTaskSearch(haystack: string, query: string) {
+  const trimmed = query.trim().toLowerCase()
+  if (!trimmed) return true
+  const h = haystack.toLowerCase()
+  return trimmed
+    .split(/\s+/)
+    .filter(Boolean)
+    .every((word) => h.includes(word))
+}
+
+const TASK_SEARCH = {
+  dinner:
+    'dinner sarah completed recently reservation confirmed invite calendar evening outcome',
+  investor:
+    'schedule investor calls completed venture partners briefing meeting coordinated sent outcome',
+  memo: 'draft research memo running synthesizing market data internal repositories public filings status',
+} as const
+
 export function TasksPage() {
   const graphFlowComplete = readGraphFlowComplete()
+  const [taskSearch, setTaskSearch] = useState('')
+  const taskSearchInputRef = useRef<HTMLInputElement>(null)
+
+  const { showDinner, showInvestor, showMemo } = useMemo(() => {
+    const q = taskSearch
+    return {
+      showDinner: graphFlowComplete && matchesTaskSearch(TASK_SEARCH.dinner, q),
+      showInvestor: matchesTaskSearch(TASK_SEARCH.investor, q),
+      showMemo: matchesTaskSearch(TASK_SEARCH.memo, q),
+    }
+  }, [taskSearch, graphFlowComplete])
+
+  const hasAnyTaskMatch = showDinner || showInvestor || showMemo
 
   return (
     <div className="acta-shell bg-[#131313] text-[#e5e2e1]">
-      <header className="acta-header-fixed z-10 flex h-16 items-center justify-between bg-[#131313] px-6">
-        <div className="size-8 overflow-hidden rounded-full bg-[#201f1f]">
+      <header className="acta-header-fixed z-10 flex h-16 items-center gap-3 bg-[#131313] px-6">
+        <div className="size-8 shrink-0 overflow-hidden rounded-full bg-[#201f1f]">
           <img alt="" className="size-full object-cover" src={imgUserProfilePhoto} />
         </div>
-        <button type="button" className="rounded-full p-2" aria-label="Search">
-          <img alt="" className="size-[18px]" src={imgHeaderSearch} />
-        </button>
+        <div className="flex min-w-0 flex-1 items-center gap-2 rounded-full border border-[rgba(60,74,66,0.25)] bg-[#1c1b1b] px-3 py-2 shadow-[0px_0px_0px_1px_rgba(60,74,66,0.08)] transition-[box-shadow,ring] focus-within:border-[rgba(78,222,163,0.45)] focus-within:shadow-[0px_0px_0px_1px_rgba(78,222,163,0.35),0_0_0_3px_rgba(78,222,163,0.15)] focus-within:ring-2 focus-within:ring-[#4edea3]/80">
+          <img alt="" className="size-[18px] shrink-0 opacity-80" src={imgHeaderSearch} aria-hidden />
+          <label htmlFor="tasks-search-input" className="sr-only">
+            Filter recent tasks
+          </label>
+          <input
+            ref={taskSearchInputRef}
+            id="tasks-search-input"
+            type="search"
+            placeholder="Filter tasks…"
+            value={taskSearch}
+            onChange={(e) => setTaskSearch(e.target.value)}
+            autoComplete="off"
+            className="min-w-0 flex-1 border-0 bg-transparent text-[15px] font-medium leading-5 text-[#e5e2e1] placeholder:text-[rgba(187,202,191,0.45)] focus:outline-none focus:ring-0"
+          />
+        </div>
       </header>
 
       <main className="acta-main acta-main--inset-both max-w-[896px] px-6 pb-28 pt-4">
         <div className="flex flex-col gap-12">
-          {/* Quiet hero + input */}
-          <div className="flex flex-col gap-8">
-            <h2 className="text-[36px] font-semibold leading-10 tracking-[-0.9px]">
-              <span className="text-[#e5e2e1]">Ready to </span>
-              <span className="text-[#bbcabf]">delegate.</span>
-            </h2>
-
-            <div className="relative flex items-center rounded-2xl bg-[#1c1b1b] p-5 shadow-[0px_0px_0px_1px_rgba(60,74,66,0.1)]">
-              <div className="relative h-[22px] w-[38px] shrink-0">
-                <img alt="" className="absolute inset-0 size-full max-w-none object-contain" src={imgInputSparkle} />
-              </div>
-              <label htmlFor="tasks-need-input" className="sr-only">
-                What do you need?
-              </label>
-              <input
-                id="tasks-need-input"
-                type="search"
-                placeholder="What do you need?"
-                className="min-w-0 flex-1 border-0 bg-transparent px-3 py-3 text-[18px] font-medium text-[#e5e2e1] placeholder:text-[rgba(187,202,191,0.4)] focus:outline-none focus:ring-0"
-              />
-            </div>
-          </div>
+          <h2 className="text-[36px] font-semibold leading-10 tracking-[-0.9px]">
+            <span className="text-[#e5e2e1]">Ready to </span>
+            <span className="text-[#bbcabf]">delegate.</span>
+          </h2>
 
           {/* Recent tasks */}
           <section className="flex flex-col gap-8">
@@ -75,7 +101,7 @@ export function TasksPage() {
             </div>
 
             <div className="flex flex-col gap-4">
-              {graphFlowComplete ? (
+              {showDinner ? (
                 <Link
                   to="/graph"
                   className="flex flex-col gap-4 rounded-2xl border border-[rgba(60,74,66,0.05)] bg-[#1c1b1b] p-[25px] text-left no-underline transition-colors hover:border-[rgba(60,74,66,0.18)] hover:bg-[#222121] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#131313]"
@@ -112,8 +138,12 @@ export function TasksPage() {
                 </Link>
               ) : null}
 
-              {/* Task card — completed */}
-              <article className="flex flex-col gap-4 rounded-2xl border border-[rgba(60,74,66,0.05)] bg-[#1c1b1b] p-[25px]">
+              {showInvestor ? (
+              <Link
+                to="/graph/investor-calls"
+                className="flex flex-col gap-4 rounded-2xl border border-[rgba(60,74,66,0.05)] bg-[#1c1b1b] p-[25px] text-left no-underline transition-colors hover:border-[rgba(60,74,66,0.18)] hover:bg-[#222121] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#131313]"
+                aria-label="Schedule investor calls — view orchestration graph"
+              >
                 <div className="flex flex-col gap-2">
                   <div className="flex flex-wrap items-center gap-3">
                     <span className="text-[10px] font-bold uppercase leading-[15px] tracking-[1px] text-[rgba(187,202,191,0.5)]">
@@ -147,10 +177,15 @@ export function TasksPage() {
                     </p>
                   </div>
                 </div>
-              </article>
+              </Link>
+              ) : null}
 
-              {/* Task card — running */}
-              <article className="flex flex-col gap-4 rounded-2xl border border-[rgba(60,74,66,0.05)] bg-[#1c1b1b] p-[25px]">
+              {showMemo ? (
+              <Link
+                to="/graph/draft-research-memo"
+                className="flex flex-col gap-4 rounded-2xl border border-[rgba(60,74,66,0.05)] bg-[#1c1b1b] p-[25px] text-left no-underline transition-colors hover:border-[rgba(60,74,66,0.18)] hover:bg-[#222121] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#131313]"
+                aria-label="Draft research memo — view orchestration graph"
+              >
                 <div className="flex flex-col gap-2">
                   <div className="flex flex-wrap items-center gap-3">
                     <span className="text-[10px] font-bold uppercase leading-[15px] tracking-[1px] text-[#4edea3]">
@@ -179,7 +214,14 @@ export function TasksPage() {
                     </p>
                   </div>
                 </div>
-              </article>
+              </Link>
+              ) : null}
+
+              {taskSearch.trim() && !hasAnyTaskMatch ? (
+                <p className="rounded-2xl border border-dashed border-[rgba(60,74,66,0.35)] bg-[#1a1a1a] px-5 py-8 text-center text-[15px] leading-6 text-[#bbcabf]">
+                  No tasks match “{taskSearch.trim()}”. Try different words.
+                </p>
+              ) : null}
             </div>
           </section>
 
