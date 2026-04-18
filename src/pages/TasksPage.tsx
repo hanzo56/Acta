@@ -1,4 +1,5 @@
 import { AppBottomNav } from '../components/AppBottomNav'
+import { readGraphFlowComplete } from '../graphFlowStorage'
 
 /** Figma node 21:3 — Tasks / Ready to delegate */
 const imgUserProfilePhoto =
@@ -19,6 +20,8 @@ const imgHeaderSearch =
   'https://www.figma.com/api/mcp/asset/2d5f8865-edc4-4921-8675-5a7b1f7a1981'
 
 export function TasksPage() {
+  const graphFlowComplete = readGraphFlowComplete()
+
   return (
     <div className="acta-shell bg-[#131313] text-[#e5e2e1]">
       <header className="acta-header-fixed z-10 flex h-16 items-center justify-between bg-[#131313] px-6">
@@ -70,6 +73,39 @@ export function TasksPage() {
             </div>
 
             <div className="flex flex-col gap-4">
+              {graphFlowComplete ? (
+                <article className="flex flex-col gap-4 rounded-2xl border border-[rgba(60,74,66,0.05)] bg-[#1c1b1b] p-[25px]">
+                  <div className="flex flex-col gap-2">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="text-[10px] font-bold uppercase leading-[15px] tracking-[1px] text-[rgba(187,202,191,0.5)]">
+                        COMPLETED
+                      </span>
+                      <span className="text-[10px] font-normal leading-[15px] text-[rgba(187,202,191,0.4)]">
+                        Recently
+                      </span>
+                    </div>
+                    <h4 className="text-[20px] font-semibold leading-7 tracking-[-0.5px] text-[#e5e2e1]">
+                      Dinner with Sarah
+                    </h4>
+                    <p className="text-[15px] font-normal leading-[24px] text-[#bbcabf]">
+                      Reservation confirmed, invite accepted, and calendar event created for your evening.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4 border-t border-transparent pt-2">
+                    <div className="flex size-8 items-center justify-center rounded-lg bg-[#201f1f] shadow-[0_0_0_2px_#1c1b1b]">
+                      <img alt="" className="h-2.5 w-2 object-contain" src={imgTaskCalendar} />
+                    </div>
+                    <div className="h-8 w-px bg-[rgba(60,74,66,0.1)]" aria-hidden />
+                    <div className="text-right">
+                      <p className="text-[14px] font-semibold leading-5 text-[#e5e2e1]">Confirmed</p>
+                      <p className="text-[9px] font-normal uppercase leading-[13.5px] tracking-[0.45px] text-[rgba(187,202,191,0.4)]">
+                        OUTCOME
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              ) : null}
+
               {/* Task card — completed */}
               <article className="flex flex-col gap-4 rounded-2xl border border-[rgba(60,74,66,0.05)] bg-[#1c1b1b] p-[25px]">
                 <div className="flex flex-col gap-2">

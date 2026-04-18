@@ -82,9 +82,9 @@ const STEPS: StepConfig[] = [
   },
 ]
 
-function tomorrowLabel() {
-  const t = new Date()
-  t.setDate(t.getDate() + 1)
+/** Dinner reservation date (calendar card) */
+function reservationDateLabel() {
+  const t = new Date(2026, 3, 21)
   return t.toLocaleDateString(undefined, {
     weekday: 'long',
     month: 'short',
@@ -302,7 +302,7 @@ export function GraphPage() {
                     Dinner with Sarah
                   </p>
                   <p className="mt-1 text-[14px] leading-5 text-[#bbcabf]">
-                    {tomorrowLabel()} · 7:00 PM
+                    {reservationDateLabel()} · 7:00 PM
                   </p>
                 </div>
                 <div className="rounded-xl border border-[rgba(60,74,66,0.12)] bg-[#131313] px-4 py-3">
