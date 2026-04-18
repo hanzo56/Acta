@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 import { AppBottomNav } from '../components/AppBottomNav'
 import { readGraphFlowComplete } from '../graphFlowStorage'
 
@@ -74,7 +76,11 @@ export function TasksPage() {
 
             <div className="flex flex-col gap-4">
               {graphFlowComplete ? (
-                <article className="flex flex-col gap-4 rounded-2xl border border-[rgba(60,74,66,0.05)] bg-[#1c1b1b] p-[25px]">
+                <Link
+                  to="/graph"
+                  className="flex flex-col gap-4 rounded-2xl border border-[rgba(60,74,66,0.05)] bg-[#1c1b1b] p-[25px] text-left no-underline transition-colors hover:border-[rgba(60,74,66,0.18)] hover:bg-[#222121] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#131313]"
+                  aria-label="Dinner with Sarah — view orchestration graph"
+                >
                   <div className="flex flex-col gap-2">
                     <div className="flex flex-wrap items-center gap-3">
                       <span className="text-[10px] font-bold uppercase leading-[15px] tracking-[1px] text-[rgba(187,202,191,0.5)]">
@@ -103,7 +109,7 @@ export function TasksPage() {
                       </p>
                     </div>
                   </div>
-                </article>
+                </Link>
               ) : null}
 
               {/* Task card — completed */}

@@ -21,9 +21,15 @@ export type AppBottomNavProps = {
   tasksIconSrc?: string
   /** Used while on `/settings` when set (e.g. Settings page PNG) */
   settingsIconSrc?: string
+  /** Larger settings glyph + hit area (e.g. Settings route with custom active icon) */
+  largeSettingsIcon?: boolean
 }
 
-export function AppBottomNav({ tasksIconSrc, settingsIconSrc }: AppBottomNavProps) {
+export function AppBottomNav({
+  tasksIconSrc,
+  settingsIconSrc,
+  largeSettingsIcon,
+}: AppBottomNavProps) {
   const { pathname } = useLocation()
 
   const tasksSrc =
@@ -35,6 +41,11 @@ export function AppBottomNav({ tasksIconSrc, settingsIconSrc }: AppBottomNavProp
     pathname === '/tasks' && tasksIconSrc ? 'object-contain' : ''
   const settingsImgClass =
     pathname === '/settings' && settingsIconSrc ? 'object-contain' : ''
+
+  const settingsIconWrapClass =
+    largeSettingsIcon && pathname === '/settings'
+      ? 'relative size-10'
+      : 'relative h-5 w-[20.1px]'
 
   return (
     <nav
@@ -95,7 +106,7 @@ export function AppBottomNav({ tasksIconSrc, settingsIconSrc }: AppBottomNavProp
             className="flex flex-col items-center justify-end gap-1 pb-0.5"
             aria-current={pathname === '/settings' ? 'page' : undefined}
           >
-            <div className="relative h-5 w-[20.1px]">
+            <div className={settingsIconWrapClass}>
               <img
                 alt=""
                 className={`absolute inset-0 size-full max-w-none ${settingsImgClass} ${

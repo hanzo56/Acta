@@ -382,7 +382,7 @@ export function SettingsPage() {
         </div>
       </main>
 
-      <AppBottomNav settingsIconSrc="/nav-settings-active.png" />
+      <AppBottomNav settingsIconSrc="/nav-settings-active.png" largeSettingsIcon />
     </div>
   )
 }
