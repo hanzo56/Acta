@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useId, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+
+import { AppBottomNav } from '../components/AppBottomNav'
 
 /** Figma node 21:356 — Intelligence / Recent context */
 const imgUser =
@@ -12,15 +14,6 @@ const imgEdit =
   'https://www.figma.com/api/mcp/asset/2942ae87-7b96-4360-9021-b4a849c3dbcf'
 const imgSearch =
   'https://www.figma.com/api/mcp/asset/07a14779-9d0f-4656-9746-c3c766a58932'
-const imgNavHome =
-  'https://www.figma.com/api/mcp/asset/f8159318-98f5-4a10-b23a-f31f75ab63d2'
-const imgNavApps =
-  'https://www.figma.com/api/mcp/asset/2f0e5483-ac22-4b91-b8e3-e37f972705eb'
-const imgNavGraph =
-  'https://www.figma.com/api/mcp/asset/7855d582-3072-4873-b03d-5ef445275ad5'
-const imgNavSettings =
-  'https://www.figma.com/api/mcp/asset/cb903a54-72f1-4f23-92c3-c40fa0a0ccf6'
-
 const STORAGE_CONTACTS = 'acta.settings.favoriteContacts'
 const STORAGE_TONE = 'acta.settings.toneStyle'
 
@@ -91,7 +84,6 @@ function formatContactLine(contacts: FavoriteContact[]): string {
 }
 
 export function SettingsPage() {
-  const { pathname } = useLocation()
   const baseId = useId()
   const [contacts, setContacts] = useState<FavoriteContact[]>(loadContacts)
   const [toneStyle, setToneStyle] = useState<ToneStyleId>(loadTone)
@@ -390,39 +382,7 @@ export function SettingsPage() {
         </div>
       </main>
 
-      <nav
-        className="acta-nav-fixed flex h-20 items-center justify-between bg-[rgba(19,19,19,0.9)] px-8 backdrop-blur-[12px]"
-        aria-label="Primary"
-      >
-        <Link to="/" className="flex items-center justify-center p-3">
-          <img alt="" className="h-[18px] w-4" src={imgNavHome} />
-        </Link>
-        <Link
-          to="/tasks"
-          className="flex items-center justify-center p-3"
-          aria-current={pathname === '/tasks' ? 'page' : undefined}
-        >
-          <img
-            alt=""
-            className={`size-[19.3px] ${pathname === '/tasks' ? 'drop-shadow-[0_0_10px_rgba(78,222,163,0.85)]' : ''}`}
-            src={imgNavApps}
-          />
-        </Link>
-        <Link to="/graph" className="flex items-center justify-center p-3">
-          <img alt="" className="h-[23px] w-6" src={imgNavGraph} />
-        </Link>
-        <Link
-          to="/settings"
-          className="flex items-center justify-center p-3"
-          aria-current="page"
-        >
-          <img
-            alt=""
-            className="h-5 w-[20.1px] drop-shadow-[0_0_10px_rgba(78,222,163,0.85)]"
-            src={imgNavSettings}
-          />
-        </Link>
-      </nav>
+      <AppBottomNav settingsIconSrc="/nav-settings-active.png" />
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom'
+import { AppBottomNav } from '../components/AppBottomNav'
 
 /** Figma node 21:3 — Tasks / Ready to delegate */
 const imgUserProfilePhoto =
@@ -18,18 +18,7 @@ const imgFabPlus =
 const imgHeaderSearch =
   'https://www.figma.com/api/mcp/asset/2d5f8865-edc4-4921-8675-5a7b1f7a1981'
 
-const imgNavHome =
-  'https://www.figma.com/api/mcp/asset/f8159318-98f5-4a10-b23a-f31f75ab63d2'
-const imgNavApps =
-  'https://www.figma.com/api/mcp/asset/2f0e5483-ac22-4b91-b8e3-e37f972705eb'
-const imgNavGraph =
-  'https://www.figma.com/api/mcp/asset/7855d582-3072-4873-b03d-5ef445275ad5'
-const imgNavSettings =
-  'https://www.figma.com/api/mcp/asset/cb903a54-72f1-4f23-92c3-c40fa0a0ccf6'
-
 export function TasksPage() {
-  const { pathname } = useLocation()
-
   return (
     <div className="acta-shell bg-[#131313] text-[#e5e2e1]">
       <header className="acta-header-fixed z-10 flex h-16 items-center justify-between bg-[#131313] px-6">
@@ -203,35 +192,7 @@ export function TasksPage() {
         <img alt="" className="size-3.5 object-contain" src={imgFabPlus} />
       </button>
 
-      <nav
-        className="acta-nav-fixed flex h-20 items-center justify-between bg-[rgba(19,19,19,0.9)] px-8 backdrop-blur-[12px]"
-        aria-label="Primary"
-      >
-        <Link to="/" className="flex items-center justify-center p-3">
-          <img alt="" className="h-[18px] w-4" src={imgNavHome} />
-        </Link>
-        <Link
-          to="/tasks"
-          className="flex items-center justify-center p-3"
-          aria-current={pathname === '/tasks' ? 'page' : undefined}
-        >
-          <img
-            alt=""
-            className={`size-[19.3px] ${pathname === '/tasks' ? 'drop-shadow-[0_0_10px_rgba(78,222,163,0.85)]' : ''}`}
-            src={imgNavApps}
-          />
-        </Link>
-        <Link to="/graph" className="flex items-center justify-center p-3">
-          <img alt="" className="h-[23px] w-6" src={imgNavGraph} />
-        </Link>
-        <Link to="/settings" className="flex items-center justify-center p-3">
-          <img
-            alt=""
-            className={`h-5 w-[20.1px] ${pathname === '/settings' ? 'drop-shadow-[0_0_8px_rgba(78,222,163,0.9)]' : ''}`}
-            src={imgNavSettings}
-          />
-        </Link>
-      </nav>
+      <AppBottomNav tasksIconSrc="/nav-tasks-icon.png" />
     </div>
   )
 }

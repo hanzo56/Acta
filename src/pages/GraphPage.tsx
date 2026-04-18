@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+
+import { AppBottomNav } from '../components/AppBottomNav'
 import {
   clearGraphFlowComplete,
   readGraphFlowComplete,
@@ -15,11 +17,6 @@ const imgForkKnife = 'https://www.figma.com/api/mcp/asset/c1a08f2a-0706-4427-a3f
 const imgBell = 'https://www.figma.com/api/mcp/asset/bd5c3338-25a3-499b-a65d-d8517347f191'
 const imgEllipsis = 'https://www.figma.com/api/mcp/asset/adf72b64-0fc3-4174-a5f2-a3b2ff753fbe'
 const imgSearchBtn = 'https://www.figma.com/api/mcp/asset/9267dc38-be11-43d8-a9fc-c1a80d0c5152'
-const imgNavHome = 'https://www.figma.com/api/mcp/asset/5f25d71e-048e-4466-a547-3bc08a28ae4e'
-const imgNavApps = 'https://www.figma.com/api/mcp/asset/3a73b60f-81bc-41c1-800d-bb1ffb6c105a'
-const imgNavGraph = 'https://www.figma.com/api/mcp/asset/c99d45b1-72b8-403d-8758-3282783df4a8'
-const imgNavSettings = 'https://www.figma.com/api/mcp/asset/0d61da53-0691-462f-b30d-10f400fd9aa4'
-
 const YELP_URL = 'https://www.yelp.com/biz/tori-tori-shabu-n-sushi-arcadia-2'
 
 const TORI_PHOTOS = [
@@ -331,27 +328,7 @@ export function GraphPage() {
         </button>
       </header>
 
-      <nav
-        className="acta-nav-fixed flex h-20 items-center justify-between bg-[rgba(19,19,19,0.9)] px-8 backdrop-blur-[12px]"
-        aria-label="Primary"
-      >
-        <Link to="/" className="flex items-center justify-center p-3">
-          <img alt="" className="h-[18px] w-4" src={imgNavHome} />
-        </Link>
-        <Link to="/tasks" className="flex items-center justify-center p-3">
-          <img alt="" className="size-[19.3px]" src={imgNavApps} />
-        </Link>
-        <div className="flex items-center justify-center p-3">
-          <img
-            alt=""
-            className="h-[23px] w-6 drop-shadow-[0_0_10px_rgba(78,222,163,0.85)]"
-            src={imgNavGraph}
-          />
-        </div>
-        <Link to="/settings" className="flex items-center justify-center p-3">
-          <img alt="" className="h-5 w-[20.1px]" src={imgNavSettings} />
-        </Link>
-      </nav>
+      <AppBottomNav />
     </div>
   )
 }

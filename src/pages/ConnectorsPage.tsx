@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+
+import { AppBottomNav } from "../components/AppBottomNav";
 
 const imgUser =
   "https://www.figma.com/api/mcp/asset/94be4414-cc9e-4d5c-b29e-04dae21dab43";
@@ -16,15 +17,6 @@ const imgOpenTable =
   "https://www.figma.com/api/mcp/asset/15cb743f-3903-41f2-a2a1-d44319c5e6ca";
 const imgSearch =
   "https://www.figma.com/api/mcp/asset/218a2058-ddba-48e5-a9bc-f1535a58879b";
-const imgNavHome =
-  "https://www.figma.com/api/mcp/asset/e80acde6-8a6f-4a8d-ad4f-e70b629f347b";
-const imgNavApps =
-  "https://www.figma.com/api/mcp/asset/1eb49a59-c8af-4f3b-9ca2-d49626648a9a";
-const imgNavGraph =
-  "https://www.figma.com/api/mcp/asset/3468b1d5-0351-412a-b66b-f7564dfae3fb";
-const imgNavSettings =
-  "https://www.figma.com/api/mcp/asset/ade41d2d-7946-4074-9c9a-219671a3ba4e";
-
 /** Simple Icons CDN — brand marks for connectors without Figma assets */
 const iconInstagram = "https://cdn.simpleicons.org/instagram/E4405F";
 const iconFacebook = "https://cdn.simpleicons.org/facebook/1877F2";
@@ -243,7 +235,6 @@ function Toggle({
 }
 
 export function ConnectorsPage() {
-  const { pathname } = useLocation();
   const [toggles, setToggles] = useState(loadConnectorToggles);
 
   useEffect(() => {
@@ -306,35 +297,7 @@ export function ConnectorsPage() {
         </div>
       </main>
 
-      <nav
-        className="acta-nav-fixed flex h-20 items-center justify-between bg-[rgba(19,19,19,0.9)] px-4 backdrop-blur-[12px]"
-        aria-label="Primary"
-      >
-        <Link to="/" className="flex items-center justify-center p-3">
-          <img alt="" className="h-[18px] w-4" src={imgNavHome} />
-        </Link>
-        <Link
-          to="/tasks"
-          className="flex items-center justify-center p-3"
-          aria-current={pathname === "/tasks" ? "page" : undefined}
-        >
-          <img
-            alt=""
-            className={`size-[19.3px] ${pathname === "/tasks" ? "drop-shadow-[0_0_8px_rgba(78,222,163,0.85)]" : ""}`}
-            src={imgNavApps}
-          />
-        </Link>
-        <Link to="/graph" className="flex items-center justify-center p-3">
-          <img alt="" className="h-[23px] w-6" src={imgNavGraph} />
-        </Link>
-        <Link to="/settings" className="flex items-center justify-center p-3">
-          <img
-            alt=""
-            className={`h-5 w-[20.1px] ${pathname === "/settings" ? "drop-shadow-[0_0_8px_rgba(78,222,163,0.9)]" : ""}`}
-            src={imgNavSettings}
-          />
-        </Link>
-      </nav>
+      <AppBottomNav />
     </div>
   );
 }
