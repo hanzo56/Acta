@@ -31,6 +31,10 @@ const bars = [
 const SILENCE_MS = 3000
 const PROCESSING_BEFORE_NAV_MS = 2000
 
+/** Spoken intent → phone-activity preview instead of dinner preview */
+const PHONE_UPDATE_INTENT =
+  /\b(give me an update|give (me )?(an )?update|provide (me )?(an )?update|phone update|activity update|check my phone)\b/i
+
 export function HomePage() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
@@ -38,6 +42,7 @@ export function HomePage() {
   const [silenceProcessing, setSilenceProcessing] = useState(false)
   const silenceNavigatedRef = useRef(false)
   const processingNavTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const dictationSnapshotRef = useRef('')
 
   const handleDictationSilence = useCallback(() => {
     if (silenceNavigatedRef.current) return
@@ -46,7 +51,9 @@ export function HomePage() {
     setSilenceProcessing(true)
     processingNavTimeoutRef.current = window.setTimeout(() => {
       processingNavTimeoutRef.current = null
-      navigate('/preview')
+      const t = dictationSnapshotRef.current
+      const goPhoneUpdate = PHONE_UPDATE_INTENT.test(t)
+      navigate(goPhoneUpdate ? '/preview/update' : '/preview')
     }, PROCESSING_BEFORE_NAV_MS)
   }, [navigate])
 
@@ -70,6 +77,10 @@ export function HomePage() {
     micListening,
     speechDictationOptions,
   )
+
+  useEffect(() => {
+    dictationSnapshotRef.current = `${finalText} ${interimText}`.trim()
+  }, [finalText, interimText])
 
   const waveLevels = useMicWaveLevels(micListening)
   const waveLive = micListening && waveLevels !== null

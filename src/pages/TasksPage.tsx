@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 
 import { AppBottomNav } from '../components/AppBottomNav'
 import { readGraphFlowComplete } from '../graphFlowStorage'
+import { readPhoneUpdateComplete } from '../phoneUpdateStorage'
 
 /** Figma node 21:3 — Tasks / Ready to delegate */
 const imgUserProfilePhoto =
@@ -37,23 +38,28 @@ const TASK_SEARCH = {
   investor:
     'schedule investor calls completed venture partners briefing meeting coordinated sent outcome',
   memo: 'draft research memo running synthesizing market data internal repositories public filings status',
+  phoneUpdate:
+    'phone activity summary spam email voicemail mother arcadia school daughter team out of office ooo sent completed',
 } as const
 
 export function TasksPage() {
   const graphFlowComplete = readGraphFlowComplete()
+  const phoneUpdateComplete = readPhoneUpdateComplete()
   const [taskSearch, setTaskSearch] = useState('')
   const taskSearchInputRef = useRef<HTMLInputElement>(null)
 
-  const { showDinner, showInvestor, showMemo } = useMemo(() => {
+  const { showDinner, showInvestor, showMemo, showPhoneUpdate } = useMemo(() => {
     const q = taskSearch
     return {
       showDinner: graphFlowComplete && matchesTaskSearch(TASK_SEARCH.dinner, q),
       showInvestor: matchesTaskSearch(TASK_SEARCH.investor, q),
       showMemo: matchesTaskSearch(TASK_SEARCH.memo, q),
+      showPhoneUpdate:
+        phoneUpdateComplete && matchesTaskSearch(TASK_SEARCH.phoneUpdate, q),
     }
-  }, [taskSearch, graphFlowComplete])
+  }, [taskSearch, graphFlowComplete, phoneUpdateComplete])
 
-  const hasAnyTaskMatch = showDinner || showInvestor || showMemo
+  const hasAnyTaskMatch = showDinner || showInvestor || showMemo || showPhoneUpdate
 
   return (
     <div className="acta-shell bg-[#131313] text-[#e5e2e1]">
@@ -215,6 +221,44 @@ export function TasksPage() {
                   </div>
                 </div>
               </Link>
+              ) : null}
+
+              {showPhoneUpdate ? (
+                <Link
+                  to="/graph/phone-update"
+                  className="flex flex-col gap-4 rounded-2xl border border-[rgba(60,74,66,0.05)] bg-[#1c1b1b] p-[25px] text-left no-underline transition-colors hover:border-[rgba(60,74,66,0.18)] hover:bg-[#222121] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#131313]"
+                  aria-label="Phone activity summary — view graph"
+                >
+                  <div className="flex flex-col gap-2">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="text-[10px] font-bold uppercase leading-[15px] tracking-[1px] text-[rgba(187,202,191,0.5)]">
+                        COMPLETED
+                      </span>
+                      <span className="text-[10px] font-normal leading-[15px] text-[rgba(187,202,191,0.4)]">
+                        Recently
+                      </span>
+                    </div>
+                    <h4 className="text-[20px] font-semibold leading-7 tracking-[-0.5px] text-[#e5e2e1]">
+                      Phone activity summary
+                    </h4>
+                    <p className="text-[15px] font-normal leading-[24px] text-[#bbcabf]">
+                      Removed spam, flagged the school wellness call, and sent your out-of-office note to the
+                      team.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4 border-t border-transparent pt-2">
+                    <div className="flex size-8 items-center justify-center rounded-lg bg-[#201f1f] shadow-[0_0_0_2px_#1c1b1b]">
+                      <img alt="" className="h-2 w-2.5 object-contain" src={imgTaskMail} />
+                    </div>
+                    <div className="h-8 w-px bg-[rgba(60,74,66,0.1)]" aria-hidden />
+                    <div className="text-right">
+                      <p className="text-[14px] font-semibold leading-5 text-[#e5e2e1]">OOO sent</p>
+                      <p className="text-[9px] font-normal uppercase leading-[13.5px] tracking-[0.45px] text-[rgba(187,202,191,0.4)]">
+                        OUTCOME
+                      </p>
+                    </div>
+                  </div>
+                </Link>
               ) : null}
 
               {taskSearch.trim() && !hasAnyTaskMatch ? (
