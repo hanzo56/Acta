@@ -314,13 +314,13 @@ export function ConnectorsPage() {
           <img alt="" className="h-[18px] w-4" src={imgNavHome} />
         </Link>
         <Link
-          to="/connectors"
+          to="/tasks"
           className="flex items-center justify-center p-3"
-          aria-current={pathname === "/connectors" ? "page" : undefined}
+          aria-current={pathname === "/tasks" ? "page" : undefined}
         >
           <img
             alt=""
-            className={`size-[19.3px] ${pathname === "/connectors" ? "drop-shadow-[0_0_8px_rgba(78,222,163,0.85)]" : ""}`}
+            className={`size-[19.3px] ${pathname === "/tasks" ? "drop-shadow-[0_0_8px_rgba(78,222,163,0.85)]" : ""}`}
             src={imgNavApps}
           />
         </Link>

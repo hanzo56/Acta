@@ -293,20 +293,20 @@ export function HomePage() {
               </span>
             </Link>
             <Link
-              to="/connectors"
+              to="/tasks"
               className="flex flex-col items-center justify-end gap-1 pb-0.5"
             >
               <div className="relative size-[19.3px]">
                 <img
                   alt=""
-                  className={`absolute inset-0 size-full max-w-none ${pathname === '/connectors' ? 'drop-shadow-[0_0_8px_rgba(78,222,163,0.75)]' : ''}`}
+                  className={`absolute inset-0 size-full max-w-none ${pathname === '/tasks' ? 'drop-shadow-[0_0_8px_rgba(78,222,163,0.75)]' : ''}`}
                   src={imgNavApps}
                 />
               </div>
               <span
-                className={`text-[8px] font-bold uppercase leading-3 tracking-[0.8px] ${pathname === '/connectors' ? 'text-[#4edea3]' : 'text-[rgba(185,199,224,0.5)]'}`}
+                className={`text-[8px] font-bold uppercase leading-3 tracking-[0.8px] ${pathname === '/tasks' ? 'text-[#4edea3]' : 'text-[rgba(185,199,224,0.5)]'}`}
               >
-                APPS
+                TASKS
               </span>
             </Link>
             <div className="flex justify-center" aria-hidden />

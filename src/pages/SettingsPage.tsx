@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 /** Figma node 21:356 — Intelligence / Recent context */
 const imgUser =
@@ -91,6 +91,7 @@ function formatContactLine(contacts: FavoriteContact[]): string {
 }
 
 export function SettingsPage() {
+  const { pathname } = useLocation()
   const baseId = useId()
   const [contacts, setContacts] = useState<FavoriteContact[]>(loadContacts)
   const [toneStyle, setToneStyle] = useState<ToneStyleId>(loadTone)
@@ -396,8 +397,16 @@ export function SettingsPage() {
         <Link to="/" className="flex items-center justify-center p-3">
           <img alt="" className="h-[18px] w-4" src={imgNavHome} />
         </Link>
-        <Link to="/connectors" className="flex items-center justify-center p-3">
-          <img alt="" className="size-[19.3px]" src={imgNavApps} />
+        <Link
+          to="/tasks"
+          className="flex items-center justify-center p-3"
+          aria-current={pathname === '/tasks' ? 'page' : undefined}
+        >
+          <img
+            alt=""
+            className={`size-[19.3px] ${pathname === '/tasks' ? 'drop-shadow-[0_0_10px_rgba(78,222,163,0.85)]' : ''}`}
+            src={imgNavApps}
+          />
         </Link>
         <Link to="/graph" className="flex items-center justify-center p-3">
           <img alt="" className="h-[23px] w-6" src={imgNavGraph} />

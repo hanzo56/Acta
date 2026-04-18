@@ -338,7 +338,7 @@ export function GraphPage() {
         <Link to="/" className="flex items-center justify-center p-3">
           <img alt="" className="h-[18px] w-4" src={imgNavHome} />
         </Link>
-        <Link to="/connectors" className="flex items-center justify-center p-3">
+        <Link to="/tasks" className="flex items-center justify-center p-3">
           <img alt="" className="size-[19.3px]" src={imgNavApps} />
         </Link>
         <div className="flex items-center justify-center p-3">
