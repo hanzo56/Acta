@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 
-import { useMicWaveLevels } from '../hooks/useMicWaveLevels'
 import { useSpeechDictation } from '../hooks/useSpeechDictation'
 
 const imgUserProfileAvatar =
@@ -65,6 +64,14 @@ export function HomePage() {
     }
   }, [])
 
+  const prevMicOnRef = useRef(false)
+  useEffect(() => {
+    if (micListening && !prevMicOnRef.current) {
+      silenceNavigatedRef.current = false
+    }
+    prevMicOnRef.current = micListening
+  }, [micListening])
+
   const speechDictationOptions = useMemo(
     () => ({
       silenceMs: SILENCE_MS,
@@ -82,8 +89,7 @@ export function HomePage() {
     dictationSnapshotRef.current = `${finalText} ${interimText}`.trim()
   }, [finalText, interimText])
 
-  const waveLevels = useMicWaveLevels(micListening)
-  const waveLive = micListening && waveLevels !== null
+  /** Real-time levels use `getUserMedia`, which fights Web Speech’s own mic — keep one pipeline (speech only). */
   const micClusterIdle = !micListening && !silenceProcessing
 
   return (
@@ -253,18 +259,6 @@ export function HomePage() {
             >
               {silenceProcessing ? (
                 <div className="h-8 w-full max-w-[200px]" aria-hidden />
-              ) : waveLive ? (
-                waveLevels.map((level, i) => {
-                  const b = bars[i] ?? bars[0]
-                  const y = 0.12 + level * 0.88
-                  return (
-                    <div
-                      key={i}
-                      className={`h-8 w-1 shrink-0 origin-bottom rounded-full will-change-transform ${b.bg}`}
-                      style={{ transform: `scaleY(${Math.max(0.1, Math.min(1, y))})` }}
-                    />
-                  )
-                })
               ) : (
                 bars.map((b, i) => (
                   <div

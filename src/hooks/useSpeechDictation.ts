@@ -116,28 +116,38 @@ export function useSpeechDictation(active: boolean, options?: UseSpeechDictation
     recognition.onend = () => {
       if (!activeRef.current || recognitionRef.current !== recognition) return
       window.setTimeout(() => {
+        if (!activeRef.current || recognitionRef.current !== recognition) return
         try {
           recognition.start()
         } catch {
-          /* already running */
+          /* InvalidStateError: already running — ignore */
         }
-      }, 120)
+      }, 280)
     }
 
     queueMicrotask(() => {
       setStatus('listening')
     })
 
-    try {
-      recognition.start()
-      /* Silence countdown starts only after `onresult` — not on mic open — so we don’t navigate
-       * until the user has spoken and then stops for `silenceMs`. */
-    } catch {
-      clearSilenceTimer()
-      queueMicrotask(() => {
-        setStatus('unsupported')
-      })
+    const startOnce = () => {
+      try {
+        recognition.start()
+        /* Silence countdown starts only after `onresult` — not on mic open — so we don’t navigate
+         * until the user has spoken and then stops for `silenceMs`. */
+      } catch {
+        window.setTimeout(() => {
+          if (!activeRef.current || recognitionRef.current !== recognition) return
+          try {
+            recognition.start()
+          } catch {
+            clearSilenceTimer()
+            queueMicrotask(() => setStatus('idle'))
+          }
+        }, 200)
+      }
     }
+
+    startOnce()
 
     return () => {
       clearSilenceTimer()
