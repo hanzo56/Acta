@@ -70,15 +70,24 @@ export function PhoneUpdatePreviewPage() {
 
       {visibleCount >= 3 ? (
         <div className="acta-preview-footer-fixed bg-[rgba(19,19,19,0.8)] px-6 pb-12 pt-6 backdrop-blur-[20px]">
-          <button
-            type="button"
-            onClick={() =>
-              navigate('/graph/phone-update', { state: { fromPhoneUpdatePreview: true } })
-            }
-            className="acta-preview-reveal relative w-full rounded-2xl bg-[#4edea3] py-5 shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)]"
-          >
-            <span className="text-[16px] font-bold leading-6 text-[#00422b]">Approve</span>
-          </button>
+          <div className="acta-preview-reveal flex flex-col gap-3">
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              className="w-full rounded-2xl border border-[rgba(187,202,191,0.28)] py-[18px] text-[16px] font-semibold leading-6 text-[#bbcabf] transition hover:border-[rgba(187,202,191,0.45)] hover:bg-[rgba(255,255,255,0.04)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#e5e2e1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#131313]"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                navigate('/graph/phone-update', { state: { fromPhoneUpdatePreview: true } })
+              }
+              className="relative w-full rounded-2xl bg-[#4edea3] py-5 shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] transition hover:bg-[#5fe8b3] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#e5e2e1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#131313]"
+            >
+              <span className="text-[16px] font-bold leading-6 text-[#00422b]">Approve</span>
+            </button>
+          </div>
         </div>
       ) : null}
     </div>

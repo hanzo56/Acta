@@ -4,6 +4,9 @@ export const GRAPH_FLOW_STORAGE_KEY = 'acta-graph-flow-complete'
 /** JSON array of completion timestamps (ms since epoch), one per graph step */
 const GRAPH_STEP_TIMES_KEY = 'acta-graph-flow-step-times'
 
+/** Wall-clock ms when the current dinner graph run started (sequence advances while user is away) */
+const GRAPH_SEQUENCE_START_KEY = 'acta-graph-sequence-start'
+
 export function readGraphFlowComplete(): boolean {
   try {
     return sessionStorage.getItem(GRAPH_FLOW_STORAGE_KEY) === '1'
@@ -24,6 +27,26 @@ export function clearGraphFlowComplete() {
   try {
     sessionStorage.removeItem(GRAPH_FLOW_STORAGE_KEY)
     sessionStorage.removeItem(GRAPH_STEP_TIMES_KEY)
+    sessionStorage.removeItem(GRAPH_SEQUENCE_START_KEY)
+  } catch {
+    /* ignore */
+  }
+}
+
+export function readGraphSequenceStart(): number | null {
+  try {
+    const raw = sessionStorage.getItem(GRAPH_SEQUENCE_START_KEY)
+    if (raw == null) return null
+    const n = Number(raw)
+    return Number.isFinite(n) ? n : null
+  } catch {
+    return null
+  }
+}
+
+export function writeGraphSequenceStart(ms: number) {
+  try {
+    sessionStorage.setItem(GRAPH_SEQUENCE_START_KEY, String(ms))
   } catch {
     /* ignore */
   }

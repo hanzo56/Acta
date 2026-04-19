@@ -5,8 +5,10 @@ import { AppBottomNav } from "../components/AppBottomNav";
 import {
   clearGraphFlowComplete,
   readGraphFlowComplete,
+  readGraphSequenceStart,
   readGraphStepTimes,
   writeGraphFlowComplete,
+  writeGraphSequenceStart,
   writeGraphStepTimes,
 } from "../graphFlowStorage";
 
@@ -100,6 +102,39 @@ function formatStepCompletedTime(ms: number) {
   });
 }
 
+/** Wall-clock instant when step `index` completes (inclusive of its loading duration). */
+function stepCompletionTime(sequenceStart: number, index: number): number {
+  let t = sequenceStart;
+  for (let i = 0; i <= index; i++) {
+    t += STEPS[i].loadDurationMs ?? STEP_LOAD_MS;
+  }
+  return t;
+}
+
+function computeStateFromElapsed(
+  sequenceStart: number,
+  now: number,
+): { stepStatuses: StepStatus[]; stepCompletedAt: (number | null)[] } {
+  const stepStatuses: StepStatus[] = STEPS.map(() => "pending");
+  const stepCompletedAt: (number | null)[] = Array.from(
+    { length: STEPS.length },
+    () => null,
+  );
+
+  for (let i = 0; i < STEPS.length; i++) {
+    const end = stepCompletionTime(sequenceStart, i);
+    if (now >= end) {
+      stepStatuses[i] = "done";
+      stepCompletedAt[i] = end;
+    } else {
+      stepStatuses[i] = "loading";
+      for (let j = i + 1; j < STEPS.length; j++) stepStatuses[j] = "pending";
+      return { stepStatuses, stepCompletedAt };
+    }
+  }
+  return { stepStatuses, stepCompletedAt };
+}
+
 function initialStepCompletedAt(
   fromPreviewApprove: boolean,
 ): (number | null)[] {
@@ -113,6 +148,10 @@ function initialStepCompletedAt(
     }
     const now = Date.now();
     return STEPS.map((_, i) => now - (STEPS.length - 1 - i) * 2500);
+  }
+  const seqStart = readGraphSequenceStart();
+  if (seqStart != null) {
+    return computeStateFromElapsed(seqStart, Date.now()).stepCompletedAt;
   }
   return Array.from({ length: STEPS.length }, () => null);
 }
@@ -130,12 +169,17 @@ function reservationDateLabel() {
 function initialStepStatuses(fromPreviewApprove: boolean): StepStatus[] {
   if (fromPreviewApprove) {
     clearGraphFlowComplete();
+    writeGraphSequenceStart(Date.now());
     return Array.from({ length: STEPS.length }, (_, i) =>
       i === 0 ? "loading" : "pending",
     );
   }
   if (readGraphFlowComplete()) {
     return STEPS.map(() => "done");
+  }
+  const seqStart = readGraphSequenceStart();
+  if (seqStart != null) {
+    return computeStateFromElapsed(seqStart, Date.now()).stepStatuses;
   }
   return Array.from({ length: STEPS.length }, (_, i) =>
     i === 0 ? "loading" : "pending",
@@ -168,14 +212,20 @@ export function GraphPage() {
   useEffect(() => {
     if (readGraphFlowComplete()) return;
 
+    let sequenceStart = readGraphSequenceStart();
+    if (sequenceStart == null) {
+      sequenceStart = Date.now();
+      writeGraphSequenceStart(sequenceStart);
+    }
+
     const timeouts: ReturnType<typeof setTimeout>[] = [];
 
-    const advance = (index: number) => {
+    const advanceFrom = (index: number) => {
       if (index >= STEPS.length) return;
-      const delay = STEPS[index].loadDurationMs ?? STEP_LOAD_MS;
+      const endMs = stepCompletionTime(sequenceStart!, index);
+      const remaining = Math.max(0, endMs - Date.now());
       timeouts.push(
         setTimeout(() => {
-          const completedAt = Date.now();
           setStepStatuses((prev) => {
             const next = [...prev] as StepStatus[];
             next[index] = "done";
@@ -186,17 +236,23 @@ export function GraphPage() {
           });
           setStepCompletedAt((prev) => {
             const next = [...prev];
-            next[index] = completedAt;
+            next[index] = endMs;
             return next;
           });
-          advance(index + 1);
-        }, delay),
+          advanceFrom(index + 1);
+        }, remaining),
       );
     };
 
-    advance(0);
+    const loadingIdx = stepStatuses.findIndex((s) => s === "loading");
+    if (loadingIdx !== -1) {
+      advanceFrom(loadingIdx);
+    } else if (!stepStatuses.every((s) => s === "done")) {
+      advanceFrom(0);
+    }
 
     return () => timeouts.forEach(clearTimeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- schedule once from initial snapshot; step progress updates timers via advanceFrom chain
   }, []);
 
   useEffect(() => {
