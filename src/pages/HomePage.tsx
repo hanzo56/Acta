@@ -33,7 +33,7 @@ const PROCESSING_BEFORE_NAV_MS = 2000
 
 /** Spoken intent → phone-activity preview instead of dinner preview */
 const PHONE_UPDATE_INTENT =
-  /\b(give me an update|give (me )?(an )?update|provide (me )?(an )?update|phone update|activity update|check my phone)\b/i
+  /\b(give me an update on my phone activity|give me an update|give (me )?(an )?update|provide (me )?(an )?update|phone update|activity update|check my phone)\b/i
 
 export function HomePage() {
   const navigate = useNavigate()
