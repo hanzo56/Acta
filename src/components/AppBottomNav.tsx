@@ -47,6 +47,9 @@ export function AppBottomNav({
       ? 'relative size-10'
       : 'relative h-5 w-[20.1px]'
 
+  const graphActive =
+    pathname === '/graph' || pathname.startsWith('/graph/')
+
   return (
     <nav
       className="acta-nav-fixed acta-nav-home h-20 overflow-visible bg-[rgba(19,19,19,0.9)] backdrop-blur-[12px]"
@@ -88,18 +91,20 @@ export function AppBottomNav({
           <Link
             to="/graph"
             className="flex flex-col items-center justify-end gap-1 pb-0.5"
-            aria-current={pathname === '/graph' ? 'page' : undefined}
+            aria-current={graphActive ? 'page' : undefined}
           >
             <div className="relative h-[23px] w-6">
               <img
                 alt=""
                 className={`absolute inset-0 size-full max-w-none ${
-                  pathname === '/graph' ? 'drop-shadow-[0_0_10px_rgba(78,222,163,0.85)]' : ''
+                  graphActive
+                    ? '[filter:brightness(0)_saturate(100%)_invert(73%)_sepia(31%)_saturate(650%)_hue-rotate(99deg)_brightness(98%)_contrast(92%)_drop-shadow(0_0_8px_rgba(78,222,163,0.65))]'
+                    : ''
                 }`}
                 src={IMG_NAV_GRAPH}
               />
             </div>
-            <span className={navLabel(pathname === '/graph')}>GRAPH</span>
+            <span className={navLabel(graphActive)}>GRAPH</span>
           </Link>
           <Link
             to="/settings"

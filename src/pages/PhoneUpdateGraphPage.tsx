@@ -305,7 +305,7 @@ function PhoneGraphStepRow({
         ) : null}
         {loading && (
           <p className="mt-0.5 text-[11px] uppercase leading-[16.5px] text-[rgba(78,222,163,0.8)]">
-            IN PROGRESS · {loadingClock ?? '—'}
+            COMPLETED · {loadingClock ?? '—'}
           </p>
         )}
         {pending && (
