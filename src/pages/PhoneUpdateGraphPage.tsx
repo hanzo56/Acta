@@ -1,158 +1,195 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { AppBottomNav } from '../components/AppBottomNav'
-import { readPhoneUpdateComplete, writePhoneUpdateComplete } from '../phoneUpdateStorage'
+import { AppBottomNav } from "../components/AppBottomNav";
+import {
+  readPhoneUpdateComplete,
+  writePhoneUpdateComplete,
+} from "../phoneUpdateStorage";
 
 const imgUserProfile =
-  'https://www.figma.com/api/mcp/asset/62a50c2d-ed0c-46b1-a196-24ef5cc6c4b9'
+  "https://www.figma.com/api/mcp/asset/62a50c2d-ed0c-46b1-a196-24ef5cc6c4b9";
 const imgSearchBtn =
-  'https://www.figma.com/api/mcp/asset/9267dc38-be11-43d8-a9fc-c1a80d0c5152'
+  "https://www.figma.com/api/mcp/asset/9267dc38-be11-43d8-a9fc-c1a80d0c5152";
 const imgMessages =
-  'https://www.figma.com/api/mcp/asset/48e0d446-cdf9-4c63-a566-1ce2d114f799'
+  "https://www.figma.com/api/mcp/asset/48e0d446-cdf9-4c63-a566-1ce2d114f799";
 const imgBell =
-  'https://www.figma.com/api/mcp/asset/bd5c3338-25a3-499b-a65d-d8517347f191'
+  "https://www.figma.com/api/mcp/asset/bd5c3338-25a3-499b-a65d-d8517347f191";
 const imgCheck =
-  'https://www.figma.com/api/mcp/asset/6f9c5a7b-b87d-4bc7-bd68-74cb75e6ae98'
+  "https://www.figma.com/api/mcp/asset/6f9c5a7b-b87d-4bc7-bd68-74cb75e6ae98";
 const imgEllipsis =
-  'https://www.figma.com/api/mcp/asset/adf72b64-0fc3-4174-a5f2-a3b2ff753fbe'
+  "https://www.figma.com/api/mcp/asset/adf72b64-0fc3-4174-a5f2-a3b2ff753fbe";
 
-type StepStatus = 'pending' | 'loading' | 'done'
+type StepStatus = "pending" | "loading" | "done";
 
 const AUTO_STEPS = [
   {
-    title: 'Removed 25 spam emails from your inbox',
+    title: "Removed 25 spam emails from your inbox",
     icon: imgMessages,
-    iconSize: 'size-5' as const,
+    iconSize: "size-5" as const,
   },
   {
-    title: 'Blocked 5 spam calls and silenced repeat robocallers',
+    title: "Blocked 5 spam calls and silenced repeat robocallers",
     icon: imgBell,
-    iconSize: 'h-5 w-5' as const,
-  },
-  {
-    title: 'Voicemail — your mother asked you to call her back when you get a chance',
-    icon: imgMessages,
-    iconSize: 'size-5' as const,
+    iconSize: "h-5 w-5" as const,
   },
   {
     title:
-      'Arcadia High School — your daughter is not feeling well; please pick her up as soon as possible',
-    icon: imgBell,
-    iconSize: 'h-5 w-5' as const,
+      "Voicemail — your mother asked you to call her back when you get a chance",
+    icon: imgMessages,
+    iconSize: "size-5" as const,
   },
-] as const
+  {
+    title:
+      "Arcadia High School — your daughter is not feeling well; please pick her up as soon as possible",
+    icon: imgBell,
+    iconSize: "h-5 w-5" as const,
+  },
+] as const;
 
 /** Full sequence completes in ~1 minute; each step gets an equal share */
-const ACTIVITY_TIMELINE_MS = 60_000
-const STEP_LOAD_MS = ACTIVITY_TIMELINE_MS / AUTO_STEPS.length
+const ACTIVITY_TIMELINE_MS = 30_000;
+const STEP_LOAD_MS = ACTIVITY_TIMELINE_MS / AUTO_STEPS.length;
 
 /** Local window ~6:00am–3:00pm (“morning and early afternoon”) */
 function randomOrderedMorningAfternoonTimes(count: number): number[] {
-  const d = new Date()
-  const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 6, 0, 0, 0).getTime()
-  const dayEnd = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 15, 0, 0, 0).getTime()
-  const span = dayEnd - dayStart
-  const raw = Array.from({ length: count }, () => dayStart + Math.random() * span)
-  raw.sort((a, b) => a - b)
-  return raw
+  const d = new Date();
+  const dayStart = new Date(
+    d.getFullYear(),
+    d.getMonth(),
+    d.getDate(),
+    6,
+    0,
+    0,
+    0,
+  ).getTime();
+  const dayEnd = new Date(
+    d.getFullYear(),
+    d.getMonth(),
+    d.getDate(),
+    15,
+    0,
+    0,
+    0,
+  ).getTime();
+  const span = dayEnd - dayStart;
+  const raw = Array.from(
+    { length: count },
+    () => dayStart + Math.random() * span,
+  );
+  raw.sort((a, b) => a - b);
+  return raw;
 }
 
 /** Slightly before completion, clamped so it stays in the same calendar morning window */
 function loadingDisplayMsBeforeCompletion(completionMs: number): number {
-  const d = new Date(completionMs)
-  const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 6, 0, 0, 0).getTime()
-  return Math.max(completionMs - 90_000, dayStart)
+  const d = new Date(completionMs);
+  const dayStart = new Date(
+    d.getFullYear(),
+    d.getMonth(),
+    d.getDate(),
+    6,
+    0,
+    0,
+    0,
+  ).getTime();
+  return Math.max(completionMs - 90_000, dayStart);
 }
 
 function formatStepCompletedTime(ms: number) {
   return new Date(ms).toLocaleTimeString(undefined, {
-    hour: 'numeric',
-    minute: '2-digit',
-    second: '2-digit',
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
     hour12: true,
-  })
+  });
 }
 
 function initialStepStatuses(skipAnimation: boolean): StepStatus[] {
-  if (skipAnimation) return AUTO_STEPS.map(() => 'done')
-  return AUTO_STEPS.map(() => 'pending')
+  if (skipAnimation) return AUTO_STEPS.map(() => "done");
+  return AUTO_STEPS.map(() => "pending");
 }
 
 export function PhoneUpdateGraphPage() {
-  const oooDoneInitially = readPhoneUpdateComplete()
+  const oooDoneInitially = readPhoneUpdateComplete();
   const simulatedStepTimes = useMemo(
     () => randomOrderedMorningAfternoonTimes(AUTO_STEPS.length),
     [],
-  )
+  );
 
-  const [oooSent, setOooSent] = useState(oooDoneInitially)
+  const [oooSent, setOooSent] = useState(oooDoneInitially);
   const [stepStatuses, setStepStatuses] = useState<StepStatus[]>(() =>
     initialStepStatuses(oooDoneInitially),
-  )
-  const [stepCompletedAt, setStepCompletedAt] = useState<(number | null)[]>(() =>
-    oooDoneInitially ? [...simulatedStepTimes] : AUTO_STEPS.map(() => null),
-  )
-  const [showOooSection, setShowOooSection] = useState(oooDoneInitially)
+  );
+  const [stepCompletedAt, setStepCompletedAt] = useState<(number | null)[]>(
+    () =>
+      oooDoneInitially ? [...simulatedStepTimes] : AUTO_STEPS.map(() => null),
+  );
+  const [showOooSection, setShowOooSection] = useState(oooDoneInitially);
 
   useEffect(() => {
-    if (oooDoneInitially) return
+    if (oooDoneInitially) return;
 
-    const timeouts: ReturnType<typeof setTimeout>[] = []
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
 
     timeouts.push(
       setTimeout(() => {
         setStepStatuses((prev) => {
-          const next = [...prev] as StepStatus[]
-          next[0] = 'loading'
-          return next
-        })
+          const next = [...prev] as StepStatus[];
+          next[0] = "loading";
+          return next;
+        });
       }, 0),
-    )
+    );
 
     const advance = (index: number) => {
       if (index >= AUTO_STEPS.length) {
-        setShowOooSection(true)
-        return
+        setShowOooSection(true);
+        return;
       }
       timeouts.push(
         setTimeout(() => {
-          const completedAt = simulatedStepTimes[index]
+          const completedAt = simulatedStepTimes[index];
           setStepStatuses((prev) => {
-            const next = [...prev] as StepStatus[]
-            next[index] = 'done'
+            const next = [...prev] as StepStatus[];
+            next[index] = "done";
             if (index + 1 < AUTO_STEPS.length) {
-              next[index + 1] = 'loading'
+              next[index + 1] = "loading";
             }
-            return next
-          })
+            return next;
+          });
           setStepCompletedAt((prev) => {
-            const next = [...prev]
-            next[index] = completedAt
-            return next
-          })
-          advance(index + 1)
+            const next = [...prev];
+            next[index] = completedAt;
+            return next;
+          });
+          advance(index + 1);
         }, STEP_LOAD_MS),
-      )
-    }
+      );
+    };
 
-    advance(0)
+    advance(0);
 
-    return () => timeouts.forEach(clearTimeout)
-  }, [oooDoneInitially, simulatedStepTimes])
+    return () => timeouts.forEach(clearTimeout);
+  }, [oooDoneInitially, simulatedStepTimes]);
 
   const handleApproveOoo = useCallback(() => {
-    writePhoneUpdateComplete()
-    setOooSent(true)
-  }, [])
+    writePhoneUpdateComplete();
+    setOooSent(true);
+  }, []);
 
-  const autoAllDone = stepStatuses.length > 0 && stepStatuses.every((s) => s === 'done')
+  const autoAllDone =
+    stepStatuses.length > 0 && stepStatuses.every((s) => s === "done");
 
-  const headerStatus = oooSent ? 'Complete' : autoAllDone ? 'Review' : 'Running'
+  const headerStatus = oooSent
+    ? "Complete"
+    : autoAllDone
+      ? "Review"
+      : "Running";
 
   const doneSubtitleForStep = (i: number) => {
-    const t = stepCompletedAt[i]
-    return t != null ? formatStepCompletedTime(t) : ''
-  }
+    const t = stepCompletedAt[i];
+    return t != null ? formatStepCompletedTime(t) : "";
+  };
 
   return (
     <div className="acta-shell text-[#e5e2e1]">
@@ -166,7 +203,8 @@ export function PhoneUpdateGraphPage() {
               Phone activity summary
             </h1>
             <p className="pt-1 text-[14px] font-normal leading-5 text-[#bbcabf]">
-              Here’s what I found from your recent calls, messages, and notifications.
+              Here’s what I found from your recent calls, messages, and
+              notifications.
             </p>
           </header>
 
@@ -176,10 +214,10 @@ export function PhoneUpdateGraphPage() {
             </h2>
             <ul className="flex flex-col gap-4">
               {AUTO_STEPS.map((step, i) => {
-                const status = stepStatuses[i] ?? 'pending'
+                const status = stepStatuses[i] ?? "pending";
                 const revealed =
-                  oooDoneInitially || status === 'loading' || status === 'done'
-                if (!revealed) return null
+                  oooDoneInitially || status === "loading" || status === "done";
+                if (!revealed) return null;
 
                 return (
                   <PhoneGraphStepRow
@@ -190,14 +228,16 @@ export function PhoneUpdateGraphPage() {
                     status={status}
                     doneSubtitle={doneSubtitleForStep(i)}
                     loadingClock={
-                      status === 'loading'
+                      status === "loading"
                         ? formatStepCompletedTime(
-                            loadingDisplayMsBeforeCompletion(simulatedStepTimes[i]),
+                            loadingDisplayMsBeforeCompletion(
+                              simulatedStepTimes[i],
+                            ),
                           )
                         : undefined
                     }
                   />
-                )
+                );
               })}
             </ul>
           </section>
@@ -208,12 +248,14 @@ export function PhoneUpdateGraphPage() {
               aria-label="Out of office approval"
             >
               <p className="text-[16px] font-medium leading-6 text-[#e5e2e1]">
-                Shall I send an email to your team informing them you will be out of office?
+                Shall I send an email to your team informing them you will be
+                out of office?
               </p>
               {!oooSent ? (
                 <>
                   <p className="mt-2 text-[13px] leading-5 text-[rgba(187,202,191,0.75)]">
-                    Pending your approval — nothing will be sent until you confirm.
+                    Pending your approval — nothing will be sent until you
+                    confirm.
                   </p>
                   <button
                     type="button"
@@ -225,7 +267,9 @@ export function PhoneUpdateGraphPage() {
                 </>
               ) : (
                 <div className="mt-4 rounded-xl border border-[rgba(78,222,163,0.35)] bg-[#131313] px-4 py-3">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.8px] text-[#4edea3]">Sent</p>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.8px] text-[#4edea3]">
+                    Sent
+                  </p>
                   <p className="mt-1 text-[14px] leading-5 text-[#bbcabf]">
                     Out-of-office notice emailed to your team distribution list.
                   </p>
@@ -241,13 +285,17 @@ export function PhoneUpdateGraphPage() {
           <img alt="" className="size-full object-cover" src={imgUserProfile} />
         </div>
         <button type="button" className="relative size-[34px]">
-          <img alt="Search" className="absolute inset-0 size-full" src={imgSearchBtn} />
+          <img
+            alt="Search"
+            className="absolute inset-0 size-full"
+            src={imgSearchBtn}
+          />
         </button>
       </header>
 
       <AppBottomNav />
     </div>
-  )
+  );
 }
 
 function GraphStepLoader() {
@@ -261,7 +309,7 @@ function GraphStepLoader() {
       <span className="graph-step-loader__bar inline-block" />
       <span className="graph-step-loader__bar inline-block" />
     </div>
-  )
+  );
 }
 
 function PhoneGraphStepRow({
@@ -272,23 +320,23 @@ function PhoneGraphStepRow({
   doneSubtitle,
   loadingClock,
 }: {
-  title: string
-  icon: string
-  iconSizeClass: string
-  status: StepStatus
-  doneSubtitle: string
-  loadingClock?: string
+  title: string;
+  icon: string;
+  iconSizeClass: string;
+  status: StepStatus;
+  doneSubtitle: string;
+  loadingClock?: string;
 }) {
-  const pending = status === 'pending'
-  const loading = status === 'loading'
-  const done = status === 'done'
+  const pending = status === "pending";
+  const loading = status === "loading";
+  const done = status === "done";
 
-  const iconBoxClass = loading ? 'bg-[rgba(78,222,163,0.1)]' : 'bg-[#1c1b1b]'
+  const iconBoxClass = loading ? "bg-[rgba(78,222,163,0.1)]" : "bg-[#1c1b1b]";
 
   return (
     <li
       className={`flex items-start gap-4 py-1 transition-opacity duration-300 ${
-        pending ? 'opacity-40' : 'opacity-100'
+        pending ? "opacity-40" : "opacity-100"
       }`}
     >
       <div
@@ -305,7 +353,7 @@ function PhoneGraphStepRow({
         ) : null}
         {loading && (
           <p className="mt-0.5 text-[11px] uppercase leading-[16.5px] text-[rgba(78,222,163,0.8)]">
-            COMPLETED · {loadingClock ?? '—'}
+            COMPLETED · {loadingClock ?? "—"}
           </p>
         )}
         {pending && (
@@ -317,8 +365,10 @@ function PhoneGraphStepRow({
       <div className="flex size-[20px] shrink-0 items-center justify-center pt-0.5">
         {done && <img alt="" className="size-[16.67px]" src={imgCheck} />}
         {loading && <GraphStepLoader />}
-        {pending && <img alt="" className="size-[16.67px] opacity-70" src={imgEllipsis} />}
+        {pending && (
+          <img alt="" className="size-[16.67px] opacity-70" src={imgEllipsis} />
+        )}
       </div>
     </li>
-  )
+  );
 }
