@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { AppBottomNav } from '../components/AppBottomNav'
 import { readPhoneUpdateComplete, writePhoneUpdateComplete } from '../phoneUpdateStorage'
@@ -15,8 +15,6 @@ const imgCheck =
   'https://www.figma.com/api/mcp/asset/6f9c5a7b-b87d-4bc7-bd68-74cb75e6ae98'
 const imgEllipsis =
   'https://www.figma.com/api/mcp/asset/adf72b64-0fc3-4174-a5f2-a3b2ff753fbe'
-
-const STEP_LOAD_MS = 2200
 
 type StepStatus = 'pending' | 'loading' | 'done'
 
@@ -44,6 +42,28 @@ const AUTO_STEPS = [
   },
 ] as const
 
+/** Full sequence completes in ~1 minute; each step gets an equal share */
+const ACTIVITY_TIMELINE_MS = 60_000
+const STEP_LOAD_MS = ACTIVITY_TIMELINE_MS / AUTO_STEPS.length
+
+/** Local window ~6:00am–3:00pm (“morning and early afternoon”) */
+function randomOrderedMorningAfternoonTimes(count: number): number[] {
+  const d = new Date()
+  const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 6, 0, 0, 0).getTime()
+  const dayEnd = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 15, 0, 0, 0).getTime()
+  const span = dayEnd - dayStart
+  const raw = Array.from({ length: count }, () => dayStart + Math.random() * span)
+  raw.sort((a, b) => a - b)
+  return raw
+}
+
+/** Slightly before completion, clamped so it stays in the same calendar morning window */
+function loadingDisplayMsBeforeCompletion(completionMs: number): number {
+  const d = new Date(completionMs)
+  const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 6, 0, 0, 0).getTime()
+  return Math.max(completionMs - 90_000, dayStart)
+}
+
 function formatStepCompletedTime(ms: number) {
   return new Date(ms).toLocaleTimeString(undefined, {
     hour: 'numeric',
@@ -55,36 +75,39 @@ function formatStepCompletedTime(ms: number) {
 
 function initialStepStatuses(skipAnimation: boolean): StepStatus[] {
   if (skipAnimation) return AUTO_STEPS.map(() => 'done')
-  return AUTO_STEPS.map((_, i) => (i === 0 ? 'loading' : 'pending'))
-}
-
-function initialStepCompletedAt(skipAnimation: boolean): (number | null)[] {
-  if (!skipAnimation) return AUTO_STEPS.map(() => null)
-  const now = Date.now()
-  return AUTO_STEPS.map((_, i) => now - (AUTO_STEPS.length - 1 - i) * STEP_LOAD_MS)
+  return AUTO_STEPS.map(() => 'pending')
 }
 
 export function PhoneUpdateGraphPage() {
   const oooDoneInitially = readPhoneUpdateComplete()
+  const simulatedStepTimes = useMemo(
+    () => randomOrderedMorningAfternoonTimes(AUTO_STEPS.length),
+    [],
+  )
+
   const [oooSent, setOooSent] = useState(oooDoneInitially)
   const [stepStatuses, setStepStatuses] = useState<StepStatus[]>(() =>
     initialStepStatuses(oooDoneInitially),
   )
   const [stepCompletedAt, setStepCompletedAt] = useState<(number | null)[]>(() =>
-    initialStepCompletedAt(oooDoneInitially),
+    oooDoneInitially ? [...simulatedStepTimes] : AUTO_STEPS.map(() => null),
   )
   const [showOooSection, setShowOooSection] = useState(oooDoneInitially)
-  const [clockNowMs, setClockNowMs] = useState(() => Date.now())
-
-  useEffect(() => {
-    const id = window.setInterval(() => setClockNowMs(Date.now()), 1000)
-    return () => clearInterval(id)
-  }, [])
 
   useEffect(() => {
     if (oooDoneInitially) return
 
     const timeouts: ReturnType<typeof setTimeout>[] = []
+
+    timeouts.push(
+      setTimeout(() => {
+        setStepStatuses((prev) => {
+          const next = [...prev] as StepStatus[]
+          next[0] = 'loading'
+          return next
+        })
+      }, 0),
+    )
 
     const advance = (index: number) => {
       if (index >= AUTO_STEPS.length) {
@@ -93,7 +116,7 @@ export function PhoneUpdateGraphPage() {
       }
       timeouts.push(
         setTimeout(() => {
-          const completedAt = Date.now()
+          const completedAt = simulatedStepTimes[index]
           setStepStatuses((prev) => {
             const next = [...prev] as StepStatus[]
             next[index] = 'done'
@@ -115,7 +138,7 @@ export function PhoneUpdateGraphPage() {
     advance(0)
 
     return () => timeouts.forEach(clearTimeout)
-  }, [oooDoneInitially])
+  }, [oooDoneInitially, simulatedStepTimes])
 
   const handleApproveOoo = useCallback(() => {
     writePhoneUpdateComplete()
@@ -167,7 +190,11 @@ export function PhoneUpdateGraphPage() {
                     status={status}
                     doneSubtitle={doneSubtitleForStep(i)}
                     loadingClock={
-                      status === 'loading' ? formatStepCompletedTime(clockNowMs) : undefined
+                      status === 'loading'
+                        ? formatStepCompletedTime(
+                            loadingDisplayMsBeforeCompletion(simulatedStepTimes[i]),
+                          )
+                        : undefined
                     }
                   />
                 )
