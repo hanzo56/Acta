@@ -50,6 +50,59 @@ const AUTO_STEPS = [
 const ACTIVITY_TIMELINE_MS = 30_000;
 const STEP_LOAD_MS = ACTIVITY_TIMELINE_MS / AUTO_STEPS.length;
 
+const OOO_EMAIL_TO = [
+  "ebrusilo@usc.edu",
+  "katyar@usc.edu",
+  "nbergren@usc.edu",
+  "kkai@usc.edu",
+] as const;
+
+const OOO_EMAIL_SUBJECT = "Larry Kiang Out of Office";
+
+const OOO_EMAIL_BODY = `Hello,
+
+I will be out of the office due to personal reasons. If there is anything urgent, please reach out to me by phone at 213-399-0139 or by email at lkiang@usc.edu.
+
+Thank you,
+Larry Kiang`;
+
+function OooEmailPreviewCard() {
+  return (
+    <div
+      className="rounded-xl border border-[rgba(60,74,66,0.35)] bg-[#1c1b1b] p-4 text-left"
+      aria-label="Draft email preview"
+    >
+      <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.8px] text-[rgba(187,202,191,0.65)]">
+        Draft preview
+      </p>
+      <dl className="space-y-3 text-[13px] leading-5">
+        <div>
+          <dt className="text-[11px] font-bold uppercase tracking-[0.6px] text-[rgba(187,202,191,0.65)]">
+            To
+          </dt>
+          <dd className="mt-1 break-words text-[#e5e2e1]">
+            {OOO_EMAIL_TO.join(", ")}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-[11px] font-bold uppercase tracking-[0.6px] text-[rgba(187,202,191,0.65)]">
+            Subject
+          </dt>
+          <dd className="mt-1 text-[#e5e2e1]">{OOO_EMAIL_SUBJECT}</dd>
+        </div>
+        <div>
+          <dt className="text-[11px] font-bold uppercase tracking-[0.6px] text-[rgba(187,202,191,0.65)]">
+            Message
+          </dt>
+          <dd className="mt-2 whitespace-pre-wrap rounded-lg border border-[rgba(60,74,66,0.25)] bg-[#131313] px-3 py-2.5 font-normal text-[#bbcabf]">
+            {OOO_EMAIL_BODY}
+          </dd>
+        </div>
+      </dl>
+    </div>
+  );
+}
+
 /** Local window ~6:00am–3:00pm (“morning and early afternoon”) */
 function randomOrderedMorningAfternoonTimes(count: number): number[] {
   const d = new Date();
@@ -253,7 +306,10 @@ export function PhoneUpdateGraphPage() {
               </p>
               {!oooSent ? (
                 <>
-                  <p className="mt-2 text-[13px] leading-5 text-[rgba(187,202,191,0.75)]">
+                  <div className="mt-4">
+                    <OooEmailPreviewCard />
+                  </div>
+                  <p className="mt-4 text-[13px] leading-5 text-[rgba(187,202,191,0.75)]">
                     Pending your approval — nothing will be sent until you
                     confirm.
                   </p>
@@ -271,7 +327,8 @@ export function PhoneUpdateGraphPage() {
                     Sent
                   </p>
                   <p className="mt-1 text-[14px] leading-5 text-[#bbcabf]">
-                    Out-of-office notice emailed to your team distribution list.
+                    Your out-of-office message was sent to{" "}
+                    {OOO_EMAIL_TO.join(", ")}.
                   </p>
                 </div>
               )}

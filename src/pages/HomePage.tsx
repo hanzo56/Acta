@@ -32,7 +32,7 @@ const PROCESSING_BEFORE_NAV_MS = 2000
 
 /** Spoken intent → phone-activity preview instead of dinner preview */
 const PHONE_UPDATE_INTENT =
-  /\b(?:give me an update on my phone activit(?:y|ies)|give me an update on my phone activity|give me an update|give (?:me )?(?:an )?update|provide (?:me )?(?:with )?(?:an )?update|provide me an update on my phone activit(?:y|ies)|provide me a status update on my phone activit(?:y|ies)|an update on my phone activit(?:y|ies)|update (?:on|about) my phone(?: activit(?:y|ies))?|updates? (?:on|about|for) my phone|phone activit(?:y|ies) (?:update|summary)|summar(?:y|ize|ise) (?:of )?my phone|what(?:'s| is) (?:happening |going )?on my phone|any updates? (?:on|about|for) my phone|phone update|activity update|check my phone)\b/i
+  /\b(?:give me a status update on my phone activit(?:y|ies|es)|give me an update on my phone activit(?:y|ies)|give me an update on my phone activity|give me an update|give (?:me )?(?:an )?update|provide (?:me )?(?:with )?(?:an )?update|provide me an update on my phone activit(?:y|ies)|provide me a status update on my phone activit(?:y|ies|es)|an update on my phone activit(?:y|ies)|update (?:on|about) my phone(?: activit(?:y|ies))?|updates? (?:on|about|for) my phone|phone activit(?:y|ies) (?:update|summary)|summar(?:y|ize|ise) (?:of )?my phone|what(?:'s| is) (?:happening |going )?on my phone|any updates? (?:on|about|for) my phone|phone update|activity update|check my phone)\b/i
 
 export function HomePage() {
   const navigate = useNavigate()
