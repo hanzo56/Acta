@@ -11,6 +11,7 @@ import {
   writeGraphSequenceStart,
   writeGraphStepTimes,
 } from "../graphFlowStorage";
+import { downloadDinnerWithSarahIcs } from "../utils/dinnerEventIcs";
 
 const imgUserProfile =
   "https://www.figma.com/api/mcp/asset/62a50c2d-ed0c-46b1-a196-24ef5cc6c4b9";
@@ -452,6 +453,18 @@ export function GraphPage() {
                     Sarah Jenkins
                   </p>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => downloadDinnerWithSarahIcs()}
+                  className="w-full rounded-xl border border-[rgba(78,222,163,0.35)] bg-[rgba(78,222,163,0.08)] py-3.5 text-[14px] font-semibold leading-5 text-[#4edea3] transition hover:bg-[rgba(78,222,163,0.14)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#e5e2e1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1c1b1b]"
+                  aria-label="Download calendar file to add dinner event to your calendar app"
+                >
+                  Add to calendar
+                </button>
+                <p className="text-center text-[12px] leading-4 text-[rgba(187,202,191,0.65)]">
+                  Downloads an event file — open it to add this dinner to your phone or
+                  computer calendar.
+                </p>
               </div>
             </div>
           )}
