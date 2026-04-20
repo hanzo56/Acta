@@ -7,6 +7,7 @@ import { InvestorCallsGraphPage } from './pages/InvestorCallsGraphPage'
 import { HomePage } from './pages/HomePage'
 import { PhoneUpdateGraphPage } from './pages/PhoneUpdateGraphPage'
 import { PhoneUpdatePreviewPage } from './pages/PhoneUpdatePreviewPage'
+import { ProfileSettingsPage } from './pages/ProfileSettingsPage'
 import { PreviewPage } from './pages/PreviewPage'
 import { SettingsPage } from './pages/SettingsPage'
 import { TasksPage } from './pages/TasksPage'
@@ -24,6 +25,7 @@ export default function App() {
       <Route path="/graph/menu" element={<GraphMenuPage />} />
       <Route path="/tasks" element={<TasksPage />} />
       <Route path="/settings" element={<SettingsPage />} />
+      <Route path="/profile" element={<ProfileSettingsPage />} />
       <Route path="/connectors" element={<ConnectorsPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

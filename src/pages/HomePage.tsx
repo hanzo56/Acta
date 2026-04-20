@@ -239,9 +239,13 @@ export function HomePage() {
           >
             <img alt="" className="absolute inset-0 size-full max-w-none" src={imgSettingsHeader} />
           </Link>
-          <div className="size-8 overflow-hidden rounded-full border border-[rgba(60,74,66,0.2)] bg-[#2a2a2a] p-px">
+          <Link
+            to="/profile"
+            className="size-8 shrink-0 overflow-hidden rounded-full border border-[rgba(60,74,66,0.2)] bg-[#2a2a2a] p-px focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgba(19,19,19,0.6)]"
+            aria-label="Profile"
+          >
             <img alt="" className="size-full object-cover" src={imgUserProfileAvatar} />
-          </div>
+          </Link>
         </div>
       </header>
 

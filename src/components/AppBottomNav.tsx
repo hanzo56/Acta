@@ -34,18 +34,17 @@ export function AppBottomNav({
 
   const tasksSrc =
     pathname === '/tasks' && tasksIconSrc ? tasksIconSrc : IMG_NAV_APPS
+  const settingsActive = pathname === '/settings' || pathname === '/profile'
   const settingsSrc =
-    pathname === '/settings' && settingsIconSrc ? settingsIconSrc : IMG_NAV_SETTINGS
+    settingsActive && settingsIconSrc ? settingsIconSrc : IMG_NAV_SETTINGS
 
   const tasksImgClass =
     pathname === '/tasks' && tasksIconSrc ? 'object-contain' : ''
   const settingsImgClass =
-    pathname === '/settings' && settingsIconSrc ? 'object-contain' : ''
+    settingsActive && settingsIconSrc ? 'object-contain' : ''
 
   const settingsIconWrapClass =
-    largeSettingsIcon && pathname === '/settings'
-      ? 'relative size-10'
-      : 'relative h-5 w-[20.1px]'
+    largeSettingsIcon && settingsActive ? 'relative size-10' : 'relative h-5 w-[20.1px]'
 
   const graphActive =
     pathname === '/graph' || pathname.startsWith('/graph/')
@@ -109,18 +108,18 @@ export function AppBottomNav({
           <Link
             to="/settings"
             className="flex flex-col items-center justify-end gap-1 pb-0.5"
-            aria-current={pathname === '/settings' ? 'page' : undefined}
+            aria-current={settingsActive ? 'page' : undefined}
           >
             <div className={settingsIconWrapClass}>
               <img
                 alt=""
                 className={`absolute inset-0 size-full max-w-none ${settingsImgClass} ${
-                  pathname === '/settings' ? 'drop-shadow-[0_0_8px_rgba(78,222,163,0.9)]' : ''
+                  settingsActive ? 'drop-shadow-[0_0_8px_rgba(78,222,163,0.9)]' : ''
                 }`}
                 src={settingsSrc}
               />
             </div>
-            <span className={navLabel(pathname === '/settings')}>SETTINGS</span>
+            <span className={navLabel(settingsActive)}>SETTINGS</span>
           </Link>
         </div>
       </div>
