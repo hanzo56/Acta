@@ -35,7 +35,8 @@ export function PreviewPage() {
 
   return (
     <div className="acta-shell bg-[#131313] text-[#e5e2e1]">
-      <main className="acta-main acta-main--inset-preview flex w-full max-w-[672px] flex-col gap-12 px-6">
+      <main className="acta-main acta-main--inset-preview w-full px-6">
+        <div className="mx-auto flex w-full max-w-[672px] flex-col gap-12">
         {visibleCount >= 1 ? (
           <header className="acta-preview-reveal flex flex-col gap-2">
             <p className="text-[10px] font-bold uppercase leading-[15px] tracking-[2px] text-[#bbcabf]">
@@ -130,6 +131,7 @@ export function PreviewPage() {
             </div>
           </div>
         ) : null}
+        </div>
       </main>
 
       <div className="acta-preview-footer-fixed bg-[rgba(19,19,19,0.8)] px-6 pb-12 pt-6 backdrop-blur-[20px]">

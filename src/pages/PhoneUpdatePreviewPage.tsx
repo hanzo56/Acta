@@ -26,7 +26,8 @@ export function PhoneUpdatePreviewPage() {
 
   return (
     <div className="acta-shell bg-[#131313] text-[#e5e2e1]">
-      <main className="acta-main acta-main--inset-preview flex w-full max-w-[672px] flex-col gap-12 px-6">
+      <main className="acta-main acta-main--inset-preview w-full px-6">
+        <div className="mx-auto flex w-full max-w-[672px] flex-col gap-12">
         {visibleCount >= 1 ? (
           <header className="acta-preview-reveal flex flex-col gap-2">
             <p className="text-[10px] font-bold uppercase leading-[15px] tracking-[2px] text-[#bbcabf]">
@@ -66,6 +67,7 @@ export function PhoneUpdatePreviewPage() {
             </div>
           </section>
         ) : null}
+        </div>
       </main>
 
       {visibleCount >= 3 ? (

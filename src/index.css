@@ -48,11 +48,9 @@ body {
   position: relative;
   margin-left: auto;
   margin-right: auto;
-  display: flex;
   box-sizing: border-box;
   width: 100%;
   max-width: 390px;
-  flex-direction: column;
   overflow: hidden;
   isolation: isolate;
   background-color: #000;
@@ -61,11 +59,19 @@ body {
   min-height: -webkit-fill-available;
 }
 
+/*
+ * Primary scrollport for shell pages. Use absolute insets (same idea as .acta-graph-body) so
+ * iOS Safari gets a definite height; flex:1 + overflow:auto on a flex child often won’t scroll.
+ */
 .acta-main {
-  /* flex-basis: 0% — critical so this region gets a bounded height (enables overflow scroll) */
-  min-height: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  box-sizing: border-box;
   min-width: 0;
-  flex: 1 1 0%;
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
