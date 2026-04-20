@@ -108,7 +108,7 @@ export function HomePage() {
         </div>
       </div>
 
-      <main className="acta-main acta-main--inset-both relative z-[1] px-6">
+      <main className="acta-main acta-main--inset-both px-6">
         <div className="flex w-full max-w-[768px] flex-col items-center gap-8 py-6">
           <div className="flex w-full flex-col items-center gap-8">
             <div className="flex w-full flex-col gap-4">

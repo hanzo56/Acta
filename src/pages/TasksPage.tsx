@@ -16,8 +16,6 @@ const imgTaskDoc =
   'https://www.figma.com/api/mcp/asset/e75c96f3-34ea-4d75-82ee-9372b7064e11'
 const imgInsightPredictive =
   'https://www.figma.com/api/mcp/asset/77f20aff-a149-4e93-8396-1b2a78a17f62'
-const imgFabPlus =
-  'https://www.figma.com/api/mcp/asset/a0e12bfa-9a6c-43ef-ae8e-97d6b19ea229'
 const imgHeaderSearch =
   'https://www.figma.com/api/mcp/asset/2d5f8865-edc4-4921-8675-5a7b1f7a1981'
 
@@ -63,30 +61,9 @@ export function TasksPage() {
 
   return (
     <div className="acta-shell bg-[#131313] text-[#e5e2e1]">
-      <header className="acta-header-fixed z-10 flex h-16 items-center gap-3 bg-[#131313] px-6">
-        <div className="size-8 shrink-0 overflow-hidden rounded-full bg-[#201f1f]">
-          <img alt="" className="size-full object-cover" src={imgUserProfilePhoto} />
-        </div>
-        <div className="flex min-w-0 flex-1 items-center gap-2 rounded-full border border-[rgba(60,74,66,0.25)] bg-[#1c1b1b] px-3 py-2 shadow-[0px_0px_0px_1px_rgba(60,74,66,0.08)] transition-[box-shadow,ring] focus-within:border-[rgba(78,222,163,0.45)] focus-within:shadow-[0px_0px_0px_1px_rgba(78,222,163,0.35),0_0_0_3px_rgba(78,222,163,0.15)] focus-within:ring-2 focus-within:ring-[#4edea3]/80">
-          <img alt="" className="size-[18px] shrink-0 opacity-80" src={imgHeaderSearch} aria-hidden />
-          <label htmlFor="tasks-search-input" className="sr-only">
-            Filter recent tasks
-          </label>
-          <input
-            ref={taskSearchInputRef}
-            id="tasks-search-input"
-            type="search"
-            placeholder="Filter tasks…"
-            value={taskSearch}
-            onChange={(e) => setTaskSearch(e.target.value)}
-            autoComplete="off"
-            className="min-w-0 flex-1 border-0 bg-transparent text-[15px] font-medium leading-5 text-[#e5e2e1] placeholder:text-[rgba(187,202,191,0.45)] focus:outline-none focus:ring-0"
-          />
-        </div>
-      </header>
-
-      <main className="acta-main acta-main--inset-both max-w-[896px] px-6 pb-28 pt-4">
-        <div className="flex flex-col gap-12">
+      <main className="acta-main acta-main--inset-both w-full px-6 pb-10 pt-4">
+        <div className="mx-auto w-full max-w-[896px]">
+          <div className="flex flex-col gap-12">
           <h2 className="text-[36px] font-semibold leading-10 tracking-[-0.9px]">
             <span className="text-[#e5e2e1]">Ready to </span>
             <span className="text-[#bbcabf]">delegate.</span>
@@ -305,20 +282,31 @@ export function TasksPage() {
               </div>
             </div>
           </section>
+          </div>
         </div>
       </main>
 
-      {/* FAB — above bottom nav */}
-      <button
-        type="button"
-        className="fixed right-6 z-[35] flex size-14 items-center justify-center rounded-full bg-[#4edea3] shadow-[0px_20px_25px_-5px_rgba(0,0,0,0.1),0px_8px_10px_-6px_rgba(0,0,0,0.1)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#e5e2e1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#131313]"
-        style={{
-          bottom: 'calc(var(--acta-nav-h, 5rem) + env(safe-area-inset-bottom, 0px) + 16px)',
-        }}
-        aria-label="New task"
-      >
-        <img alt="" className="size-3.5 object-contain" src={imgFabPlus} />
-      </button>
+      <header className="acta-header-fixed z-10 flex h-16 items-center gap-3 bg-[#131313] px-6">
+        <div className="size-8 shrink-0 overflow-hidden rounded-full bg-[#201f1f]">
+          <img alt="" className="size-full object-cover" src={imgUserProfilePhoto} />
+        </div>
+        <div className="flex min-w-0 flex-1 items-center gap-2 rounded-full border border-[rgba(60,74,66,0.25)] bg-[#1c1b1b] px-3 py-2 shadow-[0px_0px_0px_1px_rgba(60,74,66,0.08)] transition-[box-shadow,ring] focus-within:border-[rgba(78,222,163,0.45)] focus-within:shadow-[0px_0px_0px_1px_rgba(78,222,163,0.35),0_0_0_3px_rgba(78,222,163,0.15)] focus-within:ring-2 focus-within:ring-[#4edea3]/80">
+          <img alt="" className="size-[18px] shrink-0 opacity-80" src={imgHeaderSearch} aria-hidden />
+          <label htmlFor="tasks-search-input" className="sr-only">
+            Filter recent tasks
+          </label>
+          <input
+            ref={taskSearchInputRef}
+            id="tasks-search-input"
+            type="search"
+            placeholder="Filter tasks…"
+            value={taskSearch}
+            onChange={(e) => setTaskSearch(e.target.value)}
+            autoComplete="off"
+            className="min-w-0 flex-1 border-0 bg-transparent text-[15px] font-medium leading-5 text-[#e5e2e1] placeholder:text-[rgba(187,202,191,0.45)] focus:outline-none focus:ring-0"
+          />
+        </div>
+      </header>
 
       <AppBottomNav tasksIconSrc="/nav-tasks-icon.png" />
     </div>
