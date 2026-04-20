@@ -228,9 +228,11 @@ export function HomePage() {
       </main>
 
       <header className="acta-header-fixed flex h-16 items-center justify-between bg-[rgba(19,19,19,0.6)] px-6 backdrop-blur-[12px]">
-        <span className="text-[20px] font-bold leading-7 tracking-[-1px] text-[#e5e2e1]">
-          Acta AI
-        </span>
+        <img
+          src="/acta-logo.png"
+          alt="Acta"
+          className="block h-9 w-auto max-w-[min(60vw,220px)] object-contain object-left"
+        />
         <div className="flex items-center gap-4">
           <Link
             to="/settings"
