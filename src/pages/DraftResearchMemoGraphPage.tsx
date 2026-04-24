@@ -1,11 +1,10 @@
+import { ActaHeaderLogo } from '../components/ActaHeaderLogo'
 import { AppBottomNav } from '../components/AppBottomNav'
 import {
   ICON_CHECK as imgCheck,
   ICON_DOC as imgTaskDoc,
   ICON_ELLIPSIS as imgEllipsis,
   ICON_MESSAGES as imgMessages,
-  ICON_SEARCH as imgSearchBtn,
-  ICON_USER_AVATAR as imgUserProfile,
 } from '../assets/actaIconUrls'
 
 type StepStatus = 'pending' | 'loading' | 'done'
@@ -101,13 +100,8 @@ export function DraftResearchMemoGraphPage() {
         </div>
       </main>
 
-      <header className="acta-header-fixed flex h-16 items-center justify-between bg-[#131313] px-6">
-        <div className="size-8 overflow-hidden rounded-full bg-[#2a2a2a]">
-          <img alt="" className="size-full object-cover" src={imgUserProfile} />
-        </div>
-        <button type="button" className="relative size-[34px]">
-          <img alt="Search" className="absolute inset-0 size-full" src={imgSearchBtn} />
-        </button>
+      <header className="acta-header-fixed flex h-16 items-center justify-start bg-[#131313] px-6">
+        <ActaHeaderLogo />
       </header>
 
       <AppBottomNav />

@@ -1,5 +1,7 @@
 import { useState, type ReactNode } from 'react'
+import { Link } from 'react-router-dom'
 
+import { ActaHeaderLogo } from '../components/ActaHeaderLogo'
 import { AppBottomNav } from '../components/AppBottomNav'
 import {
   ICON_ACCOUNT as imgAccountDetails,
@@ -8,37 +10,33 @@ import {
   ICON_CHEVRON_RIGHT as imgChevron,
   ICON_PRIVACY as imgPrivacy,
   ICON_PROFILE_RING_BADGE as imgBackgroundBorder,
-  ICON_SEARCH as imgSearch,
   ICON_SIGN_OUT as imgSignOut,
   ICON_SUBSCRIPTION as imgSubscription,
   ICON_USER_AVATAR,
 } from '../assets/actaIconUrls'
 
-const imgUserProfilePhoto = ICON_USER_AVATAR
 const imgUserProfile = ICON_USER_AVATAR
 
-function SettingsRow({
+const settingsRowClass = (borderTop: boolean) =>
+  `flex w-full items-center justify-between gap-3 px-6 py-5 text-left transition-colors hover:bg-[rgba(255,255,255,0.02)] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#4edea3] ${
+    borderTop ? 'border-t border-[rgba(60,74,66,0.05)]' : ''
+  }`
+
+function SettingsRowContent({
   icon,
   iconClassName,
   title,
   subtitle,
   trailing,
-  borderTop,
 }: {
   icon: string
   iconClassName?: string
   title: string
   subtitle: string
   trailing?: ReactNode
-  borderTop?: boolean
 }) {
   return (
-    <button
-      type="button"
-      className={`flex w-full items-center justify-between gap-3 px-6 py-5 text-left transition-colors hover:bg-[rgba(255,255,255,0.02)] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#4edea3] ${
-        borderTop ? 'border-t border-[rgba(60,74,66,0.05)]' : ''
-      }`}
-    >
+    <>
       <div className="flex min-w-0 flex-1 items-center gap-4">
         <div className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-[#353534]">
           <div className={`relative shrink-0 ${iconClassName ?? 'size-4'}`}>
@@ -56,6 +54,49 @@ function SettingsRow({
           <img alt="" className="absolute inset-0 size-full max-w-none" src={imgChevron} />
         </div>
       </div>
+    </>
+  )
+}
+
+function SettingsRow({
+  to,
+  icon,
+  iconClassName,
+  title,
+  subtitle,
+  trailing,
+  borderTop,
+}: {
+  to?: string
+  icon: string
+  iconClassName?: string
+  title: string
+  subtitle: string
+  trailing?: ReactNode
+  borderTop?: boolean
+}) {
+  if (to) {
+    return (
+      <Link to={to} className={settingsRowClass(!!borderTop)}>
+        <SettingsRowContent
+          icon={icon}
+          iconClassName={iconClassName}
+          title={title}
+          subtitle={subtitle}
+          trailing={trailing}
+        />
+      </Link>
+    )
+  }
+  return (
+    <button type="button" className={settingsRowClass(!!borderTop)}>
+      <SettingsRowContent
+        icon={icon}
+        iconClassName={iconClassName}
+        title={title}
+        subtitle={subtitle}
+        trailing={trailing}
+      />
     </button>
   )
 }
@@ -65,16 +106,8 @@ export function ProfileSettingsPage() {
 
   return (
     <div className="acta-shell bg-[#131313] text-[#e5e2e1]">
-      <header className="acta-header-fixed z-10 flex h-16 items-center justify-between bg-[#131313] px-6">
-        <div className="flex items-center gap-3">
-          <div className="size-10 shrink-0 overflow-hidden rounded-full border border-[rgba(60,74,66,0.2)] bg-[#201f1f] p-px">
-            <img alt="" className="size-full object-cover" src={imgUserProfilePhoto} />
-          </div>
-          <span className="text-[24px] font-bold leading-8 tracking-[-0.6px]">Acta</span>
-        </div>
-        <button type="button" className="rounded-full p-2" aria-label="Search">
-          <img alt="" className="size-[18px]" src={imgSearch} />
-        </button>
+      <header className="acta-header-fixed z-10 flex h-16 items-center justify-start bg-[#131313] px-6">
+        <ActaHeaderLogo />
       </header>
 
       <main className="acta-main acta-main--inset-both max-w-[672px] px-6 pb-10">
@@ -117,11 +150,13 @@ export function ProfileSettingsPage() {
                 </h2>
               </div>
               <SettingsRow
+                to="/profile/account"
                 icon={imgAccountDetails}
                 title="Account Details"
                 subtitle="Update password and email"
               />
               <SettingsRow
+                to="/profile/subscription"
                 icon={imgSubscription}
                 iconClassName="h-4 w-5"
                 title="Subscription"
@@ -142,12 +177,14 @@ export function ProfileSettingsPage() {
                 </h2>
               </div>
               <SettingsRow
+                to="/profile/notifications"
                 icon={imgNotifications}
                 iconClassName="h-5 w-4"
                 title="Notifications"
                 subtitle="Manage alerts and sounds"
               />
               <SettingsRow
+                to="/profile/privacy"
                 icon={imgPrivacy}
                 iconClassName="h-[15px] w-[22px]"
                 title="Privacy"

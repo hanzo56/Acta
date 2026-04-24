@@ -113,6 +113,12 @@ body {
   padding-bottom: calc(var(--acta-nav-h) + env(safe-area-inset-bottom, 0px));
 }
 
+/* Subpages: fixed header only, full scroll to bottom (no bottom nav) */
+.acta-main--inset-top {
+  padding-top: calc(var(--acta-header-h) + env(safe-area-inset-top, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
 /* Preview: only bottom approve bar (top matches former pt-12 + safe area) */
 .acta-main--inset-preview {
   padding-top: max(3rem, calc(0.75rem + env(safe-area-inset-top, 0px)));

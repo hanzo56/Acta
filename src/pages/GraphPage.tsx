@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
+import { ActaHeaderLogo } from "../components/ActaHeaderLogo";
 import { AppBottomNav } from "../components/AppBottomNav";
 import {
   clearGraphFlowComplete,
@@ -19,8 +20,6 @@ import {
   ICON_ELLIPSIS as imgEllipsis,
   ICON_FORK_KNIFE as imgForkKnife,
   ICON_MESSAGES as imgMessages,
-  ICON_SEARCH as imgSearchBtn,
-  ICON_USER_AVATAR as imgUserProfile,
 } from "../assets/actaIconUrls";
 const YELP_URL = "https://www.yelp.com/biz/tori-tori-shabu-n-sushi-arcadia-2";
 
@@ -464,17 +463,8 @@ export function GraphPage() {
         </div>
       </main>
 
-      <header className="acta-header-fixed flex h-16 items-center justify-between bg-[#131313] px-6">
-        <div className="size-8 overflow-hidden rounded-full bg-[#2a2a2a]">
-          <img alt="" className="size-full object-cover" src={imgUserProfile} />
-        </div>
-        <button type="button" className="relative size-[34px]">
-          <img
-            alt="Search"
-            className="absolute inset-0 size-full"
-            src={imgSearchBtn}
-          />
-        </button>
+      <header className="acta-header-fixed flex h-16 items-center justify-start bg-[#131313] px-6">
+        <ActaHeaderLogo />
       </header>
 
       <AppBottomNav />

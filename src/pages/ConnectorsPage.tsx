@@ -1,15 +1,14 @@
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 
+import { ActaHeaderLogo } from "../components/ActaHeaderLogo";
 import { AppBottomNav } from "../components/AppBottomNav";
 import {
   ICON_CALENDAR as imgCalendar,
   ICON_CHEVRON_RIGHT as imgChevron,
   ICON_GMAIL as imgGmail,
   ICON_OPENTABLE as imgOpenTable,
-  ICON_SEARCH as imgSearch,
   ICON_SLACK as imgSlack,
-  ICON_USER_AVATAR as imgUser,
 } from "../assets/actaIconUrls";
 /** Simple Icons CDN — brand marks for connectors without Figma assets */
 const iconInstagram = "https://cdn.simpleicons.org/instagram/E4405F";
@@ -237,13 +236,8 @@ export function ConnectorsPage() {
 
   return (
     <div className="acta-shell text-[#e5e2e1]">
-      <header className="acta-header-fixed z-10 flex h-16 items-center justify-between bg-[#131313] px-6">
-        <div className="size-8 overflow-hidden rounded-full bg-[#2a2a2a]">
-          <img alt="" className="size-full object-cover" src={imgUser} />
-        </div>
-        <button type="button" className="rounded-full p-2">
-          <img alt="Search" className="size-[18px]" src={imgSearch} />
-        </button>
+      <header className="acta-header-fixed z-10 flex h-16 items-center justify-start bg-[#131313] px-6">
+        <ActaHeaderLogo />
       </header>
 
       <main className="acta-main acta-main--inset-both max-w-[672px] px-6 pb-6">
