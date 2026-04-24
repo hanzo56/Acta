@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import {
   ICON_CALENDAR as imgCalendar,
@@ -13,64 +13,66 @@ import {
   ICON_NAV_SETTINGS_DIM as imgNavSettings,
   ICON_SETTINGS_GEAR as imgSettingsHeader,
   ICON_USER_AVATAR as imgUserProfileAvatar,
-} from '../assets/actaIconUrls'
-import { useSpeechDictation } from '../hooks/useSpeechDictation'
+} from "../assets/actaIconUrls";
+import { useSpeechDictation } from "../hooks/useSpeechDictation";
 
 /** Max bar height (scaleY animates from ~22% to 100% of this) */
 const bars = [
-  { h: 'h-6', bg: 'bg-[#4edea3]', delayMs: 0, durationMs: 520 },
-  { h: 'h-10', bg: 'bg-[#10b981]', delayMs: 80, durationMs: 580 },
-  { h: 'h-4', bg: 'bg-[#d0bcff]', delayMs: 160, durationMs: 480 },
-  { h: 'h-12', bg: 'bg-[#4edea3]', delayMs: 40, durationMs: 620 },
-  { h: 'h-8', bg: 'bg-[#b090ff]', delayMs: 120, durationMs: 540 },
-  { h: 'h-[18px]', bg: 'bg-[#10b981]', delayMs: 200, durationMs: 500 },
-  { h: 'h-7', bg: 'bg-[#4edea3]', delayMs: 60, durationMs: 560 },
-] as const
+  { h: "h-6", bg: "bg-[#4edea3]", delayMs: 0, durationMs: 520 },
+  { h: "h-10", bg: "bg-[#10b981]", delayMs: 80, durationMs: 580 },
+  { h: "h-4", bg: "bg-[#d0bcff]", delayMs: 160, durationMs: 480 },
+  { h: "h-12", bg: "bg-[#4edea3]", delayMs: 40, durationMs: 620 },
+  { h: "h-8", bg: "bg-[#b090ff]", delayMs: 120, durationMs: 540 },
+  { h: "h-[18px]", bg: "bg-[#10b981]", delayMs: 200, durationMs: 500 },
+  { h: "h-7", bg: "bg-[#4edea3]", delayMs: 60, durationMs: 560 },
+] as const;
 
-const SILENCE_MS = 3000
-const PROCESSING_BEFORE_NAV_MS = 2000
+const SILENCE_MS = 3000;
+const PROCESSING_BEFORE_NAV_MS = 2000;
 
 /** Spoken intent → phone-activity preview instead of dinner preview */
 const PHONE_UPDATE_INTENT =
-  /\b(?:give me a status update on my phone activit(?:y|ies|es)|give me an update on my phone activit(?:y|ies)|give me an update on my phone activity|give me an update|give (?:me )?(?:an )?update|provide (?:me )?(?:with )?(?:an )?update|provide me an update on my phone activit(?:y|ies)|provide me a status update on my phone activit(?:y|ies|es)|an update on my phone activit(?:y|ies)|update (?:on|about) my phone(?: activit(?:y|ies))?|updates? (?:on|about|for) my phone|phone activit(?:y|ies) (?:update|summary)|summar(?:y|ize|ise) (?:of )?my phone|what(?:'s| is) (?:happening |going )?on my phone|any updates? (?:on|about|for) my phone|phone update|activity update|check my phone)\b/i
+  /\b(?:give me a status update on my phone activit(?:y|ies|es)|give me an update on my phone activit(?:y|ies)|give me an update on my phone activity|give me an update|give (?:me )?(?:an )?update|provide (?:me )?(?:with )?(?:an )?update|provide me an update on my phone activit(?:y|ies)|provide me a status update on my phone activit(?:y|ies|es)|an update on my phone activit(?:y|ies)|update (?:on|about) my phone(?: activit(?:y|ies))?|updates? (?:on|about|for) my phone|phone activit(?:y|ies) (?:update|summary)|summar(?:y|ize|ise) (?:of )?my phone|what(?:'s| is) (?:happening |going )?on my phone|any updates? (?:on|about|for) my phone|phone update|activity update|check my phone)\b/i;
 
 export function HomePage() {
-  const navigate = useNavigate()
-  const { pathname } = useLocation()
-  const [micListening, setMicListening] = useState(false)
-  const [silenceProcessing, setSilenceProcessing] = useState(false)
-  const silenceNavigatedRef = useRef(false)
-  const processingNavTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const dictationSnapshotRef = useRef('')
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const [micListening, setMicListening] = useState(false);
+  const [silenceProcessing, setSilenceProcessing] = useState(false);
+  const silenceNavigatedRef = useRef(false);
+  const processingNavTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+  const dictationSnapshotRef = useRef("");
 
   const handleDictationSilence = useCallback(() => {
-    if (silenceNavigatedRef.current) return
-    silenceNavigatedRef.current = true
-    setMicListening(false)
-    setSilenceProcessing(true)
+    if (silenceNavigatedRef.current) return;
+    silenceNavigatedRef.current = true;
+    setMicListening(false);
+    setSilenceProcessing(true);
     processingNavTimeoutRef.current = window.setTimeout(() => {
-      processingNavTimeoutRef.current = null
-      const t = dictationSnapshotRef.current
-      const goPhoneUpdate = PHONE_UPDATE_INTENT.test(t)
-      navigate(goPhoneUpdate ? '/preview/update' : '/preview')
-    }, PROCESSING_BEFORE_NAV_MS)
-  }, [navigate])
+      processingNavTimeoutRef.current = null;
+      const t = dictationSnapshotRef.current;
+      const goPhoneUpdate = PHONE_UPDATE_INTENT.test(t);
+      navigate(goPhoneUpdate ? "/preview/update" : "/preview");
+    }, PROCESSING_BEFORE_NAV_MS);
+  }, [navigate]);
 
   useEffect(() => {
     return () => {
       if (processingNavTimeoutRef.current) {
-        clearTimeout(processingNavTimeoutRef.current)
+        clearTimeout(processingNavTimeoutRef.current);
       }
-    }
-  }, [])
+    };
+  }, []);
 
-  const prevMicOnRef = useRef(false)
+  const prevMicOnRef = useRef(false);
   useEffect(() => {
     if (micListening && !prevMicOnRef.current) {
-      silenceNavigatedRef.current = false
+      silenceNavigatedRef.current = false;
     }
-    prevMicOnRef.current = micListening
-  }, [micListening])
+    prevMicOnRef.current = micListening;
+  }, [micListening]);
 
   const speechDictationOptions = useMemo(
     () => ({
@@ -78,24 +80,28 @@ export function HomePage() {
       onSilence: handleDictationSilence,
     }),
     [handleDictationSilence],
-  )
+  );
 
-  const { finalText, interimText, status: dictationStatus } = useSpeechDictation(
-    micListening,
-    speechDictationOptions,
-  )
+  const {
+    finalText,
+    interimText,
+    status: dictationStatus,
+  } = useSpeechDictation(micListening, speechDictationOptions);
 
   useEffect(() => {
-    dictationSnapshotRef.current = `${finalText} ${interimText}`.trim()
-  }, [finalText, interimText])
+    dictationSnapshotRef.current = `${finalText} ${interimText}`.trim();
+  }, [finalText, interimText]);
 
   /** Real-time levels use `getUserMedia`, which fights Web Speech’s own mic — keep one pipeline (speech only). */
-  const micClusterIdle = !micListening && !silenceProcessing
+  const micClusterIdle = !micListening && !silenceProcessing;
 
   return (
     <div className="acta-shell text-[#e5e2e1]">
       <div className="pointer-events-none absolute inset-0 z-0 flex flex-col items-start justify-center overflow-hidden opacity-40 blur-[20px]">
-        <div className="pointer-events-none absolute inset-0 bg-[#1c1b1b] mix-blend-saturation" aria-hidden />
+        <div
+          className="pointer-events-none absolute inset-0 bg-[#1c1b1b] mix-blend-saturation"
+          aria-hidden
+        />
         <div className="grid w-full flex-1 grid-cols-1 gap-8 p-8">
           <div className="flex flex-col gap-6">
             <div className="h-64 w-full rounded-xl bg-[#1c1b1b]" />
@@ -131,7 +137,7 @@ export function HomePage() {
                 <p className="text-[11px] font-bold uppercase leading-4 tracking-[1.2px] text-[rgba(185,199,224,0.55)]">
                   Voice input
                 </p>
-                {micListening && dictationStatus === 'listening' ? (
+                {micListening && dictationStatus === "listening" ? (
                   <span className="text-[10px] font-bold uppercase leading-4 tracking-[0.12em] text-[#4edea3]">
                     Live
                   </span>
@@ -142,34 +148,41 @@ export function HomePage() {
                 aria-live="polite"
                 aria-relevant="additions text"
               >
-                {dictationStatus === 'unsupported' ? (
+                {dictationStatus === "unsupported" ? (
                   <p className="text-[rgba(187,202,191,0.78)]">
-                    Speech recognition isn’t available in this browser. Try Chrome on desktop.
+                    Speech recognition isn’t available in this browser. Try
+                    Chrome on desktop.
                   </p>
                 ) : null}
-                {dictationStatus === 'denied' ? (
+                {dictationStatus === "denied" ? (
                   <p className="text-[rgba(187,202,191,0.78)]">
-                    Microphone access was blocked. Allow the microphone for this site in your browser
-                    settings, then try again.
+                    Microphone access was blocked. Allow the microphone for this
+                    site in your browser settings, then try again.
                   </p>
                 ) : null}
-                {dictationStatus !== 'unsupported' && dictationStatus !== 'denied' ? (
+                {dictationStatus !== "unsupported" &&
+                dictationStatus !== "denied" ? (
                   <>
                     {!finalText && !interimText && !micListening ? (
                       <p className="text-[rgba(187,202,191,0.5)]">
-                        Tap the microphone below to dictate. Your words will appear here.
+                        Tap the microphone below to dictate. Your words will
+                        appear here.
                       </p>
                     ) : null}
                     {!finalText &&
                     !interimText &&
                     micListening &&
-                    dictationStatus === 'listening' ? (
-                      <p className="text-[rgba(187,202,191,0.55)]">Listening… speak now.</p>
+                    dictationStatus === "listening" ? (
+                      <p className="text-[rgba(187,202,191,0.55)]">
+                        Listening… speak now.
+                      </p>
                     ) : null}
                     {finalText || interimText ? (
                       <p className="whitespace-pre-wrap break-words text-[#e5e2e1]">
                         <span>{finalText}</span>
-                        <span className="text-[rgba(229,226,225,0.78)]">{interimText}</span>
+                        <span className="text-[rgba(229,226,225,0.78)]">
+                          {interimText}
+                        </span>
                       </p>
                     ) : null}
                   </>
@@ -184,7 +197,11 @@ export function HomePage() {
               className="flex items-center gap-3 rounded-2xl border border-[rgba(60,74,66,0.1)] bg-[#1c1b1b] px-6 py-[17px]"
             >
               <div className="relative h-[22px] w-[21px] shrink-0">
-                <img alt="" className="absolute inset-0 size-full max-w-none" src={imgCalendar} />
+                <img
+                  alt=""
+                  className="absolute inset-0 size-full max-w-none"
+                  src={imgCalendar}
+                />
               </div>
               <span className="text-center text-[16px] font-medium leading-6 text-[#e5e2e1]">
                 Plan a meeting
@@ -195,7 +212,11 @@ export function HomePage() {
               className="flex items-center gap-3 rounded-2xl border border-[rgba(60,74,66,0.1)] bg-[#1c1b1b] px-6 py-[17px]"
             >
               <div className="relative h-5 w-[15px] shrink-0">
-                <img alt="" className="absolute inset-0 size-full max-w-none" src={imgForkKnife} />
+                <img
+                  alt=""
+                  className="absolute inset-0 size-full max-w-none"
+                  src={imgForkKnife}
+                />
               </div>
               <span className="text-center text-[16px] font-medium leading-6 text-[#e5e2e1]">
                 Book dinner
@@ -206,7 +227,11 @@ export function HomePage() {
               className="flex items-center gap-3 rounded-2xl border border-[rgba(60,74,66,0.1)] bg-[#1c1b1b] px-6 py-[17px]"
             >
               <div className="relative size-5 shrink-0">
-                <img alt="" className="absolute inset-0 size-full max-w-none" src={imgChat} />
+                <img
+                  alt=""
+                  className="absolute inset-0 size-full max-w-none"
+                  src={imgChat}
+                />
               </div>
               <span className="text-center text-[16px] font-medium leading-6 text-[#e5e2e1]">
                 Message team
@@ -217,7 +242,11 @@ export function HomePage() {
               className="flex items-center gap-3 rounded-2xl border border-[rgba(60,74,66,0.1)] bg-[#1c1b1b] px-6 py-[17px]"
             >
               <div className="relative h-4 w-[18px] shrink-0">
-                <img alt="" className="absolute inset-0 size-full max-w-none" src={imgList} />
+                <img
+                  alt=""
+                  className="absolute inset-0 size-full max-w-none"
+                  src={imgList}
+                />
               </div>
               <span className="text-center text-[16px] font-medium leading-6 text-[#e5e2e1]">
                 Summarize Brief
@@ -239,14 +268,22 @@ export function HomePage() {
             className="relative block h-9 w-[36.1px] shrink-0"
             aria-label="Settings"
           >
-            <img alt="" className="absolute inset-0 size-full max-w-none" src={imgSettingsHeader} />
+            <img
+              alt=""
+              className="absolute inset-0 size-full max-w-none"
+              src={imgSettingsHeader}
+            />
           </Link>
           <Link
             to="/profile"
             className="size-8 shrink-0 overflow-hidden rounded-full border border-[rgba(60,74,66,0.2)] bg-[#2a2a2a] p-px focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgba(19,19,19,0.6)]"
             aria-label="Profile"
           >
-            <img alt="" className="size-full object-cover" src={imgUserProfileAvatar} />
+            <img
+              alt=""
+              className="size-full object-cover"
+              src={imgUserProfileAvatar}
+            />
           </Link>
         </div>
       </header>
@@ -257,7 +294,7 @@ export function HomePage() {
       >
         <div className="relative mx-auto h-20 w-full max-w-[390px]">
           <div
-            className={`pointer-events-none absolute left-1/2 top-0 z-50 flex w-[min(100%,220px)] -translate-x-1/2 -translate-y-[42%] flex-col items-center gap-1 ${micClusterIdle ? 'acta-nav-mic--idle' : ''}`}
+            className={`pointer-events-none absolute left-1/2 top-0 z-50 flex w-[min(100%,220px)] -translate-x-1/2 -translate-y-[42%] flex-col items-center gap-1 ${micClusterIdle ? "acta-nav-mic--idle" : ""}`}
           >
             <div
               className="flex h-8 w-full max-w-[200px] items-end justify-center gap-1"
@@ -280,7 +317,7 @@ export function HomePage() {
             </div>
             {silenceProcessing ? (
               <div
-                className="pointer-events-auto relative flex size-[4.5rem] items-center justify-center rounded-full bg-[rgba(78,222,163,0.15)] shadow-[0px_0px_20px_0px_rgba(78,222,163,0.2)]"
+                className="pointer-events-auto relative flex size-[5.75rem] items-center justify-center rounded-full bg-[rgba(78,222,163,0.15)] shadow-[0px_0px_20px_0px_rgba(78,222,163,0.2)]"
                 role="status"
                 aria-live="polite"
                 aria-label="Processing"
@@ -291,25 +328,29 @@ export function HomePage() {
               <button
                 type="button"
                 aria-pressed={micListening}
-                aria-label={micListening ? 'Microphone on, listening' : 'Microphone off, tap to listen'}
+                aria-label={
+                  micListening
+                    ? "Microphone on, listening"
+                    : "Microphone off, tap to listen"
+                }
                 onClick={() => setMicListening((v) => !v)}
-                className="pointer-events-auto relative flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]"
+                className="pointer-events-auto relative flex size-[5.75rem] items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]"
               >
                 <div
-                  className="acta-mic-pulse-ring pointer-events-none absolute aspect-square w-[4.5rem] rounded-full border border-[rgba(78,222,163,0.35)]"
+                  className="acta-mic-pulse-ring pointer-events-none absolute aspect-square w-[5.75rem] rounded-full border border-[rgba(78,222,163,0.35)]"
                   aria-hidden
                 />
                 <div
-                  className="acta-mic-pulse-ring-delayed pointer-events-none absolute aspect-square w-[4.5rem] rounded-full border border-[rgba(78,222,163,0.25)]"
+                  className="acta-mic-pulse-ring-delayed pointer-events-none absolute aspect-square w-[5.75rem] rounded-full border border-[rgba(78,222,163,0.25)]"
                   aria-hidden
                 />
-                <div className="acta-mic-button-glow relative flex items-center justify-center rounded-full bg-[rgba(78,222,163,0.2)] p-8 shadow-[0px_0px_40px_0px_rgba(78,222,163,0.3)]">
+                <div className="acta-mic-button-glow relative flex size-[3.75rem] shrink-0 items-center justify-center rounded-full bg-[rgba(78,222,163,0.2)] shadow-[0px_0px_40px_0px_rgba(78,222,163,0.3)]">
                   <div className="pointer-events-none absolute inset-0 rounded-full bg-[rgba(78,222,163,0.3)] opacity-20" />
                   <div className="pointer-events-none absolute inset-0 rounded-full bg-[rgba(78,222,163,0.1)]" />
-                  <div className="relative h-7 w-5 shrink-0">
+                  <div className="relative size-[calc(5.75rem*0.4)] shrink-0">
                     <img
                       alt=""
-                      className="acta-mic-icon-animate absolute inset-0 size-full max-w-none"
+                      className="acta-mic-icon-animate absolute inset-0 size-full max-w-none object-contain"
                       src={imgMic}
                     />
                   </div>
@@ -319,13 +360,17 @@ export function HomePage() {
             <p
               className={`acta-nav-mic-status mt-0.5 -translate-y-[6px] text-center font-bold uppercase ${
                 silenceProcessing
-                  ? 'text-[12px] leading-4 tracking-[2.4px] text-[#4edea3]'
+                  ? "text-[12px] leading-4 tracking-[2.4px] text-[#4edea3]"
                   : micListening
-                    ? 'acta-listening-text text-[12px] leading-4 tracking-[2.4px] text-[#4edea3]'
-                    : 'text-[8px] leading-3 tracking-[1.6px] text-[rgba(185,199,224,0.5)]'
+                    ? "acta-listening-text text-[12px] leading-4 tracking-[2.4px] text-[#4edea3]"
+                    : "text-[8px] leading-3 tracking-[1.6px] text-[rgba(185,199,224,0.5)]"
               }`}
             >
-              {silenceProcessing ? 'PROCESSING' : micListening ? 'LISTENING' : 'MIC OFF'}
+              {silenceProcessing
+                ? "PROCESSING"
+                : micListening
+                  ? "LISTENING"
+                  : "MIC OFF"}
             </p>
           </div>
 
@@ -335,10 +380,14 @@ export function HomePage() {
               className="flex flex-col items-center justify-end gap-1 pb-0.5"
             >
               <div className="relative h-[18px] w-4">
-                <img alt="" className="absolute inset-0 size-full max-w-none" src={imgNavHome} />
+                <img
+                  alt=""
+                  className="absolute inset-0 size-full max-w-none"
+                  src={imgNavHome}
+                />
               </div>
               <span
-                className={`text-[8px] font-bold uppercase leading-3 tracking-[0.8px] ${pathname === '/' ? 'text-[#4edea3]' : 'text-[rgba(185,199,224,0.5)]'}`}
+                className={`text-[8px] font-bold uppercase leading-3 tracking-[0.8px] ${pathname === "/" ? "text-[#4edea3]" : "text-[rgba(185,199,224,0.5)]"}`}
               >
                 HOME
               </span>
@@ -350,12 +399,12 @@ export function HomePage() {
               <div className="relative size-[19.3px]">
                 <img
                   alt=""
-                  className={`absolute inset-0 size-full max-w-none ${pathname === '/tasks' ? 'drop-shadow-[0_0_8px_rgba(78,222,163,0.75)]' : ''}`}
+                  className={`absolute inset-0 size-full max-w-none ${pathname === "/tasks" ? "drop-shadow-[0_0_8px_rgba(78,222,163,0.75)]" : ""}`}
                   src={imgNavApps}
                 />
               </div>
               <span
-                className={`text-[8px] font-bold uppercase leading-3 tracking-[0.8px] ${pathname === '/tasks' ? 'text-[#4edea3]' : 'text-[rgba(185,199,224,0.5)]'}`}
+                className={`text-[8px] font-bold uppercase leading-3 tracking-[0.8px] ${pathname === "/tasks" ? "text-[#4edea3]" : "text-[rgba(185,199,224,0.5)]"}`}
               >
                 TASKS
               </span>
@@ -368,12 +417,12 @@ export function HomePage() {
               <div className="relative h-[23px] w-6">
                 <img
                   alt=""
-                  className={`absolute inset-0 size-full max-w-none ${pathname === '/graph' ? 'drop-shadow-[0_0_10px_rgba(78,222,163,0.85)]' : ''}`}
+                  className={`absolute inset-0 size-full max-w-none ${pathname === "/graph" ? "drop-shadow-[0_0_10px_rgba(78,222,163,0.85)]" : ""}`}
                   src={imgNavGraph}
                 />
               </div>
               <span
-                className={`text-[8px] font-bold uppercase leading-3 tracking-[0.8px] ${pathname === '/graph' ? 'text-[#4edea3]' : 'text-[rgba(185,199,224,0.5)]'}`}
+                className={`text-[8px] font-bold uppercase leading-3 tracking-[0.8px] ${pathname === "/graph" ? "text-[#4edea3]" : "text-[rgba(185,199,224,0.5)]"}`}
               >
                 GRAPH
               </span>
@@ -385,12 +434,12 @@ export function HomePage() {
               <div className="relative h-5 w-[20.1px]">
                 <img
                   alt=""
-                  className={`absolute inset-0 size-full max-w-none ${pathname === '/settings' ? 'drop-shadow-[0_0_8px_rgba(78,222,163,0.9)]' : ''}`}
+                  className={`absolute inset-0 size-full max-w-none ${pathname === "/settings" ? "drop-shadow-[0_0_8px_rgba(78,222,163,0.9)]" : ""}`}
                   src={imgNavSettings}
                 />
               </div>
               <span
-                className={`text-[8px] font-bold uppercase leading-3 tracking-[0.8px] ${pathname === '/settings' ? 'text-[#4edea3]' : 'text-[rgba(185,199,224,0.5)]'}`}
+                className={`text-[8px] font-bold uppercase leading-3 tracking-[0.8px] ${pathname === "/settings" ? "text-[#4edea3]" : "text-[rgba(185,199,224,0.5)]"}`}
               >
                 SETTINGS
               </span>
@@ -399,5 +448,5 @@ export function HomePage() {
         </div>
       </nav>
     </div>
-  )
+  );
 }
