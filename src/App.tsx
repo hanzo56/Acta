@@ -7,7 +7,11 @@ import { InvestorCallsGraphPage } from './pages/InvestorCallsGraphPage'
 import { HomePage } from './pages/HomePage'
 import { PhoneUpdateGraphPage } from './pages/PhoneUpdateGraphPage'
 import { PhoneUpdatePreviewPage } from './pages/PhoneUpdatePreviewPage'
+import { AccountDetailsPage } from './pages/AccountDetailsPage'
+import { ProfileNotificationsPage } from './pages/ProfileNotificationsPage'
+import { ProfilePrivacyPage } from './pages/ProfilePrivacyPage'
 import { ProfileSettingsPage } from './pages/ProfileSettingsPage'
+import { ProfileSubscriptionPage } from './pages/ProfileSubscriptionPage'
 import { PreviewPage } from './pages/PreviewPage'
 import { SettingsPage } from './pages/SettingsPage'
 import { TasksPage } from './pages/TasksPage'
@@ -26,6 +30,10 @@ export default function App() {
       <Route path="/tasks" element={<TasksPage />} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="/profile" element={<ProfileSettingsPage />} />
+      <Route path="/profile/account" element={<AccountDetailsPage />} />
+      <Route path="/profile/subscription" element={<ProfileSubscriptionPage />} />
+      <Route path="/profile/notifications" element={<ProfileNotificationsPage />} />
+      <Route path="/profile/privacy" element={<ProfilePrivacyPage />} />
       <Route path="/connectors" element={<ConnectorsPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

@@ -131,6 +131,16 @@ export const ICON_CHEVRON_RIGHT = svgDataUrl(
   outlineIcon('<path d="m9 18 6-6-6-6"/>'),
 )
 
+export const ICON_CHEVRON_LEFT = svgDataUrl(
+  outlineIconLight('<path d="m15 18-6-6 6-6"/>'),
+)
+
+/** For destructive / emphasis rows (e.g. delete account) */
+const SALMON = '#ffb4ab'
+export const ICON_CHEVRON_RIGHT_SALMON = svgDataUrl(
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="${SALMON}" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`,
+)
+
 export const ICON_MAIL = svgDataUrl(
   outlineIconLight(
     '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>',
