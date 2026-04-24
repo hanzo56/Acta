@@ -1,20 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 
+import {
+  ICON_CALENDAR as imgCalendar,
+  ICON_CHAT as imgChat,
+  ICON_FORK_KNIFE as imgForkKnife,
+  ICON_LIST as imgList,
+  ICON_MIC_MINT as imgMic,
+  ICON_NAV_APPS_DIM as imgNavApps,
+  ICON_NAV_GRAPH_DIM as imgNavGraph,
+  ICON_NAV_HOME_SOLID as imgNavHome,
+  ICON_NAV_SETTINGS_DIM as imgNavSettings,
+  ICON_SETTINGS_GEAR as imgSettingsHeader,
+  ICON_USER_AVATAR as imgUserProfileAvatar,
+} from '../assets/actaIconUrls'
 import { useSpeechDictation } from '../hooks/useSpeechDictation'
-
-const imgUserProfileAvatar =
-  'https://www.figma.com/api/mcp/asset/b319f404-f6b1-4efb-b193-ec0f12841a6a'
-const imgCalendar = 'https://www.figma.com/api/mcp/asset/5cec74ce-7f8f-4cd4-a30a-9c7261b926e6'
-const imgForkKnife = 'https://www.figma.com/api/mcp/asset/c339afaa-6d27-4785-9ae9-0960043575d1'
-const imgChat = 'https://www.figma.com/api/mcp/asset/c7fe6845-f62d-4db3-9105-1d362e34762f'
-const imgList = 'https://www.figma.com/api/mcp/asset/472d8e13-d25c-49fc-ae41-6ccf38c27981'
-const imgMic = 'https://www.figma.com/api/mcp/asset/190802c2-b8f1-4e53-adde-8cac5c349fa9'
-const imgSettingsHeader = 'https://www.figma.com/api/mcp/asset/6a2a8927-eaf0-40c9-a836-fd65a36d6824'
-const imgNavHome = 'https://www.figma.com/api/mcp/asset/f8159318-98f5-4a10-b23a-f31f75ab63d2'
-const imgNavApps = 'https://www.figma.com/api/mcp/asset/2f0e5483-ac22-4b91-b8e3-e37f972705eb'
-const imgNavGraph = 'https://www.figma.com/api/mcp/asset/7855d582-3072-4873-b03d-5ef445275ad5'
-const imgNavSettings = 'https://www.figma.com/api/mcp/asset/cb903a54-72f1-4f23-92c3-c40fa0a0ccf6'
 
 /** Max bar height (scaleY animates from ~22% to 100% of this) */
 const bars = [
@@ -303,7 +303,7 @@ export function HomePage() {
                   className="acta-mic-pulse-ring-delayed pointer-events-none absolute aspect-square w-[4.5rem] rounded-full border border-[rgba(78,222,163,0.25)]"
                   aria-hidden
                 />
-                <div className="acta-mic-button-glow relative flex items-center justify-center rounded-full bg-[rgba(78,222,163,0.2)] p-4 shadow-[0px_0px_28px_0px_rgba(78,222,163,0.28)]">
+                <div className="acta-mic-button-glow relative flex items-center justify-center rounded-full bg-[rgba(78,222,163,0.2)] p-8 shadow-[0px_0px_40px_0px_rgba(78,222,163,0.3)]">
                   <div className="pointer-events-none absolute inset-0 rounded-full bg-[rgba(78,222,163,0.3)] opacity-20" />
                   <div className="pointer-events-none absolute inset-0 rounded-full bg-[rgba(78,222,163,0.1)]" />
                   <div className="relative h-7 w-5 shrink-0">
@@ -317,12 +317,12 @@ export function HomePage() {
               </button>
             )}
             <p
-              className={`acta-nav-mic-status mt-0.5 text-center text-[8px] font-bold uppercase leading-3 tracking-[1.6px] ${
+              className={`acta-nav-mic-status mt-0.5 -translate-y-[6px] text-center font-bold uppercase ${
                 silenceProcessing
-                  ? 'text-[#4edea3]'
+                  ? 'text-[12px] leading-4 tracking-[2.4px] text-[#4edea3]'
                   : micListening
-                    ? 'acta-listening-text text-[#4edea3]'
-                    : 'text-[rgba(185,199,224,0.5)]'
+                    ? 'acta-listening-text text-[12px] leading-4 tracking-[2.4px] text-[#4edea3]'
+                    : 'text-[8px] leading-3 tracking-[1.6px] text-[rgba(185,199,224,0.5)]'
               }`}
             >
               {silenceProcessing ? 'PROCESSING' : micListening ? 'LISTENING' : 'MIC OFF'}

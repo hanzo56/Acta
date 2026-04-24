@@ -2,8 +2,7 @@ import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const imgMessages =
-  'https://www.figma.com/api/mcp/asset/13775fd3-f434-43fb-9d63-13b1f713525a'
+import { ICON_MESSAGES as imgMessages } from '../assets/actaIconUrls'
 
 const STAGGER_MS = 2800
 const SECTION_COUNT = 3

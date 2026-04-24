@@ -2,18 +2,13 @@ import { useCallback, useEffect, useId, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { AppBottomNav } from '../components/AppBottomNav'
-
-/** Figma node 21:356 — Intelligence / Recent context */
-const imgUser =
-  'https://www.figma.com/api/mcp/asset/fb05fb57-5b8e-4a8f-a7de-a56ddcbf2849'
-const imgUsageSparkle =
-  'https://www.figma.com/api/mcp/asset/0b26063d-b262-4530-b4b8-813d2c25dd74'
-const imgOptionsDots =
-  'https://www.figma.com/api/mcp/asset/c3698677-04a0-4785-9ddd-52c4ce3a5891'
-const imgEdit =
-  'https://www.figma.com/api/mcp/asset/2942ae87-7b96-4360-9021-b4a849c3dbcf'
-const imgSearch =
-  'https://www.figma.com/api/mcp/asset/07a14779-9d0f-4656-9746-c3c766a58932'
+import {
+  ICON_DOTS_VERTICAL as imgOptionsDots,
+  ICON_EDIT as imgEdit,
+  ICON_SEARCH as imgSearch,
+  ICON_SPARKLE as imgUsageSparkle,
+  ICON_USER_AVATAR as imgUser,
+} from '../assets/actaIconUrls'
 const STORAGE_CONTACTS = 'acta.settings.favoriteContacts'
 const STORAGE_TONE = 'acta.settings.toneStyle'
 

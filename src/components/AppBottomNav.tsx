@@ -1,14 +1,11 @@
 import { Link, useLocation } from 'react-router-dom'
 
-/** Same Figma assets as HomePage bottom nav */
-const IMG_NAV_HOME =
-  'https://www.figma.com/api/mcp/asset/f8159318-98f5-4a10-b23a-f31f75ab63d2'
-const IMG_NAV_APPS =
-  'https://www.figma.com/api/mcp/asset/2f0e5483-ac22-4b91-b8e3-e37f972705eb'
-const IMG_NAV_GRAPH =
-  'https://www.figma.com/api/mcp/asset/7855d582-3072-4873-b03d-5ef445275ad5'
-const IMG_NAV_SETTINGS =
-  'https://www.figma.com/api/mcp/asset/cb903a54-72f1-4f23-92c3-c40fa0a0ccf6'
+import {
+  ICON_NAV_APPS as IMG_NAV_APPS,
+  ICON_NAV_GRAPH as IMG_NAV_GRAPH,
+  ICON_NAV_HOME as IMG_NAV_HOME,
+  ICON_NAV_SETTINGS as IMG_NAV_SETTINGS,
+} from '../assets/actaIconUrls'
 
 function navLabel(active: boolean) {
   return `text-[8px] font-bold uppercase leading-3 tracking-[0.8px] ${

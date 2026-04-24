@@ -2,21 +2,15 @@ import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 
 import { AppBottomNav } from "../components/AppBottomNav";
-
-const imgUser =
-  "https://www.figma.com/api/mcp/asset/94be4414-cc9e-4d5c-b29e-04dae21dab43";
-const imgSlack =
-  "https://www.figma.com/api/mcp/asset/7f8b54cb-075d-4394-abca-8b16e0f03f17";
-const imgChevron =
-  "https://www.figma.com/api/mcp/asset/904401dc-d0df-4175-afc0-ae2c1345bd58";
-const imgGmail =
-  "https://www.figma.com/api/mcp/asset/1ab1859c-8732-4318-8837-b75a2ae32e74";
-const imgCalendar =
-  "https://www.figma.com/api/mcp/asset/4a208709-22c0-40a0-8352-8f33422f60ea";
-const imgOpenTable =
-  "https://www.figma.com/api/mcp/asset/15cb743f-3903-41f2-a2a1-d44319c5e6ca";
-const imgSearch =
-  "https://www.figma.com/api/mcp/asset/218a2058-ddba-48e5-a9bc-f1535a58879b";
+import {
+  ICON_CALENDAR as imgCalendar,
+  ICON_CHEVRON_RIGHT as imgChevron,
+  ICON_GMAIL as imgGmail,
+  ICON_OPENTABLE as imgOpenTable,
+  ICON_SEARCH as imgSearch,
+  ICON_SLACK as imgSlack,
+  ICON_USER_AVATAR as imgUser,
+} from "../assets/actaIconUrls";
 /** Simple Icons CDN — brand marks for connectors without Figma assets */
 const iconInstagram = "https://cdn.simpleicons.org/instagram/E4405F";
 const iconFacebook = "https://cdn.simpleicons.org/facebook/1877F2";

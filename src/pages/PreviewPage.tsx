@@ -2,14 +2,12 @@ import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const imgMap =
-  "https://www.figma.com/api/mcp/asset/eaf7b63c-c64f-4bbf-bdf6-c73d408fe920";
-const imgMessages =
-  "https://www.figma.com/api/mcp/asset/13775fd3-f434-43fb-9d63-13b1f713525a";
-const imgCalendar =
-  "https://www.figma.com/api/mcp/asset/3429baad-9ae0-4bd2-91f6-7603bb4a7ce9";
-const imgOpenTable =
-  "https://www.figma.com/api/mcp/asset/15cb743f-3903-41f2-a2a1-d44319c5e6ca";
+import {
+  ICON_CALENDAR as imgCalendar,
+  ICON_MAP as imgMap,
+  ICON_MESSAGES as imgMessages,
+  ICON_OPENTABLE as imgOpenTable,
+} from "../assets/actaIconUrls";
 
 /** First block shows immediately; each following block after this delay. */
 const STAGGER_MS = 5000;
