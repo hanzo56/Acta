@@ -12,23 +12,16 @@ import {
   writeGraphStepTimes,
 } from "../graphFlowStorage";
 import { downloadDinnerWithSarahIcs } from "../utils/dinnerEventIcs";
-
-const imgUserProfile =
-  "https://www.figma.com/api/mcp/asset/62a50c2d-ed0c-46b1-a196-24ef5cc6c4b9";
-const imgMessages =
-  "https://www.figma.com/api/mcp/asset/48e0d446-cdf9-4c63-a566-1ce2d114f799";
-const imgCheck =
-  "https://www.figma.com/api/mcp/asset/6f9c5a7b-b87d-4bc7-bd68-74cb75e6ae98";
-const imgCalendar =
-  "https://www.figma.com/api/mcp/asset/ca90f40a-91bc-4d77-b3d0-f10ec1f2d348";
-const imgForkKnife =
-  "https://www.figma.com/api/mcp/asset/c1a08f2a-0706-4427-a3f5-7b68d3060e45";
-const imgBell =
-  "https://www.figma.com/api/mcp/asset/bd5c3338-25a3-499b-a65d-d8517347f191";
-const imgEllipsis =
-  "https://www.figma.com/api/mcp/asset/adf72b64-0fc3-4174-a5f2-a3b2ff753fbe";
-const imgSearchBtn =
-  "https://www.figma.com/api/mcp/asset/9267dc38-be11-43d8-a9fc-c1a80d0c5152";
+import {
+  ICON_BELL as imgBell,
+  ICON_CALENDAR as imgCalendar,
+  ICON_CHECK as imgCheck,
+  ICON_ELLIPSIS as imgEllipsis,
+  ICON_FORK_KNIFE as imgForkKnife,
+  ICON_MESSAGES as imgMessages,
+  ICON_SEARCH as imgSearchBtn,
+  ICON_USER_AVATAR as imgUserProfile,
+} from "../assets/actaIconUrls";
 const YELP_URL = "https://www.yelp.com/biz/tori-tori-shabu-n-sushi-arcadia-2";
 
 const TORI_PHOTOS = [

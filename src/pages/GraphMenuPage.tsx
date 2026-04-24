@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 
+import { RemoteNavMicCluster } from '../components/RemoteNavMicCluster'
+
 const MENU_IMAGES = [
   { src: '/images/tori-tori/04-menu-1.png', alt: 'Tori Tori — menu page 1' },
   { src: '/images/tori-tori/05-menu-2.png', alt: 'Tori Tori — menu page 2' },
@@ -30,6 +32,15 @@ export function GraphMenuPage() {
           ))}
         </div>
       </main>
+
+      <nav
+        className="acta-nav-fixed acta-nav-home h-20 overflow-visible bg-[rgba(19,19,19,0.9)] backdrop-blur-[12px]"
+        aria-label="Quick voice to home"
+      >
+        <div className="relative mx-auto h-20 w-full max-w-[390px]">
+          <RemoteNavMicCluster />
+        </div>
+      </nav>
     </div>
   )
 }

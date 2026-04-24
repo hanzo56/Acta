@@ -1,15 +1,11 @@
 import { AppBottomNav } from '../components/AppBottomNav'
-
-const imgUserProfile =
-  'https://www.figma.com/api/mcp/asset/62a50c2d-ed0c-46b1-a196-24ef5cc6c4b9'
-const imgMessages =
-  'https://www.figma.com/api/mcp/asset/48e0d446-cdf9-4c63-a566-1ce2d114f799'
-const imgCheck =
-  'https://www.figma.com/api/mcp/asset/6f9c5a7b-b87d-4bc7-bd68-74cb75e6ae98'
-const imgCalendar =
-  'https://www.figma.com/api/mcp/asset/ca90f40a-91bc-4d77-b3d0-f10ec1f2d348'
-const imgSearchBtn =
-  'https://www.figma.com/api/mcp/asset/9267dc38-be11-43d8-a9fc-c1a80d0c5152'
+import {
+  ICON_CALENDAR as imgCalendar,
+  ICON_CHECK as imgCheck,
+  ICON_MESSAGES as imgMessages,
+  ICON_SEARCH as imgSearchBtn,
+  ICON_USER_AVATAR as imgUserProfile,
+} from '../assets/actaIconUrls'
 
 const CONFIRMED_PARTNERS = [
   { name: 'Morgan Chen', firm: 'Horizon Ventures' },

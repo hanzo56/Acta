@@ -1,30 +1,21 @@
 import { useState, type ReactNode } from 'react'
 
 import { AppBottomNav } from '../components/AppBottomNav'
+import {
+  ICON_ACCOUNT as imgAccountDetails,
+  ICON_AGENT_INSIGHTS as imgAgentInsights,
+  ICON_BELL as imgNotifications,
+  ICON_CHEVRON_RIGHT as imgChevron,
+  ICON_PRIVACY as imgPrivacy,
+  ICON_PROFILE_RING_BADGE as imgBackgroundBorder,
+  ICON_SEARCH as imgSearch,
+  ICON_SIGN_OUT as imgSignOut,
+  ICON_SUBSCRIPTION as imgSubscription,
+  ICON_USER_AVATAR,
+} from '../assets/actaIconUrls'
 
-/** Figma node 100:197 — Profile Settings */
-const imgUserProfilePhoto =
-  'https://www.figma.com/api/mcp/asset/987bcecb-0548-45e3-a37d-f4278c671cb8'
-const imgUserProfile =
-  'https://www.figma.com/api/mcp/asset/063c6a13-ceaa-4645-8a72-e340809a4942'
-const imgSearch =
-  'https://www.figma.com/api/mcp/asset/f86c6b7f-bf39-4cf7-bef7-328807a7b912'
-const imgBackgroundBorder =
-  'https://www.figma.com/api/mcp/asset/87994ab7-0786-4f96-bb40-5f94306e8327'
-const imgAccountDetails =
-  'https://www.figma.com/api/mcp/asset/31482827-8602-4046-965c-689e4584629f'
-const imgChevron =
-  'https://www.figma.com/api/mcp/asset/85407219-001b-46a4-b115-6980f9d16466'
-const imgSubscription =
-  'https://www.figma.com/api/mcp/asset/7d9044a2-b782-424c-a046-b3ecd05fedc6'
-const imgNotifications =
-  'https://www.figma.com/api/mcp/asset/1b463aec-e090-4e3b-bc4b-6de8c33803cb'
-const imgPrivacy =
-  'https://www.figma.com/api/mcp/asset/0a97235d-20a3-4a36-a78d-80b475b40431'
-const imgAgentInsights =
-  'https://www.figma.com/api/mcp/asset/4e49f553-2063-4548-84d6-6f1958ba5106'
-const imgSignOut =
-  'https://www.figma.com/api/mcp/asset/c636cd30-1ec6-4d0d-b486-41961b72fb83'
+const imgUserProfilePhoto = ICON_USER_AVATAR
+const imgUserProfile = ICON_USER_AVATAR
 
 function SettingsRow({
   icon,

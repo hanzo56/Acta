@@ -2,22 +2,16 @@ import { useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { AppBottomNav } from '../components/AppBottomNav'
+import {
+  ICON_CALENDAR as imgTaskCalendar,
+  ICON_DOC as imgTaskDoc,
+  ICON_INSIGHT as imgInsightPredictive,
+  ICON_MAIL as imgTaskMail,
+  ICON_SEARCH as imgHeaderSearch,
+  ICON_USER_AVATAR as imgUserProfilePhoto,
+} from '../assets/actaIconUrls'
 import { readGraphFlowComplete } from '../graphFlowStorage'
 import { readPhoneUpdateComplete } from '../phoneUpdateStorage'
-
-/** Figma node 21:3 — Tasks / Ready to delegate */
-const imgUserProfilePhoto =
-  'https://www.figma.com/api/mcp/asset/c988cd55-c214-4dc8-9942-ff9b97114f3d'
-const imgTaskMail =
-  'https://www.figma.com/api/mcp/asset/e44116c1-1090-4324-b585-1e9613865c84'
-const imgTaskCalendar =
-  'https://www.figma.com/api/mcp/asset/91da8ec2-d776-4fd5-a2c6-973b7e7392f1'
-const imgTaskDoc =
-  'https://www.figma.com/api/mcp/asset/e75c96f3-34ea-4d75-82ee-9372b7064e11'
-const imgInsightPredictive =
-  'https://www.figma.com/api/mcp/asset/77f20aff-a149-4e93-8396-1b2a78a17f62'
-const imgHeaderSearch =
-  'https://www.figma.com/api/mcp/asset/2d5f8865-edc4-4921-8675-5a7b1f7a1981'
 
 /** Lowercase haystack; every non-empty word in the query must appear somewhere (AND). */
 function matchesTaskSearch(haystack: string, query: string) {
