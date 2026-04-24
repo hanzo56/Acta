@@ -1,50 +1,51 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation } from "react-router-dom";
 
 import {
   ICON_NAV_APPS as IMG_NAV_APPS,
   ICON_NAV_GRAPH as IMG_NAV_GRAPH,
   ICON_NAV_HOME as IMG_NAV_HOME,
   ICON_NAV_SETTINGS as IMG_NAV_SETTINGS,
-} from '../assets/actaIconUrls'
+} from "../assets/actaIconUrls";
 
 function navLabel(active: boolean) {
   return `text-[8px] font-bold uppercase leading-3 tracking-[0.8px] ${
-    active ? 'text-[#4edea3]' : 'text-[rgba(185,199,224,0.5)]'
-  }`
+    active ? "text-[#4edea3]" : "text-[rgba(185,199,224,0.5)]"
+  }`;
 }
 
 export type AppBottomNavProps = {
   /** Used while on `/tasks` when set (e.g. Tasks page PNG) */
-  tasksIconSrc?: string
+  tasksIconSrc?: string;
   /** Used while on `/settings` when set (e.g. Settings page PNG) */
-  settingsIconSrc?: string
+  settingsIconSrc?: string;
   /** Larger settings glyph + hit area (e.g. Settings route with custom active icon) */
-  largeSettingsIcon?: boolean
-}
+  largeSettingsIcon?: boolean;
+};
 
 export function AppBottomNav({
   tasksIconSrc,
   settingsIconSrc,
   largeSettingsIcon,
 }: AppBottomNavProps) {
-  const { pathname } = useLocation()
+  const { pathname } = useLocation();
 
   const tasksSrc =
-    pathname === '/tasks' && tasksIconSrc ? tasksIconSrc : IMG_NAV_APPS
-  const settingsActive = pathname === '/settings' || pathname === '/profile'
+    pathname === "/tasks" && tasksIconSrc ? tasksIconSrc : IMG_NAV_APPS;
+  const settingsActive = pathname === "/settings" || pathname === "/profile";
   const settingsSrc =
-    settingsActive && settingsIconSrc ? settingsIconSrc : IMG_NAV_SETTINGS
+    settingsActive && settingsIconSrc ? settingsIconSrc : IMG_NAV_SETTINGS;
 
   const tasksImgClass =
-    pathname === '/tasks' && tasksIconSrc ? 'object-contain' : ''
+    pathname === "/tasks" && tasksIconSrc ? "object-contain" : "";
   const settingsImgClass =
-    settingsActive && settingsIconSrc ? 'object-contain' : ''
+    settingsActive && settingsIconSrc ? "object-contain" : "";
 
   const settingsIconWrapClass =
-    largeSettingsIcon && settingsActive ? 'relative size-10' : 'relative h-5 w-[20.1px]'
+    largeSettingsIcon && settingsActive
+      ? "relative size-10"
+      : "relative h-5 w-[20.1px]";
 
-  const graphActive =
-    pathname === '/graph' || pathname.startsWith('/graph/')
+  const graphActive = pathname === "/graph" || pathname.startsWith("/graph/");
 
   return (
     <nav
@@ -56,46 +57,48 @@ export function AppBottomNav({
           <Link
             to="/"
             className="flex flex-col items-center justify-end gap-1 pb-0.5"
-            aria-current={pathname === '/' ? 'page' : undefined}
+            aria-current={pathname === "/" ? "page" : undefined}
           >
-            <div className="relative h-[18px] w-4">
+            <div className="relative h-5 w-[21px]">
               <img
                 alt=""
                 className="absolute inset-0 size-full max-w-none"
                 src={IMG_NAV_HOME}
               />
             </div>
-            <span className={navLabel(pathname === '/')}>HOME</span>
+            <span className={navLabel(pathname === "/")}>HOME</span>
           </Link>
           <Link
             to="/tasks"
             className="flex flex-col items-center justify-end gap-1 pb-0.5"
-            aria-current={pathname === '/tasks' ? 'page' : undefined}
+            aria-current={pathname === "/tasks" ? "page" : undefined}
           >
             <div className="relative size-[19.3px]">
               <img
                 alt=""
                 className={`absolute inset-0 size-full max-w-none ${tasksImgClass} ${
-                  pathname === '/tasks' ? 'drop-shadow-[0_0_8px_rgba(78,222,163,0.75)]' : ''
+                  pathname === "/tasks"
+                    ? "drop-shadow-[0_0_8px_rgba(78,222,163,0.75)]"
+                    : ""
                 }`}
                 src={tasksSrc}
               />
             </div>
-            <span className={navLabel(pathname === '/tasks')}>TASKS</span>
+            <span className={navLabel(pathname === "/tasks")}>TASKS</span>
           </Link>
           <div className="flex justify-center" aria-hidden />
           <Link
             to="/graph"
             className="flex flex-col items-center justify-end gap-1 pb-0.5"
-            aria-current={graphActive ? 'page' : undefined}
+            aria-current={graphActive ? "page" : undefined}
           >
             <div className="relative h-[23px] w-6">
               <img
                 alt=""
                 className={`absolute inset-0 size-full max-w-none ${
                   graphActive
-                    ? '[filter:brightness(0)_saturate(100%)_invert(73%)_sepia(31%)_saturate(650%)_hue-rotate(99deg)_brightness(98%)_contrast(92%)_drop-shadow(0_0_8px_rgba(78,222,163,0.65))]'
-                    : ''
+                    ? "[filter:brightness(0)_saturate(100%)_invert(73%)_sepia(31%)_saturate(650%)_hue-rotate(99deg)_brightness(98%)_contrast(92%)_drop-shadow(0_0_8px_rgba(78,222,163,0.65))]"
+                    : ""
                 }`}
                 src={IMG_NAV_GRAPH}
               />
@@ -105,13 +108,15 @@ export function AppBottomNav({
           <Link
             to="/settings"
             className="flex flex-col items-center justify-end gap-1 pb-0.5"
-            aria-current={settingsActive ? 'page' : undefined}
+            aria-current={settingsActive ? "page" : undefined}
           >
             <div className={settingsIconWrapClass}>
               <img
                 alt=""
                 className={`absolute inset-0 size-full max-w-none ${settingsImgClass} ${
-                  settingsActive ? 'drop-shadow-[0_0_8px_rgba(78,222,163,0.9)]' : ''
+                  settingsActive
+                    ? "drop-shadow-[0_0_8px_rgba(78,222,163,0.9)]"
+                    : ""
                 }`}
                 src={settingsSrc}
               />
@@ -121,5 +126,5 @@ export function AppBottomNav({
         </div>
       </div>
     </nav>
-  )
+  );
 }

@@ -4,7 +4,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   ICON_CALENDAR as imgCalendar,
   ICON_CHAT as imgChat,
-  ICON_FORK_KNIFE as imgForkKnife,
   ICON_LIST as imgList,
   ICON_MIC_MINT as imgMic,
   ICON_NAV_APPS_DIM as imgNavApps,
@@ -15,6 +14,9 @@ import {
   ICON_USER_AVATAR as imgUserProfileAvatar,
 } from "../assets/actaIconUrls";
 import { useSpeechDictation } from "../hooks/useSpeechDictation";
+
+/** Fork + knife asset (lavender) for Book dinner — see public/icon-book-dinner.png */
+const IMG_BOOK_DINNER = "/icon-book-dinner.png";
 
 /** Max bar height (scaleY animates from ~22% to 100% of this) */
 const bars = [
@@ -211,11 +213,11 @@ export function HomePage() {
               type="button"
               className="flex items-center gap-3 rounded-2xl border border-[rgba(60,74,66,0.1)] bg-[#1c1b1b] px-6 py-[17px]"
             >
-              <div className="relative h-5 w-[15px] shrink-0">
+              <div className="relative h-5 w-6 shrink-0">
                 <img
                   alt=""
-                  className="absolute inset-0 size-full max-w-none"
-                  src={imgForkKnife}
+                  className="absolute inset-0 size-full max-w-none object-contain object-left"
+                  src={IMG_BOOK_DINNER}
                 />
               </div>
               <span className="text-center text-[16px] font-medium leading-6 text-[#e5e2e1]">
@@ -358,7 +360,7 @@ export function HomePage() {
               </button>
             )}
             <p
-              className={`acta-nav-mic-status mt-0.5 -translate-y-[6px] text-center font-bold uppercase ${
+              className={`acta-nav-mic-status mt-0.5 -translate-y-[12px] text-center font-bold uppercase ${
                 silenceProcessing
                   ? "text-[12px] leading-4 tracking-[2.4px] text-[#4edea3]"
                   : micListening
@@ -379,7 +381,7 @@ export function HomePage() {
               to="/"
               className="flex flex-col items-center justify-end gap-1 pb-0.5"
             >
-              <div className="relative h-[18px] w-4">
+              <div className="relative h-5 w-[19px]">
                 <img
                   alt=""
                   className="absolute inset-0 size-full max-w-none"

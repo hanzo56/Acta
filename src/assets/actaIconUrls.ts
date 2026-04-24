@@ -18,6 +18,14 @@ function outlineIconLight(paths: string): string {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="${S2}" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`
 }
 
+/** Six-tooth cog outline (Heroicons-style), shared by nav + header settings */
+const GEAR_PATHS =
+  '<path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>'
+
+/** Hub + 5 spokes (one up); outer ring nodes — Graph nav */
+const GRAPH_HUB_SPOKE_PATHS =
+  '<path d="M 12 12 L 12 5.5 M 12 12 L 18.18 9.99 M 12 12 L 15.83 17.26 M 12 12 L 8.17 17.26 M 12 12 L 5.82 9.99"/><circle cx="12" cy="12" r="2.3"/><circle cx="12" cy="5.5" r="1.85"/><circle cx="18.18" cy="9.99" r="1.85"/><circle cx="15.83" cy="17.26" r="1.85"/><circle cx="8.17" cy="17.26" r="1.85"/><circle cx="5.82" cy="9.99" r="1.85"/>'
+
 /** Bottom nav + headers — muted so active labels / filters read clearly */
 export const ICON_NAV_HOME = svgDataUrl(
   outlineIcon('<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>'),
@@ -29,17 +37,9 @@ export const ICON_NAV_APPS = svgDataUrl(
   ),
 )
 
-export const ICON_NAV_GRAPH = svgDataUrl(
-  outlineIcon(
-    '<circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 6.5h7M15.5 6.5 8 17.5"/>',
-  ),
-)
+export const ICON_NAV_GRAPH = svgDataUrl(outlineIcon(GRAPH_HUB_SPOKE_PATHS))
 
-export const ICON_NAV_SETTINGS = svgDataUrl(
-  outlineIcon(
-    '<circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>',
-  ),
-)
+export const ICON_NAV_SETTINGS = svgDataUrl(outlineIcon(GEAR_PATHS))
 
 /** Figma home bottom bar (9:983): active HOME + inactive tabs */
 const NAV_DIM = 'rgba(185,199,224,0.5)'
@@ -58,17 +58,9 @@ export const ICON_NAV_APPS_DIM = svgDataUrl(
   ),
 )
 
-export const ICON_NAV_GRAPH_DIM = svgDataUrl(
-  outlineNavDim(
-    '<circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 6.5h7M15.5 6.5 8 17.5"/>',
-  ),
-)
+export const ICON_NAV_GRAPH_DIM = svgDataUrl(outlineNavDim(GRAPH_HUB_SPOKE_PATHS))
 
-export const ICON_NAV_SETTINGS_DIM = svgDataUrl(
-  outlineNavDim(
-    '<circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>',
-  ),
-)
+export const ICON_NAV_SETTINGS_DIM = svgDataUrl(outlineNavDim(GEAR_PATHS))
 
 /** Figma center FAB: filled mint microphone */
 export const ICON_MIC_MINT = svgDataUrl(
@@ -109,11 +101,7 @@ export const ICON_MIC = svgDataUrl(
   ),
 )
 
-export const ICON_SETTINGS_GEAR = svgDataUrl(
-  outlineIconLight(
-    '<circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>',
-  ),
-)
+export const ICON_SETTINGS_GEAR = svgDataUrl(outlineIconLight(GEAR_PATHS))
 
 export const ICON_MESSAGES = svgDataUrl(
   outlineIconLight(
