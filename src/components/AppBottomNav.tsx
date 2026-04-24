@@ -56,13 +56,17 @@ export function AppBottomNav({
         <div className="grid h-full w-full grid-cols-5 items-end gap-0 px-1 pb-2 pt-0">
           <Link
             to="/"
-            className="flex flex-col items-center justify-end gap-1 pb-0.5"
+            className="group flex flex-col items-center justify-end gap-1 pb-0.5"
             aria-current={pathname === "/" ? "page" : undefined}
           >
             <div className="relative h-5 w-[21px]">
               <img
                 alt=""
-                className="absolute inset-0 size-full max-w-none"
+                className={`absolute inset-0 size-full max-w-none origin-bottom transition duration-200 ${
+                  pathname === "/"
+                    ? "group-hover:scale-110 group-hover:drop-shadow-[0_0_10px_rgba(78,222,163,0.5)]"
+                    : "opacity-80 group-hover:opacity-100"
+                }`}
                 src={IMG_NAV_HOME}
               />
             </div>
@@ -70,16 +74,16 @@ export function AppBottomNav({
           </Link>
           <Link
             to="/tasks"
-            className="flex flex-col items-center justify-end gap-1 pb-0.5"
+            className="group flex flex-col items-center justify-end gap-1 pb-0.5"
             aria-current={pathname === "/tasks" ? "page" : undefined}
           >
             <div className="relative size-[19.3px]">
               <img
                 alt=""
-                className={`absolute inset-0 size-full max-w-none ${tasksImgClass} ${
+                className={`absolute inset-0 size-full max-w-none origin-bottom transition duration-200 ${tasksImgClass} ${
                   pathname === "/tasks"
-                    ? "drop-shadow-[0_0_8px_rgba(78,222,163,0.75)]"
-                    : ""
+                    ? "drop-shadow-[0_0_8px_rgba(78,222,163,0.75)] group-hover:drop-shadow-[0_0_12px_rgba(78,222,163,0.9)] group-hover:scale-110"
+                    : "opacity-80 group-hover:opacity-100"
                 }`}
                 src={tasksSrc}
               />
@@ -89,16 +93,16 @@ export function AppBottomNav({
           <div className="flex justify-center" aria-hidden />
           <Link
             to="/graph"
-            className="flex flex-col items-center justify-end gap-1 pb-0.5"
+            className="group flex flex-col items-center justify-end gap-1 pb-0.5"
             aria-current={graphActive ? "page" : undefined}
           >
             <div className="relative h-[23px] w-6">
               <img
                 alt=""
-                className={`absolute inset-0 size-full max-w-none ${
+                className={`absolute inset-0 size-full max-w-none origin-bottom transition duration-200 ${
                   graphActive
-                    ? "[filter:brightness(0)_saturate(100%)_invert(73%)_sepia(31%)_saturate(650%)_hue-rotate(99deg)_brightness(98%)_contrast(92%)_drop-shadow(0_0_8px_rgba(78,222,163,0.65))]"
-                    : ""
+                    ? "[filter:brightness(0)_saturate(100%)_invert(73%)_sepia(31%)_saturate(650%)_hue-rotate(99deg)_brightness(98%)_contrast(92%)_drop-shadow(0_0_8px_rgba(78,222,163,0.65))] group-hover:scale-110"
+                    : "opacity-80 group-hover:opacity-100"
                 }`}
                 src={IMG_NAV_GRAPH}
               />
@@ -107,16 +111,16 @@ export function AppBottomNav({
           </Link>
           <Link
             to="/settings"
-            className="flex flex-col items-center justify-end gap-1 pb-0.5"
+            className="group flex flex-col items-center justify-end gap-1 pb-0.5"
             aria-current={settingsActive ? "page" : undefined}
           >
             <div className={settingsIconWrapClass}>
               <img
                 alt=""
-                className={`absolute inset-0 size-full max-w-none ${settingsImgClass} ${
+                className={`absolute inset-0 size-full max-w-none ${settingsImgClass} origin-bottom transition duration-200 ${
                   settingsActive
-                    ? "drop-shadow-[0_0_8px_rgba(78,222,163,0.9)]"
-                    : ""
+                    ? "drop-shadow-[0_0_8px_rgba(78,222,163,0.9)] group-hover:drop-shadow-[0_0_12px_rgba(78,222,163,1)] group-hover:scale-110"
+                    : "opacity-80 group-hover:opacity-100"
                 }`}
                 src={settingsSrc}
               />

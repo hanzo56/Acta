@@ -155,12 +155,12 @@ export function SettingsPage() {
                 </h2>
                 <Link
                   to="/connectors"
-                  className="relative inline-flex min-h-9 min-w-9 shrink-0 items-center justify-center rounded-full text-[#bbcabf] transition-colors hover:text-[#e5e2e1] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3]"
+                  className="relative mt-0.5 inline-flex min-h-9 min-w-9 shrink-0 items-center justify-center rounded-full text-[#bbcabf] transition-colors hover:text-[#e5e2e1] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3]"
                   aria-label="Connectors — manage integrations"
                 >
                   <img
                     alt=""
-                    className="h-0.5 w-8 max-w-none object-contain opacity-90"
+                    className="size-[15px] max-w-none object-contain opacity-90"
                     src={imgOptionsDots}
                   />
                 </Link>

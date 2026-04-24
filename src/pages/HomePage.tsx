@@ -47,6 +47,9 @@ export function HomePage() {
   );
   const dictationSnapshotRef = useRef("");
 
+  const graphActive =
+    pathname === "/graph" || pathname.startsWith("/graph/");
+
   const handleDictationSilence = useCallback(() => {
     if (silenceNavigatedRef.current) return;
     silenceNavigatedRef.current = true;
@@ -379,12 +382,17 @@ export function HomePage() {
           <div className="grid h-full w-full grid-cols-5 items-end gap-0 px-1 pb-2 pt-0">
             <Link
               to="/"
-              className="flex flex-col items-center justify-end gap-1 pb-0.5"
+              className="group flex flex-col items-center justify-end gap-1 pb-0.5"
+              aria-current={pathname === "/" ? "page" : undefined}
             >
               <div className="relative h-5 w-[19px]">
                 <img
                   alt=""
-                  className="absolute inset-0 size-full max-w-none"
+                  className={`absolute inset-0 size-full max-w-none origin-bottom transition duration-200 ${
+                    pathname === "/"
+                      ? "group-hover:scale-110 group-hover:drop-shadow-[0_0_10px_rgba(78,222,163,0.5)]"
+                      : "opacity-80 group-hover:opacity-100"
+                  }`}
                   src={imgNavHome}
                 />
               </div>
@@ -396,12 +404,17 @@ export function HomePage() {
             </Link>
             <Link
               to="/tasks"
-              className="flex flex-col items-center justify-end gap-1 pb-0.5"
+              className="group flex flex-col items-center justify-end gap-1 pb-0.5"
+              aria-current={pathname === "/tasks" ? "page" : undefined}
             >
               <div className="relative size-[19.3px]">
                 <img
                   alt=""
-                  className={`absolute inset-0 size-full max-w-none ${pathname === "/tasks" ? "drop-shadow-[0_0_8px_rgba(78,222,163,0.75)]" : ""}`}
+                  className={`absolute inset-0 size-full max-w-none origin-bottom transition duration-200 ${
+                    pathname === "/tasks"
+                      ? "drop-shadow-[0_0_8px_rgba(78,222,163,0.75)] group-hover:drop-shadow-[0_0_12px_rgba(78,222,163,0.9)] group-hover:scale-110"
+                      : "opacity-80 group-hover:opacity-100"
+                  }`}
                   src={imgNavApps}
                 />
               </div>
@@ -414,29 +427,39 @@ export function HomePage() {
             <div className="flex justify-center" aria-hidden />
             <Link
               to="/graph"
-              className="flex flex-col items-center justify-end gap-1 pb-0.5"
+              className="group flex flex-col items-center justify-end gap-1 pb-0.5"
+              aria-current={graphActive ? "page" : undefined}
             >
               <div className="relative h-[23px] w-6">
                 <img
                   alt=""
-                  className={`absolute inset-0 size-full max-w-none ${pathname === "/graph" ? "drop-shadow-[0_0_10px_rgba(78,222,163,0.85)]" : ""}`}
+                  className={`absolute inset-0 size-full max-w-none origin-bottom transition duration-200 ${
+                    graphActive
+                      ? "drop-shadow-[0_0_10px_rgba(78,222,163,0.85)] group-hover:drop-shadow-[0_0_12px_rgba(78,222,163,0.95)] group-hover:scale-110"
+                      : "opacity-80 group-hover:opacity-100"
+                  }`}
                   src={imgNavGraph}
                 />
               </div>
               <span
-                className={`text-[8px] font-bold uppercase leading-3 tracking-[0.8px] ${pathname === "/graph" ? "text-[#4edea3]" : "text-[rgba(185,199,224,0.5)]"}`}
+                className={`text-[8px] font-bold uppercase leading-3 tracking-[0.8px] ${graphActive ? "text-[#4edea3]" : "text-[rgba(185,199,224,0.5)]"}`}
               >
                 GRAPH
               </span>
             </Link>
             <Link
               to="/settings"
-              className="flex flex-col items-center justify-end gap-1 pb-0.5"
+              className="group flex flex-col items-center justify-end gap-1 pb-0.5"
+              aria-current={pathname === "/settings" ? "page" : undefined}
             >
               <div className="relative h-5 w-[20.1px]">
                 <img
                   alt=""
-                  className={`absolute inset-0 size-full max-w-none ${pathname === "/settings" ? "drop-shadow-[0_0_8px_rgba(78,222,163,0.9)]" : ""}`}
+                  className={`absolute inset-0 size-full max-w-none origin-bottom transition duration-200 ${
+                    pathname === "/settings"
+                      ? "drop-shadow-[0_0_8px_rgba(78,222,163,0.9)] group-hover:drop-shadow-[0_0_12px_rgba(78,222,163,1)] group-hover:scale-110"
+                      : "opacity-80 group-hover:opacity-100"
+                  }`}
                   src={imgNavSettings}
                 />
               </div>
