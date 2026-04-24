@@ -14,6 +14,7 @@ import {
   ICON_USER_AVATAR as imgUserProfileAvatar,
 } from "../assets/actaIconUrls";
 import { useSpeechDictation } from "../hooks/useSpeechDictation";
+import { shouldActivateMicFromNav } from "../navigation/activateMicFromNav";
 
 /** Fork + knife asset (lavender) for Book dinner — see public/icon-book-dinner.png */
 const IMG_BOOK_DINNER = "/icon-book-dinner.png";
@@ -38,7 +39,8 @@ const PHONE_UPDATE_INTENT =
 
 export function HomePage() {
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const location = useLocation();
+  const { pathname } = location;
   const [micListening, setMicListening] = useState(false);
   const [silenceProcessing, setSilenceProcessing] = useState(false);
   const silenceNavigatedRef = useRef(false);
@@ -70,6 +72,15 @@ export function HomePage() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!shouldActivateMicFromNav(location.state)) return;
+    const id = requestAnimationFrame(() => {
+      setMicListening(true);
+      navigate(".", { replace: true, state: null });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [location.state, navigate]);
 
   const prevMicOnRef = useRef(false);
   useEffect(() => {

@@ -7,6 +7,7 @@ import {
   ICON_MESSAGES as imgMessages,
   ICON_OPENTABLE as imgOpenTable,
 } from "../assets/actaIconUrls";
+import { RemoteNavMicCluster } from "../components/RemoteNavMicCluster";
 
 /**
  * OpenStreetMap embed around Tori Tori Shabu N Sushi, Arcadia, CA.
@@ -150,6 +151,15 @@ export function PreviewPage() {
         ) : null}
         </div>
       </main>
+
+      <nav
+        className="acta-preview-mic-rail acta-nav-home h-20 overflow-visible bg-[rgba(19,19,19,0.9)] backdrop-blur-[12px]"
+        aria-label="Quick voice to home"
+      >
+        <div className="relative mx-auto h-20 w-full max-w-[390px]">
+          <RemoteNavMicCluster />
+        </div>
+      </nav>
 
       <div className="acta-preview-footer-fixed bg-[rgba(19,19,19,0.8)] px-6 pb-12 pt-6 backdrop-blur-[20px]">
         <div className="flex flex-col gap-3">

@@ -116,13 +116,26 @@ body {
 /* Preview: only bottom approve bar (top matches former pt-12 + safe area) */
 .acta-main--inset-preview {
   padding-top: max(3rem, calc(0.75rem + env(safe-area-inset-top, 0px)));
-  padding-bottom: calc(var(--acta-preview-footer-h) + env(safe-area-inset-bottom, 0px));
+  /* Approve bar + same-height mic rail above it */
+  padding-bottom: calc(
+    var(--acta-preview-footer-h) + var(--acta-nav-h) + env(safe-area-inset-bottom, 0px)
+  );
 }
 
-/* Graph menu subpage: only top bar */
+/* Phone-update preview: no approve footer for first two steps; only bottom mic */
+.acta-main--inset-preview-mic-only {
+  padding-top: max(3rem, calc(0.75rem + env(safe-area-inset-top, 0px)));
+  padding-bottom: calc(
+    var(--acta-nav-h) + env(safe-area-inset-bottom, 0px)
+  );
+}
+
+/* Graph menu subpage: top bar + bottom mic rail (matches main app nav) */
 .acta-main--inset-menu {
   padding-top: calc(3.5rem + env(safe-area-inset-top, 0px));
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-bottom: calc(
+    var(--acta-nav-h) + env(safe-area-inset-bottom, 0px)
+  );
 }
 
 .acta-header-fixed {
@@ -145,6 +158,20 @@ body {
   max-width: 390px;
   transform: translateX(-50%);
   padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Mic strip stacked above the preview approve / cancel bar */
+.acta-preview-mic-rail {
+  position: fixed;
+  bottom: calc(
+    var(--acta-preview-footer-h) + env(safe-area-inset-bottom, 0px)
+  );
+  left: 50%;
+  z-index: 41;
+  width: 100%;
+  max-width: 390px;
+  transform: translateX(-50%);
+  padding-bottom: 0;
 }
 
 .acta-preview-footer-fixed {

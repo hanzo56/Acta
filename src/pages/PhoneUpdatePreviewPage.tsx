@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { ICON_MESSAGES as imgMessages } from '../assets/actaIconUrls'
+import { RemoteNavMicCluster } from '../components/RemoteNavMicCluster'
 
 const STAGGER_MS = 2800
 const SECTION_COUNT = 3
@@ -25,7 +26,13 @@ export function PhoneUpdatePreviewPage() {
 
   return (
     <div className="acta-shell bg-[#131313] text-[#e5e2e1]">
-      <main className="acta-main acta-main--inset-preview w-full px-6">
+      <main
+        className={`acta-main w-full px-6 ${
+          visibleCount >= 3
+            ? 'acta-main--inset-preview'
+            : 'acta-main--inset-preview-mic-only'
+        }`}
+      >
         <div className="mx-auto flex w-full max-w-[672px] flex-col gap-12">
         {visibleCount >= 1 ? (
           <header className="acta-preview-reveal flex flex-col gap-2">
@@ -68,6 +75,19 @@ export function PhoneUpdatePreviewPage() {
         ) : null}
         </div>
       </main>
+
+      <nav
+        className={
+          visibleCount >= 3
+            ? 'acta-preview-mic-rail acta-nav-home h-20 overflow-visible bg-[rgba(19,19,19,0.9)] backdrop-blur-[12px]'
+            : 'acta-nav-fixed acta-nav-home h-20 overflow-visible bg-[rgba(19,19,19,0.9)] backdrop-blur-[12px]'
+        }
+        aria-label="Quick voice to home"
+      >
+        <div className="relative mx-auto h-20 w-full max-w-[390px]">
+          <RemoteNavMicCluster />
+        </div>
+      </nav>
 
       {visibleCount >= 3 ? (
         <div className="acta-preview-footer-fixed bg-[rgba(19,19,19,0.8)] px-6 pb-12 pt-6 backdrop-blur-[20px]">

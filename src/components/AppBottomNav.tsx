@@ -6,6 +6,7 @@ import {
   ICON_NAV_HOME as IMG_NAV_HOME,
   ICON_NAV_SETTINGS as IMG_NAV_SETTINGS,
 } from "../assets/actaIconUrls";
+import { RemoteNavMicCluster } from "./RemoteNavMicCluster";
 
 function navLabel(active: boolean) {
   return `text-[8px] font-bold uppercase leading-3 tracking-[0.8px] ${
@@ -53,6 +54,7 @@ export function AppBottomNav({
       aria-label="Primary"
     >
       <div className="relative mx-auto h-20 w-full max-w-[390px]">
+        <RemoteNavMicCluster />
         <div className="grid h-full w-full grid-cols-5 items-end gap-0 px-1 pb-2 pt-0">
           <Link
             to="/"
