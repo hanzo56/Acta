@@ -13,6 +13,8 @@ import { ProfilePrivacyPage } from './pages/ProfilePrivacyPage'
 import { ProfileSettingsPage } from './pages/ProfileSettingsPage'
 import { ProfileSubscriptionPage } from './pages/ProfileSubscriptionPage'
 import { PreviewPage } from './pages/PreviewPage'
+import { ValentineGraphPage } from './pages/ValentineGraphPage'
+import { ValentinePreviewPage } from './pages/ValentinePreviewPage'
 import { SettingsPage } from './pages/SettingsPage'
 import { TasksPage } from './pages/TasksPage'
 
@@ -22,11 +24,13 @@ export default function App() {
       <Route path="/" element={<HomePage />} />
       <Route path="/preview" element={<PreviewPage />} />
       <Route path="/preview/update" element={<PhoneUpdatePreviewPage />} />
+      <Route path="/preview/valentine" element={<ValentinePreviewPage />} />
       <Route path="/graph" element={<GraphPage />} />
       <Route path="/graph/phone-update" element={<PhoneUpdateGraphPage />} />
       <Route path="/graph/investor-calls" element={<InvestorCallsGraphPage />} />
       <Route path="/graph/draft-research-memo" element={<DraftResearchMemoGraphPage />} />
       <Route path="/graph/menu" element={<GraphMenuPage />} />
+      <Route path="/graph/valentine" element={<ValentineGraphPage />} />
       <Route path="/tasks" element={<TasksPage />} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="/profile" element={<ProfileSettingsPage />} />

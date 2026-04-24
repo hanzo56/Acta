@@ -34,6 +34,13 @@ const bars = [
 const SILENCE_MS = 3000;
 const PROCESSING_BEFORE_NAV_MS = 2000;
 
+/**
+ * Spoken intent → Valentine’s “jaw-dropping” surprise plan (messages, friends,
+ * chef, show, custom song) — checked before phone update and dinner.
+ */
+const VALENTINE_INTENT =
+  /\b(?:valentine|valentine'?s(?: day)?|jaw\s*-?\s*dropping|private chef|concert tickets?|message history|old texts?|search(?:ing)? (?:my )?(?:text )?messages?|surprise (?:for|plan|planning) (?:a )?sarah|plan (?:a |the |my )?(?:jaw|valentine) (?:day )?surprise|custom song|the aurora|friend(?:'s|s)? (?:for )?(?:input|sign)|deep personalization|anniversary month|hint(?:s|ed)? in (?:our )?texts?|poll (?:eugene|my friends|friends)|unforgettable (?:night|evening))\b/i;
+
 /** Spoken intent → phone-activity preview instead of dinner preview */
 const PHONE_UPDATE_INTENT =
   /\b(?:give me a status update on my phone activit(?:y|ies|es)|give me an update on my phone activit(?:y|ies)|give me an update on my phone activity|give me an update|give (?:me )?(?:an )?update|provide (?:me )?(?:with )?(?:an )?update|provide me an update on my phone activit(?:y|ies)|provide me a status update on my phone activit(?:y|ies|es)|an update on my phone activit(?:y|ies)|update (?:on|about) my phone(?: activit(?:y|ies))?|updates? (?:on|about|for) my phone|phone activit(?:y|ies) (?:update|summary)|summar(?:y|ize|ise) (?:of )?my phone|what(?:'s| is) (?:happening |going )?on my phone|any updates? (?:on|about|for) my phone|phone update|activity update|check my phone)\b/i;
@@ -61,8 +68,15 @@ export function HomePage() {
     processingNavTimeoutRef.current = window.setTimeout(() => {
       processingNavTimeoutRef.current = null;
       const t = dictationSnapshotRef.current;
-      const goPhoneUpdate = PHONE_UPDATE_INTENT.test(t);
-      navigate(goPhoneUpdate ? "/preview/update" : "/preview");
+      if (VALENTINE_INTENT.test(t)) {
+        navigate("/preview/valentine");
+        return;
+      }
+      if (PHONE_UPDATE_INTENT.test(t)) {
+        navigate("/preview/update");
+        return;
+      }
+      navigate("/preview");
     }, PROCESSING_BEFORE_NAV_MS);
   }, [navigate]);
 
