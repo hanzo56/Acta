@@ -4,10 +4,16 @@ import { useNavigate } from "react-router-dom";
 
 import {
   ICON_CALENDAR as imgCalendar,
-  ICON_MAP as imgMap,
   ICON_MESSAGES as imgMessages,
   ICON_OPENTABLE as imgOpenTable,
 } from "../assets/actaIconUrls";
+
+/**
+ * OpenStreetMap embed around Tori Tori Shabu N Sushi, Arcadia, CA.
+ * bbox = min lon, min lat, max lon, max lat (see openstreetmap.org/copyright).
+ */
+const OSM_TORI_TORI_EMBED =
+  "https://www.openstreetmap.org/export/embed.html?bbox=-118.054%2C34.128%2C-118.030%2C34.147&layer=mapnik";
 
 /** First block shows immediately; each following block after this delay. */
 const STAGGER_MS = 5000;
@@ -111,15 +117,28 @@ export function PreviewPage() {
 
         {visibleCount >= 5 ? (
           <div className="acta-preview-reveal relative isolate overflow-hidden rounded-2xl border border-[rgba(60,74,66,0.1)]">
-            <div className="relative h-40 w-full opacity-40">
-              <img
-                alt=""
-                className="absolute left-0 top-[-58%] h-[215%] w-full max-w-none object-cover"
-                src={imgMap}
+            <div className="relative h-44 w-full min-h-[11rem] bg-[#1a1a1a] sm:h-48">
+              <iframe
+                title="Map — TORI TORI SHABU N SUSHI, Arcadia, CA"
+                className="pointer-events-none absolute inset-0 size-full scale-[1.02] border-0 contrast-[1.02] grayscale-[0.15]"
+                src={OSM_TORI_TORI_EMBED}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[rgba(19,19,19,0.8)] via-[rgba(19,19,19,0)] to-[rgba(19,19,19,0)]" />
-            <div className="absolute bottom-4 left-6 flex flex-col gap-0.5">
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[rgba(19,19,19,0.88)] via-[rgba(19,19,19,0.2)] to-[rgba(19,19,19,0.15)]" />
+            <p className="pointer-events-auto absolute bottom-2 right-3 z-[1] m-0 max-w-[55%] text-right text-[9px] leading-snug text-[rgba(187,202,191,0.55)]">
+              ©{" "}
+              <a
+                href="https://www.openstreetmap.org/copyright"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline decoration-[rgba(187,202,191,0.35)] underline-offset-2 hover:text-[#bbcabf]"
+              >
+                OpenStreetMap
+              </a>
+            </p>
+            <div className="pointer-events-none absolute bottom-4 left-6 flex max-w-[min(100%,calc(100%-7rem))] flex-col gap-0.5">
               <span className="text-[10px] font-bold uppercase leading-[15px] tracking-[1px] text-[#bbcabf]">
                 DESTINATION
               </span>
