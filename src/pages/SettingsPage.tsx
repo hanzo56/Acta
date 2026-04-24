@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useId, useState } from 'react'
 import { Link } from 'react-router-dom'
 
+import { ActaHeaderLogo } from '../components/ActaHeaderLogo'
 import { AppBottomNav } from '../components/AppBottomNav'
 import {
   ICON_DOTS_VERTICAL as imgOptionsDots,
   ICON_EDIT as imgEdit,
-  ICON_SEARCH as imgSearch,
   ICON_SPARKLE as imgUsageSparkle,
-  ICON_USER_AVATAR as imgUser,
 } from '../assets/actaIconUrls'
 const STORAGE_CONTACTS = 'acta.settings.favoriteContacts'
 const STORAGE_TONE = 'acta.settings.toneStyle'
@@ -115,13 +114,8 @@ export function SettingsPage() {
 
   return (
     <div className="acta-shell bg-[#131313] text-[#e5e2e1]">
-      <header className="acta-header-fixed z-10 flex h-16 items-center justify-between bg-[#131313] px-6">
-        <div className="size-8 overflow-hidden rounded-full bg-[#2a2a2a]">
-          <img alt="" className="size-full object-cover" src={imgUser} />
-        </div>
-        <button type="button" className="rounded-full p-2" aria-label="Search">
-          <img alt="" className="size-[18px]" src={imgSearch} />
-        </button>
+      <header className="acta-header-fixed z-10 flex h-16 items-center justify-start bg-[#131313] px-6">
+        <ActaHeaderLogo />
       </header>
 
       <main className="acta-main acta-main--inset-both max-w-[672px] px-6 pb-10">

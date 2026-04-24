@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
+import { ActaHeaderLogo } from '../components/ActaHeaderLogo'
 import { AppBottomNav } from '../components/AppBottomNav'
 import {
   ICON_CALENDAR as imgTaskCalendar,
@@ -8,7 +9,6 @@ import {
   ICON_INSIGHT as imgInsightPredictive,
   ICON_MAIL as imgTaskMail,
   ICON_SEARCH as imgHeaderSearch,
-  ICON_USER_AVATAR as imgUserProfilePhoto,
 } from '../assets/actaIconUrls'
 import { readGraphFlowComplete } from '../graphFlowStorage'
 import { readPhoneUpdateComplete } from '../phoneUpdateStorage'
@@ -281,8 +281,8 @@ export function TasksPage() {
       </main>
 
       <header className="acta-header-fixed z-10 flex h-16 items-center gap-3 bg-[#131313] px-6">
-        <div className="size-8 shrink-0 overflow-hidden rounded-full bg-[#201f1f]">
-          <img alt="" className="size-full object-cover" src={imgUserProfilePhoto} />
+        <div className="shrink-0">
+          <ActaHeaderLogo />
         </div>
         <div className="flex min-w-0 flex-1 items-center gap-2 rounded-full border border-[rgba(60,74,66,0.25)] bg-[#1c1b1b] px-3 py-2 shadow-[0px_0px_0px_1px_rgba(60,74,66,0.08)] transition-[box-shadow,ring] focus-within:border-[rgba(78,222,163,0.45)] focus-within:shadow-[0px_0px_0px_1px_rgba(78,222,163,0.35),0_0_0_3px_rgba(78,222,163,0.15)] focus-within:ring-2 focus-within:ring-[#4edea3]/80">
           <img alt="" className="size-[18px] shrink-0 opacity-80" src={imgHeaderSearch} aria-hidden />
