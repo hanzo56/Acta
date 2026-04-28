@@ -12,6 +12,10 @@ import {
 } from '../assets/actaIconUrls'
 import { readGraphFlowComplete } from '../graphFlowStorage'
 import { readPhoneUpdateComplete } from '../phoneUpdateStorage'
+import {
+  readValentineCompletedStepTitles,
+  readValentineFlowComplete,
+} from '../valentineGraphStorage'
 
 /** Lowercase haystack; every non-empty word in the query must appear somewhere (AND). */
 function matchesTaskSearch(haystack: string, query: string) {
@@ -32,15 +36,19 @@ const TASK_SEARCH = {
   memo: 'draft research memo running synthesizing market data internal repositories public filings status',
   phoneUpdate:
     'phone activity summary spam email voicemail mother arcadia school daughter team out of office ooo sent completed',
+  valentine:
+    'valentine surprise sarah aurora chef concert custom song run sheet vehicle navigation orchestration completed steps eugene kyson larry calendar tickets',
 } as const
 
 export function TasksPage() {
   const graphFlowComplete = readGraphFlowComplete()
   const phoneUpdateComplete = readPhoneUpdateComplete()
+  const valentineFlowComplete = readValentineFlowComplete()
+  const valentineStepTitles = readValentineCompletedStepTitles()
   const [taskSearch, setTaskSearch] = useState('')
   const taskSearchInputRef = useRef<HTMLInputElement>(null)
 
-  const { showDinner, showInvestor, showMemo, showPhoneUpdate } = useMemo(() => {
+  const { showDinner, showInvestor, showMemo, showPhoneUpdate, showValentine } = useMemo(() => {
     const q = taskSearch
     return {
       showDinner: graphFlowComplete && matchesTaskSearch(TASK_SEARCH.dinner, q),
@@ -48,10 +56,13 @@ export function TasksPage() {
       showMemo: matchesTaskSearch(TASK_SEARCH.memo, q),
       showPhoneUpdate:
         phoneUpdateComplete && matchesTaskSearch(TASK_SEARCH.phoneUpdate, q),
+      showValentine:
+        valentineFlowComplete && matchesTaskSearch(TASK_SEARCH.valentine, q),
     }
-  }, [taskSearch, graphFlowComplete, phoneUpdateComplete])
+  }, [taskSearch, graphFlowComplete, phoneUpdateComplete, valentineFlowComplete])
 
-  const hasAnyTaskMatch = showDinner || showInvestor || showMemo || showPhoneUpdate
+  const hasAnyTaskMatch =
+    showDinner || showInvestor || showMemo || showPhoneUpdate || showValentine
 
   return (
     <div className="acta-shell bg-[#131313] text-[#e5e2e1]">
@@ -109,6 +120,53 @@ export function TasksPage() {
                       <p className="text-[14px] font-semibold leading-5 text-[#e5e2e1]">Confirmed</p>
                       <p className="text-[9px] font-normal uppercase leading-[13.5px] tracking-[0.45px] text-[rgba(187,202,191,0.4)]">
                         OUTCOME
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              ) : null}
+
+              {showValentine ? (
+                <Link
+                  to="/graph/valentine"
+                  className="flex flex-col gap-4 rounded-2xl border border-[rgba(60,74,66,0.05)] bg-[#1c1b1b] p-[25px] text-left no-underline transition-colors hover:border-[rgba(60,74,66,0.18)] hover:bg-[#222121] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#131313]"
+                  aria-label="Valentine surprise for Sarah — view full graph"
+                >
+                  <div className="flex flex-col gap-2">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="text-[10px] font-bold uppercase leading-[15px] tracking-[1px] text-[rgba(187,202,191,0.5)]">
+                        COMPLETED
+                      </span>
+                      <span className="text-[10px] font-normal leading-[15px] text-[rgba(187,202,191,0.4)]">
+                        Recently
+                      </span>
+                    </div>
+                    <h4 className="text-[20px] font-semibold leading-7 tracking-[-0.5px] text-[#e5e2e1]">
+                      Valentine surprise for Sarah
+                    </h4>
+                    <p className="text-[15px] font-normal leading-[24px] text-[#bbcabf]">
+                      Graph finished: friends polled, dinner and show on calendar, custom
+                      song, run sheet, and car nav to the venue. Tap for the full list.
+                    </p>
+                    {valentineStepTitles && valentineStepTitles.length > 0 ? (
+                      <ol className="mb-0 mt-1 list-decimal space-y-1.5 pl-5 text-[14px] font-normal leading-5 text-[#bbcabf]">
+                        {valentineStepTitles.map((title) => (
+                          <li key={title} className="pl-0.5">
+                            {title}
+                          </li>
+                        ))}
+                      </ol>
+                    ) : null}
+                  </div>
+                  <div className="flex items-center gap-4 border-t border-transparent pt-2">
+                    <div className="flex size-8 items-center justify-center rounded-lg bg-[#201f1f] shadow-[0_0_0_2px_#1c1b1b]">
+                      <img alt="" className="h-2.5 w-2 object-contain" src={imgTaskCalendar} />
+                    </div>
+                    <div className="h-8 w-px bg-[rgba(60,74,66,0.1)]" aria-hidden />
+                    <div className="text-right">
+                      <p className="text-[14px] font-semibold leading-5 text-[#e5e2e1]">All steps</p>
+                      <p className="text-[9px] font-normal uppercase leading-[13.5px] tracking-[0.45px] text-[rgba(187,202,191,0.4)]">
+                        ORCHESTRATION
                       </p>
                     </div>
                   </div>

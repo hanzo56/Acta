@@ -12,6 +12,7 @@ import {
   writeGraphSequenceStart,
   writeGraphStepTimes,
 } from "../graphFlowStorage";
+import { writeLastCompletedGraphNav } from "../graphNavPath";
 import { downloadDinnerWithSarahIcs } from "../utils/dinnerEventIcs";
 import {
   ICON_BELL as imgBell,
@@ -254,6 +255,7 @@ export function GraphPage() {
     writeGraphFlowComplete();
     if (stepCompletedAt.every((t): t is number => t != null)) {
       writeGraphStepTimes(stepCompletedAt);
+      writeLastCompletedGraphNav("dinner", Math.max(...stepCompletedAt));
     }
   }, [stepStatuses, stepCompletedAt]);
 
