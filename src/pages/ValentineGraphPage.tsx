@@ -1,4 +1,11 @@
-import { useEffect, useState } from "react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useLocation } from "react-router-dom";
 
 import { ActaHeaderLogo } from "../components/ActaHeaderLogo";
@@ -9,6 +16,7 @@ import {
   ICON_CHECK as imgCheck,
   ICON_ELLIPSIS as imgEllipsis,
   ICON_FORK_KNIFE as imgFork,
+  ICON_MAP as imgMap,
   ICON_MESSAGES as imgMessages,
 } from "../assets/actaIconUrls";
 import {
@@ -16,14 +24,27 @@ import {
   readValentineFlowComplete,
   readValentineSequenceStart,
   readValentineStepTimes,
+  writeValentineCompletedStepTitles,
   writeValentineFlowComplete,
   writeValentineSequenceStart,
   writeValentineStepTimes,
 } from "../valentineGraphStorage";
+import { writeLastCompletedGraphNav } from "../graphNavPath";
 
-const STEP_LOAD_MS = 3_500;
+const STEP_LOAD_MS = 15_000;
 
 type StepStatus = "pending" | "loading" | "done";
+
+type ValentineIcsDownload = {
+  filename: string;
+  /** Calendar subject (SUMMARY). */
+  summary: string;
+  /** Body shown in calendar apps (DESCRIPTION). */
+  description: string;
+  location?: string;
+  start: Date;
+  end: Date;
+};
 
 type StepConfig = {
   title: string;
@@ -31,37 +52,128 @@ type StepConfig = {
   iconSize: "size-5" | "h-5 w-[18px]" | "h-5 w-[15px]" | "h-[20px] w-5";
   loadDurationMs?: number;
   doneMessage?: string;
+  /** When set, a done step shows a button to download an .ics for Apple/Google/Outlook. */
+  icsDownload?: ValentineIcsDownload;
 };
+
+const FRIEND_POLL_INDEX = 0;
+
+/** Simulated iMessage-style replies from the private poll (congrats + gift nudges). */
+const FRIEND_CONGRATS_AND_SUGGESTIONS: {
+  from: string;
+  congrats: string;
+  suggestion: string;
+}[] = [
+  {
+    from: "Eugene",
+    congrats: "Ahhh congrats you two — the Aurora angle is *chef’s kiss*.",
+    suggestion: "If you want a paper gift: a small Moleskine of Big Sur film shots from 2022. She teased that trip for years.",
+  },
+  {
+    from: "Katya",
+    congrats: "I’m beaming. Sarah’s going to lose it in the best way.",
+    suggestion: "She once said she’d love proper bookshelf speakers (nothing huge). If budget flexes, that + your playlist = instant win.",
+  },
+  {
+    from: "Noah",
+    congrats: "YOOO this is the one. Circle approved. 🙌",
+    suggestion: "Low-key: a really good bottle she name-dropped once + zero wrapping drama. I’ll hold the day-of alibi if you need it.",
+  },
+  {
+    from: "Kyson",
+    congrats: "This is… actually perfect. I’m in your corner 100%.",
+    suggestion: "If you want a quiet flex: a printed playlist QR that opens a private Spotify list you built from her last-shares. Feels personal without clutter.",
+  },
+  {
+    from: "Larry",
+    congrats: "Okay this is big. You’re really doing it right.",
+    suggestion: "If you want one more beat: a short letter in your own handwriting (even two paragraphs) — she keeps those. Pair it with whatever the night’s big reveal is.",
+  },
+  {
+    from: "Eugene",
+    congrats: "Also — one more: send her a dumb meme the morning of so she doesn’t get suspicious. Classic.",
+    suggestion: "For the actual gift pile: a framed ticket stub if you can grab one; she saves ephemera.",
+  },
+];
+
+/** Acta: synthesized “from your thread” ideas (simulated RAG / highlights). */
+const ACTA_GIFT_PICKS_FROM_THREAD: { idea: string; simSnippet: string }[] = [
+  {
+    idea: "Scent upgrade at home: nice candle + matches",
+    simSnippet: "“Can we not smell like the office at home?” (Jan, late-night vent thread)",
+  },
+  {
+    idea: "Vinyl of the artist she said she’d ‘frame the cover of’",
+    simSnippet: "“If you ever see this on wax, buy it before I do” (April, voice memo back-and-forth)",
+  },
+  {
+    idea: "A printed ‘Ojai someday’ one-pager — 4 mentions in 18 months",
+    simSnippet: "Recurring: spa day / tiny cabin / ‘no phones’ weekend (scattered, Aug–Dec)",
+  },
+];
 
 const STEPS: StepConfig[] = [
   {
-    title:
-      "Indexed 18 months of messages for gifts, music, and trip mentions tied to Sarah",
+    title: "Polled Eugene, Katya, Noah, Kyson, and Larry for timing, budget, and surprise level",
     icon: imgMessages,
     iconSize: "size-5",
-  },
-  {
-    title:
-      "Cross-referenced The Aurora with tour dates in your anniversary month (Feb)",
-    icon: imgCalendar,
-    iconSize: "h-5 w-[18px]",
-  },
-  {
-    title: "Polled Eugene, Katya, and Noah for timing, budget, and surprise level",
-    icon: imgMessages,
-    iconSize: "size-5",
-    loadDurationMs: STEP_LOAD_MS * 2,
     doneMessage: "Circle aligned",
   },
   {
-    title: "Booked in-home private chef (Sat Feb 7 · 7pm · 4 courses)",
+    title: "Booked in-home private chef (Sun Feb 14 · 5pm · 4 courses)",
     icon: imgFork,
     iconSize: "h-5 w-[15px]",
+  },
+  {
+    title:
+      "Private chef dinner — add to your calendar (Sun Feb 14 · 5:00pm start)",
+    icon: imgCalendar,
+    iconSize: "h-5 w-[18px]",
+    doneMessage: "Ready to import",
+    icsDownload: {
+      filename: "acta-private-chef-sarah-feb14.ics",
+      summary: "Private chef · Valentine dinner for Sarah (4 courses)",
+      description: [
+        "In-home private chef dinner — Valentine surprise for Sarah.",
+        "",
+        "• Four courses at home, before The Aurora the same night",
+        "• Start: 5:00 PM (Sun Feb 14, 2027) — ends in time for the 8:00 PM show",
+        "• Booked through Acta; coordinated with your run sheet",
+        "",
+        "Same evening as the concert; keep the reveal timing per your run sheet.",
+      ].join("\n"),
+      location: "Home",
+      start: new Date(2027, 1, 14, 17, 0, 0),
+      end: new Date(2027, 1, 14, 19, 0, 0),
+    },
   },
   {
     title: "Purchased 2 tickets — The Aurora, Feb 14, section B",
     icon: imgCalendar,
     iconSize: "h-5 w-[18px]",
+  },
+  {
+    title:
+      "The Aurora concert — add to your calendar (Sun Feb 14 · 8:00–11:00pm)",
+    icon: imgCalendar,
+    iconSize: "h-5 w-[18px]",
+    doneMessage: "Ready to import",
+    icsDownload: {
+      filename: "acta-the-aurora-sarah-feb14.ics",
+      summary: "The Aurora · Valentine concert for Sarah (Sec B)",
+      description: [
+        "The Aurora — two tickets, Section B. Valentine evening for Sarah.",
+        "",
+        "• Show window: 8:00 PM – 11:00 PM (Sun Feb 14, 2027)",
+        "• Los Angeles area; venue per your Acta map / run sheet",
+        "• Vehicle nav to the venue is staged in Acta",
+        "",
+        "Part of the full surprise: private chef at home earlier same night, custom song Feb 12, 2027, this show + reveal.",
+      ].join("\n"),
+      location: "Los Angeles, CA",
+      start: new Date(2027, 1, 14, 20, 0, 0),
+      end: new Date(2027, 1, 14, 23, 0, 0),
+    },
   },
   {
     title: "Commissioned custom song (lyrics from your thread) — ready Feb 12",
@@ -73,6 +185,12 @@ const STEPS: StepConfig[] = [
     icon: imgMessages,
     iconSize: "size-5",
   },
+  {
+    title:
+      "Your vehicle has the venue saved; navigation will run and take you to the concert",
+    icon: imgMap,
+    iconSize: "h-5 w-[15px]",
+  },
 ];
 
 function formatStepCompletedTime(ms: number) {
@@ -82,6 +200,61 @@ function formatStepCompletedTime(ms: number) {
     second: "2-digit",
     hour12: true,
   });
+}
+
+/** RFC 5545 TEXT escaping for SUMMARY / DESCRIPTION / LOCATION. */
+function escapeIcsText(value: string): string {
+  return value
+    .replace(/\\/g, "\\\\")
+    .replace(/\n/g, "\\n")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,");
+}
+
+function formatDateUtcIcs(d: Date): string {
+  return d
+    .toISOString()
+    .replace(/\.\d{3}Z$/, "Z")
+    .replace(/[-:]/g, "");
+}
+
+function buildValentineIcsEvent(payload: ValentineIcsDownload): string {
+  const uid = `acta-${payload.filename.replace(/\.ics$/i, "")}-${payload.start.getTime()}@acta.local`;
+  const dtStamp = formatDateUtcIcs(new Date());
+  const dtStart = formatDateUtcIcs(payload.start);
+  const dtEnd = formatDateUtcIcs(payload.end);
+  const lines = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Acta//Valentine//EN",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    "BEGIN:VEVENT",
+    `UID:${uid}`,
+    `DTSTAMP:${dtStamp}`,
+    `DTSTART:${dtStart}`,
+    `DTEND:${dtEnd}`,
+    `SUMMARY:${escapeIcsText(payload.summary)}`,
+    `DESCRIPTION:${escapeIcsText(payload.description)}`,
+  ];
+  if (payload.location?.trim()) {
+    lines.push(`LOCATION:${escapeIcsText(payload.location.trim())}`);
+  }
+  lines.push("END:VEVENT", "END:VCALENDAR", "");
+  return lines.join("\r\n");
+}
+
+function downloadTextFile(filename: string, text: string, mime: string) {
+  const blob = new Blob([text], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.rel = "noopener";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
 
 function stepCompletionTime(sequenceStart: number, index: number): number {
@@ -115,45 +288,45 @@ function computeStateFromElapsed(
   return { stepStatuses, stepCompletedAt };
 }
 
-function initialStepCompletedAt(
-  fromPreviewApprove: boolean,
-): (number | null)[] {
-  if (fromPreviewApprove) {
-    return Array.from({ length: STEPS.length }, () => null);
-  }
+function buildValentineVisualState(): {
+  stepStatuses: StepStatus[];
+  stepCompletedAt: (number | null)[];
+  allDone: boolean;
+} {
   if (readValentineFlowComplete()) {
     const stored = readValentineStepTimes(STEPS.length);
     if (stored) {
-      return [...stored];
+      return {
+        stepStatuses: STEPS.map(() => "done"),
+        stepCompletedAt: stored,
+        allDone: true,
+      };
     }
     const now = Date.now();
-    return STEPS.map((_, i) => now - (STEPS.length - 1 - i) * 2500);
+    return {
+      stepStatuses: STEPS.map(() => "done"),
+      stepCompletedAt: STEPS.map(
+        (_, i) => now - (STEPS.length - 1 - i) * STEP_LOAD_MS,
+      ),
+      allDone: true,
+    };
   }
-  const seqStart = readValentineSequenceStart();
-  if (seqStart != null) {
-    return computeStateFromElapsed(seqStart, Date.now()).stepCompletedAt;
+  const seq = readValentineSequenceStart();
+  if (seq == null) {
+    return {
+      stepStatuses: Array.from({ length: STEPS.length }, (_, i) =>
+        i === 0 ? "loading" : "pending",
+      ),
+      stepCompletedAt: Array.from({ length: STEPS.length }, () => null),
+      allDone: false,
+    };
   }
-  return Array.from({ length: STEPS.length }, () => null);
-}
-
-function initialStepStatuses(fromPreviewApprove: boolean): StepStatus[] {
-  if (fromPreviewApprove) {
-    clearValentineFlowComplete();
-    writeValentineSequenceStart(Date.now());
-    return Array.from({ length: STEPS.length }, (_, i) =>
-      i === 0 ? "loading" : "pending",
-    );
-  }
-  if (readValentineFlowComplete()) {
-    return STEPS.map(() => "done");
-  }
-  const seqStart = readValentineSequenceStart();
-  if (seqStart != null) {
-    return computeStateFromElapsed(seqStart, Date.now()).stepStatuses;
-  }
-  return Array.from({ length: STEPS.length }, (_, i) =>
-    i === 0 ? "loading" : "pending",
+  const { stepStatuses, stepCompletedAt } = computeStateFromElapsed(
+    seq,
+    Date.now(),
   );
+  const allDone = stepStatuses.every((s) => s === "done");
+  return { stepStatuses, stepCompletedAt, allDone };
 }
 
 export function ValentineGraphPage() {
@@ -162,74 +335,41 @@ export function ValentineGraphPage() {
     (location.state as { fromPreviewApprove?: boolean } | null)
       ?.fromPreviewApprove === true;
 
-  const [stepStatuses, setStepStatuses] = useState<StepStatus[]>(() =>
-    initialStepStatuses(fromPreviewApprove),
-  );
-  const [stepCompletedAt, setStepCompletedAt] = useState<(number | null)[]>(
-    () => initialStepCompletedAt(fromPreviewApprove),
+  const [tick, setTick] = useState(0);
+
+  useLayoutEffect(() => {
+    if (fromPreviewApprove) {
+      clearValentineFlowComplete();
+      writeValentineSequenceStart(Date.now());
+    } else if (!readValentineFlowComplete() && readValentineSequenceStart() == null) {
+      writeValentineSequenceStart(Date.now());
+    }
+    setTick((n) => n + 1);
+  }, [fromPreviewApprove, location.key]);
+
+  const bump = useCallback(() => setTick((n) => n + 1), []);
+
+  const { stepStatuses, stepCompletedAt, allDone } = useMemo(
+    () => buildValentineVisualState(),
+    [tick, location.key],
   );
 
-  const [, setClockTick] = useState(0);
   useEffect(() => {
-    const id = window.setInterval(() => setClockTick((n) => n + 1), 1000);
+    if (readValentineFlowComplete() || allDone) return;
+    const id = window.setInterval(() => bump(), 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [bump, allDone]);
 
   useEffect(() => {
+    if (!allDone) return;
     if (readValentineFlowComplete()) return;
-
-    let sequenceStart = readValentineSequenceStart();
-    if (sequenceStart == null) {
-      sequenceStart = Date.now();
-      writeValentineSequenceStart(sequenceStart);
-    }
-
-    const timeouts: ReturnType<typeof setTimeout>[] = [];
-
-    const advanceFrom = (index: number) => {
-      if (index >= STEPS.length) return;
-      const endMs = stepCompletionTime(sequenceStart!, index);
-      const remaining = Math.max(0, endMs - Date.now());
-      timeouts.push(
-        setTimeout(() => {
-          setStepStatuses((prev) => {
-            const next = [...prev] as StepStatus[];
-            next[index] = "done";
-            if (index + 1 < STEPS.length) {
-              next[index + 1] = "loading";
-            }
-            return next;
-          });
-          setStepCompletedAt((prev) => {
-            const next = [...prev];
-            next[index] = endMs;
-            return next;
-          });
-          advanceFrom(index + 1);
-        }, remaining),
-      );
-    };
-
-    const loadingIdx = stepStatuses.findIndex((s) => s === "loading");
-    if (loadingIdx !== -1) {
-      advanceFrom(loadingIdx);
-    } else if (!stepStatuses.every((s) => s === "done")) {
-      advanceFrom(0);
-    }
-
-    return () => timeouts.forEach(clearTimeout);
-  }, []);
-
-  useEffect(() => {
-    if (!stepStatuses.length || !stepStatuses.every((s) => s === "done"))
-      return;
+    const { stepCompletedAt: times } = buildValentineVisualState();
+    if (!times.length || !times.every((t): t is number => t != null)) return;
     writeValentineFlowComplete();
-    if (stepCompletedAt.every((t): t is number => t != null)) {
-      writeValentineStepTimes(stepCompletedAt);
-    }
-  }, [stepStatuses, stepCompletedAt]);
-
-  const allDone = stepStatuses.every((s) => s === "done");
+    writeValentineStepTimes(times);
+    writeValentineCompletedStepTitles(STEPS.map((s) => s.title));
+    writeLastCompletedGraphNav("valentine", Math.max(...times));
+  }, [allDone, tick]);
 
   return (
     <div className="acta-shell text-[#e5e2e1]">
@@ -257,14 +397,69 @@ export function ValentineGraphPage() {
                 step.doneMessage ??
                 (t != null ? formatStepCompletedTime(t) : "");
               return (
-                <GraphValentineRow
-                  key={step.title}
-                  title={step.title}
-                  icon={step.icon}
-                  iconSizeClass={step.iconSize}
-                  status={stepStatuses[i] ?? "pending"}
-                  doneSubtitle={doneSubtitle}
-                />
+                <Fragment key={step.title}>
+                  <GraphValentineRow
+                    title={step.title}
+                    icon={step.icon}
+                    iconSizeClass={step.iconSize}
+                    status={stepStatuses[i] ?? "pending"}
+                    doneSubtitle={doneSubtitle}
+                    icsDownload={step.icsDownload}
+                  />
+                  {i === FRIEND_POLL_INDEX &&
+                  (stepStatuses[i] ?? "pending") === "done" ? (
+                    <li className="list-none">
+                      <div className="ml-0 rounded-2xl border border-[rgba(60,74,66,0.2)] bg-[#171717] p-4 sm:ml-14">
+                        <p className="text-[10px] font-bold uppercase tracking-[1px] text-[#4edea3]">
+                          Replies to poll (simulated)
+                        </p>
+                        <ul className="mt-3 space-y-3">
+                          {FRIEND_CONGRATS_AND_SUGGESTIONS.map((row, idx) => (
+                            <li
+                              key={`fr-${idx}`}
+                              className="border-b border-[rgba(60,74,66,0.12)] pb-3 last:border-0 last:pb-0"
+                            >
+                              <p className="text-[12px] font-bold text-[#bbcabf]">
+                                {row.from}
+                              </p>
+                              <p className="text-[14px] leading-snug text-[#e5e2e1]">
+                                {row.congrats}
+                              </p>
+                              <p className="mt-1.5 text-[13px] leading-5 text-[rgba(187,202,191,0.9)]">
+                                <span className="text-[#4edea3]">Idea: </span>
+                                {row.suggestion}
+                              </p>
+                            </li>
+                          ))}
+                        </ul>
+                        <div className="mt-4 border-t border-[rgba(60,74,66,0.15)] pt-4">
+                          <p className="text-[10px] font-bold uppercase tracking-[1px] text-[#bbcabf]">
+                            Acta · from your messages (simulated)
+                          </p>
+                          <p className="mt-1.5 text-[12px] leading-4 text-[rgba(187,202,191,0.8)]">
+                            We scanned ~18 months of your thread and ranked
+                            gift adjacencies. Top picks to combine with
+                            dinner + show:
+                          </p>
+                          <ul className="mt-2 space-y-2">
+                            {ACTA_GIFT_PICKS_FROM_THREAD.map((pick) => (
+                              <li
+                                key={pick.idea}
+                                className="text-[13px] leading-5 text-[#e5e2e1]"
+                              >
+                                <span className="text-[#4edea3]">→ </span>
+                                {pick.idea}
+                                <span className="mt-0.5 block text-[11px] italic text-[rgba(187,202,191,0.7)]">
+                                  {pick.simSnippet}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </li>
+                  ) : null}
+                </Fragment>
               );
             })}
           </ul>
@@ -281,19 +476,15 @@ export function ValentineGraphPage() {
               </div>
               <div className="space-y-3 px-5 py-5">
                 <p className="text-[16px] font-medium leading-6 text-[#e5e2e1]">
-                  Sat Feb 7
-                  <span className="text-[#bbcabf]"> — </span>
-                  private chef
-                </p>
-                <p className="text-[16px] font-medium leading-6 text-[#e5e2e1]">
                   Wed Feb 12
                   <span className="text-[#bbcabf]"> — </span>
                   custom song delivered
                 </p>
                 <p className="text-[16px] font-medium leading-6 text-[#e5e2e1]">
-                  Fri Feb 14
+                  Sun Feb 14
                   <span className="text-[#bbcabf]"> — </span>
-                  The Aurora, evening reveal to Sarah
+                  private chef (5pm) at home, then The Aurora (8–11pm), evening reveal
+                  to Sarah
                 </p>
                 <p className="pt-1 text-[12px] leading-4 text-[rgba(187,202,191,0.65)]">
                   Plan grounded in the thread: band hint from six months ago,
@@ -335,12 +526,14 @@ function GraphValentineRow({
   iconSizeClass,
   status,
   doneSubtitle,
+  icsDownload,
 }: {
   title: string;
   icon: string;
   iconSizeClass: string;
   status: StepStatus;
   doneSubtitle: string;
+  icsDownload?: ValentineIcsDownload;
 }) {
   const pending = status === "pending";
   const loading = status === "loading";
@@ -350,39 +543,65 @@ function GraphValentineRow({
 
   return (
     <li
-      className={`flex items-start gap-4 py-1 transition-opacity duration-300 ${
+      className={`flex flex-col gap-2 py-1 transition-opacity duration-300 ${
         pending ? "opacity-40" : "opacity-100"
       }`}
     >
-      <div
-        className={`flex size-10 shrink-0 items-center justify-center rounded-lg ${iconBoxClass}`}
-      >
-        <img alt="" className={`${iconSizeClass} object-contain`} src={icon} />
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className="text-[14px] leading-snug text-[#e5e2e1]">{title}</p>
-        {done && doneSubtitle && (
-          <p className="mt-0.5 text-[11px] uppercase leading-[16.5px] text-[rgba(187,202,191,0.7)]">
-            {doneSubtitle}
-          </p>
-        )}
-        {loading && (
-          <p className="mt-0.5 text-[11px] uppercase leading-[16.5px] text-[rgba(78,222,163,0.8)]">
-            IN PROGRESS...
-          </p>
-        )}
-        {pending && (
-          <p className="mt-0.5 text-[11px] uppercase leading-[16.5px] text-[rgba(187,202,191,0.7)]">
-            QUEUED
-          </p>
-        )}
-      </div>
-      <div className="flex size-[20px] shrink-0 items-center justify-center pt-0.5">
-        {done && <img alt="" className="size-[16.67px]" src={imgCheck} />}
-        {loading && <GraphStepLoader />}
-        {pending && (
-          <img alt="" className="size-[16.67px] opacity-70" src={imgEllipsis} />
-        )}
+      <div className="flex items-start gap-4">
+        <div
+          className={`flex size-10 shrink-0 items-center justify-center rounded-lg ${iconBoxClass}`}
+        >
+          <img alt="" className={`${iconSizeClass} object-contain`} src={icon} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-[14px] leading-snug text-[#e5e2e1]">{title}</p>
+          {done && doneSubtitle && (
+            <p className="mt-0.5 text-[11px] uppercase leading-[16.5px] text-[rgba(187,202,191,0.7)]">
+              {doneSubtitle}
+            </p>
+          )}
+          {loading && (
+            <p className="mt-0.5 text-[11px] uppercase leading-[16.5px] text-[rgba(78,222,163,0.8)]">
+              IN PROGRESS...
+            </p>
+          )}
+          {pending && (
+            <p className="mt-0.5 text-[11px] uppercase leading-[16.5px] text-[rgba(187,202,191,0.7)]">
+              QUEUED
+            </p>
+          )}
+          {done && icsDownload ? (
+            <div className="mt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const body = buildValentineIcsEvent(icsDownload);
+                  downloadTextFile(
+                    icsDownload.filename,
+                    body,
+                    "text/calendar;charset=utf-8",
+                  );
+                }}
+                className="rounded-xl border border-[rgba(78,222,163,0.45)] bg-[rgba(78,222,163,0.12)] px-3 py-2 text-left text-[13px] font-semibold leading-4 text-[#4edea3] transition hover:border-[rgba(78,222,163,0.65)] hover:bg-[rgba(78,222,163,0.2)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#131313]"
+              >
+                Add to calendar (.ics)
+              </button>
+              <p className="mt-1.5 max-w-[min(100%,22rem)] text-[11px] leading-4 text-[rgba(187,202,191,0.65)]">
+                Downloads an iCalendar file. Open it to import — subject and
+                description are filled for you (
+                <span className="text-[#bbcabf]">{icsDownload.summary}</span>
+                ).
+              </p>
+            </div>
+          ) : null}
+        </div>
+        <div className="flex size-[20px] shrink-0 items-center justify-center pt-0.5">
+          {done && <img alt="" className="size-[16.67px]" src={imgCheck} />}
+          {loading && <GraphStepLoader />}
+          {pending && (
+            <img alt="" className="size-[16.67px] opacity-70" src={imgEllipsis} />
+          )}
+        </div>
       </div>
     </li>
   );

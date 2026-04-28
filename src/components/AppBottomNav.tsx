@@ -1,5 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 
+import { getGraphNavPath } from "../graphNavPath";
+
 import {
   ICON_NAV_APPS as IMG_NAV_APPS,
   ICON_NAV_GRAPH as IMG_NAV_GRAPH,
@@ -47,6 +49,7 @@ export function AppBottomNav({
       : "relative h-5 w-[20.1px]";
 
   const graphActive = pathname === "/graph" || pathname.startsWith("/graph/");
+  const graphTo = getGraphNavPath();
 
   return (
     <nav
@@ -94,7 +97,7 @@ export function AppBottomNav({
           </Link>
           <div className="flex justify-center" aria-hidden />
           <Link
-            to="/graph"
+            to={graphTo}
             className="group flex flex-col items-center justify-end gap-1 pb-0.5"
             aria-current={graphActive ? "page" : undefined}
           >

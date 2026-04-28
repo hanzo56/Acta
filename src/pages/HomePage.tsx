@@ -16,6 +16,7 @@ import {
 import { ActaHeaderLogo } from "../components/ActaHeaderLogo";
 import { useSpeechDictation } from "../hooks/useSpeechDictation";
 import { shouldActivateMicFromNav } from "../navigation/activateMicFromNav";
+import { getGraphNavPath } from "../graphNavPath";
 
 /** Fork + knife asset (lavender) for Book dinner — see public/icon-book-dinner.png */
 const IMG_BOOK_DINNER = "/icon-book-dinner.png";
@@ -59,6 +60,7 @@ export function HomePage() {
 
   const graphActive =
     pathname === "/graph" || pathname.startsWith("/graph/");
+  const graphTo = getGraphNavPath();
 
   const handleDictationSilence = useCallback(() => {
     if (silenceNavigatedRef.current) return;
@@ -448,7 +450,7 @@ export function HomePage() {
             </Link>
             <div className="flex justify-center" aria-hidden />
             <Link
-              to="/graph"
+              to={graphTo}
               className="group flex flex-col items-center justify-end gap-1 pb-0.5"
               aria-current={graphActive ? "page" : undefined}
             >

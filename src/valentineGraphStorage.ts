@@ -5,6 +5,7 @@
 export const VALENTINE_FLOW_STORAGE_KEY = 'acta-valentine-flow-complete'
 const VALENTINE_STEP_TIMES_KEY = 'acta-valentine-step-times'
 const VALENTINE_SEQUENCE_START_KEY = 'acta-valentine-sequence-start'
+const VALENTINE_STEP_TITLES_KEY = 'acta-valentine-completed-step-titles'
 
 export function readValentineFlowComplete(): boolean {
   try {
@@ -27,6 +28,7 @@ export function clearValentineFlowComplete() {
     sessionStorage.removeItem(VALENTINE_FLOW_STORAGE_KEY)
     sessionStorage.removeItem(VALENTINE_STEP_TIMES_KEY)
     sessionStorage.removeItem(VALENTINE_SEQUENCE_START_KEY)
+    sessionStorage.removeItem(VALENTINE_STEP_TITLES_KEY)
   } catch {
     /* ignore */
   }
@@ -71,3 +73,27 @@ export function writeValentineStepTimes(timestamps: number[]) {
     /* ignore */
   }
 }
+
+/**
+ * For Tasks list — full step labels after the run completes. Cleared on restart from preview.
+ */
+export function readValentineCompletedStepTitles(): string[] | null {
+  try {
+    const raw = sessionStorage.getItem(VALENTINE_STEP_TITLES_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as unknown
+    if (!Array.isArray(parsed) || !parsed.every((s) => typeof s === 'string')) return null
+    return parsed as string[]
+  } catch {
+    return null
+  }
+}
+
+export function writeValentineCompletedStepTitles(titles: string[]) {
+  try {
+    sessionStorage.setItem(VALENTINE_STEP_TITLES_KEY, JSON.stringify(titles))
+  } catch {
+    /* ignore */
+  }
+}
+
