@@ -368,7 +368,7 @@ export function ValentineGraphPage() {
     writeValentineFlowComplete();
     writeValentineStepTimes(times);
     writeValentineCompletedStepTitles(STEPS.map((s) => s.title));
-    writeLastCompletedGraphNav("valentine", Math.max(...times));
+    writeLastCompletedGraphNav("/graph/valentine", Math.max(...times));
   }, [allDone, tick]);
 
   return (

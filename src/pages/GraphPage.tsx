@@ -255,7 +255,7 @@ export function GraphPage() {
     writeGraphFlowComplete();
     if (stepCompletedAt.every((t): t is number => t != null)) {
       writeGraphStepTimes(stepCompletedAt);
-      writeLastCompletedGraphNav("dinner", Math.max(...stepCompletedAt));
+      writeLastCompletedGraphNav("/graph", Math.max(...stepCompletedAt));
     }
   }, [stepStatuses, stepCompletedAt]);
 
