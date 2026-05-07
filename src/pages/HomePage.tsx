@@ -240,9 +240,9 @@ export function HomePage() {
                 Plan a meeting
               </span>
             </Link>
-            <button
-              type="button"
-              className="flex items-center gap-3 rounded-2xl border border-[rgba(60,74,66,0.1)] bg-[#1c1b1b] px-6 py-[17px]"
+            <Link
+              to="/preview/book-dinner"
+              className="flex items-center gap-3 rounded-2xl border border-[rgba(60,74,66,0.1)] bg-[#1c1b1b] px-6 py-[17px] no-underline"
             >
               <div className="relative h-5 w-6 shrink-0">
                 <img
@@ -254,10 +254,10 @@ export function HomePage() {
               <span className="text-center text-[16px] font-medium leading-6 text-[#e5e2e1]">
                 Book dinner
               </span>
-            </button>
-            <button
-              type="button"
-              className="flex items-center gap-3 rounded-2xl border border-[rgba(60,74,66,0.1)] bg-[#1c1b1b] px-6 py-[17px]"
+            </Link>
+            <Link
+              to="/preview/message-team"
+              className="flex items-center gap-3 rounded-2xl border border-[rgba(60,74,66,0.1)] bg-[#1c1b1b] px-6 py-[17px] no-underline"
             >
               <div className="relative size-5 shrink-0">
                 <img
@@ -269,10 +269,10 @@ export function HomePage() {
               <span className="text-center text-[16px] font-medium leading-6 text-[#e5e2e1]">
                 Message team
               </span>
-            </button>
-            <button
-              type="button"
-              className="flex items-center gap-3 rounded-2xl border border-[rgba(60,74,66,0.1)] bg-[#1c1b1b] px-6 py-[17px]"
+            </Link>
+            <Link
+              to="/preview/summarize-brief"
+              className="flex items-center gap-3 rounded-2xl border border-[rgba(60,74,66,0.1)] bg-[#1c1b1b] px-6 py-[17px] no-underline"
             >
               <div className="relative h-4 w-[18px] shrink-0">
                 <img
@@ -284,7 +284,7 @@ export function HomePage() {
               <span className="text-center text-[16px] font-medium leading-6 text-[#e5e2e1]">
                 Summarize Brief
               </span>
-            </button>
+            </Link>
           </div>
         </div>
       </main>

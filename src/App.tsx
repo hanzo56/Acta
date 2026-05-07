@@ -2,6 +2,8 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { ConnectorsPage } from './pages/ConnectorsPage'
 import { GraphMenuPage } from './pages/GraphMenuPage'
 import { GraphPage } from './pages/GraphPage'
+import { BookDinnerGraphPage } from './pages/BookDinnerGraphPage'
+import { BookDinnerPreviewPage } from './pages/BookDinnerPreviewPage'
 import { DraftResearchMemoGraphPage } from './pages/DraftResearchMemoGraphPage'
 import { InvestorCallsGraphPage } from './pages/InvestorCallsGraphPage'
 import { HomePage } from './pages/HomePage'
@@ -12,10 +14,14 @@ import { ProfileNotificationsPage } from './pages/ProfileNotificationsPage'
 import { ProfilePrivacyPage } from './pages/ProfilePrivacyPage'
 import { ProfileSettingsPage } from './pages/ProfileSettingsPage'
 import { ProfileSubscriptionPage } from './pages/ProfileSubscriptionPage'
+import { MessageTeamGraphPage } from './pages/MessageTeamGraphPage'
+import { MessageTeamPreviewPage } from './pages/MessageTeamPreviewPage'
 import { PreviewPage } from './pages/PreviewPage'
 import { ValentineGraphPage } from './pages/ValentineGraphPage'
 import { ValentinePreviewPage } from './pages/ValentinePreviewPage'
 import { SettingsPage } from './pages/SettingsPage'
+import { SummarizeBriefGraphPage } from './pages/SummarizeBriefGraphPage'
+import { SummarizeBriefPreviewPage } from './pages/SummarizeBriefPreviewPage'
 import { TasksPage } from './pages/TasksPage'
 
 export default function App() {
@@ -25,12 +31,18 @@ export default function App() {
       <Route path="/preview" element={<PreviewPage />} />
       <Route path="/preview/update" element={<PhoneUpdatePreviewPage />} />
       <Route path="/preview/valentine" element={<ValentinePreviewPage />} />
+      <Route path="/preview/book-dinner" element={<BookDinnerPreviewPage />} />
+      <Route path="/preview/message-team" element={<MessageTeamPreviewPage />} />
+      <Route path="/preview/summarize-brief" element={<SummarizeBriefPreviewPage />} />
       <Route path="/graph" element={<GraphPage />} />
       <Route path="/graph/phone-update" element={<PhoneUpdateGraphPage />} />
       <Route path="/graph/investor-calls" element={<InvestorCallsGraphPage />} />
       <Route path="/graph/draft-research-memo" element={<DraftResearchMemoGraphPage />} />
       <Route path="/graph/menu" element={<GraphMenuPage />} />
       <Route path="/graph/valentine" element={<ValentineGraphPage />} />
+      <Route path="/graph/book-dinner" element={<BookDinnerGraphPage />} />
+      <Route path="/graph/message-team" element={<MessageTeamGraphPage />} />
+      <Route path="/graph/summarize-brief" element={<SummarizeBriefGraphPage />} />
       <Route path="/tasks" element={<TasksPage />} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="/profile" element={<ProfileSettingsPage />} />

@@ -12,6 +12,7 @@ import {
 } from '../assets/actaIconUrls'
 import { readGraphFlowComplete } from '../graphFlowStorage'
 import { readPhoneUpdateComplete } from '../phoneUpdateStorage'
+import { readScenarioFlowComplete } from '../scenarioGraphStorage'
 import {
   readValentineCompletedStepTitles,
   readValentineFlowComplete,
@@ -38,6 +39,12 @@ const TASK_SEARCH = {
     'phone activity summary spam email voicemail mother arcadia school daughter team out of office ooo sent completed',
   valentine:
     'valentine surprise sarah aurora chef concert custom song run sheet vehicle navigation orchestration completed steps eugene kyson larry calendar tickets',
+  scenarioBookDinner:
+    'book dinner orchestration roadmap guest restaurant opentable reservation preview completed logged pairing booth',
+  scenarioMessageTeam:
+    'message team weekly slack pod update delivery scheduled sent compose channel completed',
+  scenarioSummarizeBrief:
+    'summarize brief vendor security executive synthesis pdf watermark export memo citations completed',
 } as const
 
 export function TasksPage() {
@@ -45,10 +52,22 @@ export function TasksPage() {
   const phoneUpdateComplete = readPhoneUpdateComplete()
   const valentineFlowComplete = readValentineFlowComplete()
   const valentineStepTitles = readValentineCompletedStepTitles()
+  const scenarioBookDinnerComplete = readScenarioFlowComplete('book-dinner')
+  const scenarioMessageTeamComplete = readScenarioFlowComplete('message-team')
+  const scenarioSummarizeBriefComplete = readScenarioFlowComplete('summarize-brief')
   const [taskSearch, setTaskSearch] = useState('')
   const taskSearchInputRef = useRef<HTMLInputElement>(null)
 
-  const { showDinner, showInvestor, showMemo, showPhoneUpdate, showValentine } = useMemo(() => {
+  const {
+    showDinner,
+    showInvestor,
+    showMemo,
+    showPhoneUpdate,
+    showValentine,
+    showScenarioBookDinner,
+    showScenarioMessageTeam,
+    showScenarioSummarizeBrief,
+  } = useMemo(() => {
     const q = taskSearch
     return {
       showDinner: graphFlowComplete && matchesTaskSearch(TASK_SEARCH.dinner, q),
@@ -58,11 +77,35 @@ export function TasksPage() {
         phoneUpdateComplete && matchesTaskSearch(TASK_SEARCH.phoneUpdate, q),
       showValentine:
         valentineFlowComplete && matchesTaskSearch(TASK_SEARCH.valentine, q),
+      showScenarioBookDinner:
+        scenarioBookDinnerComplete &&
+        matchesTaskSearch(TASK_SEARCH.scenarioBookDinner, q),
+      showScenarioMessageTeam:
+        scenarioMessageTeamComplete &&
+        matchesTaskSearch(TASK_SEARCH.scenarioMessageTeam, q),
+      showScenarioSummarizeBrief:
+        scenarioSummarizeBriefComplete &&
+        matchesTaskSearch(TASK_SEARCH.scenarioSummarizeBrief, q),
     }
-  }, [taskSearch, graphFlowComplete, phoneUpdateComplete, valentineFlowComplete])
+  }, [
+    taskSearch,
+    graphFlowComplete,
+    phoneUpdateComplete,
+    valentineFlowComplete,
+    scenarioBookDinnerComplete,
+    scenarioMessageTeamComplete,
+    scenarioSummarizeBriefComplete,
+  ])
 
   const hasAnyTaskMatch =
-    showDinner || showInvestor || showMemo || showPhoneUpdate || showValentine
+    showDinner ||
+    showInvestor ||
+    showMemo ||
+    showPhoneUpdate ||
+    showValentine ||
+    showScenarioBookDinner ||
+    showScenarioMessageTeam ||
+    showScenarioSummarizeBrief
 
   return (
     <div className="acta-shell bg-[#131313] text-[#e5e2e1]">
@@ -282,6 +325,117 @@ export function TasksPage() {
                     <div className="h-8 w-px bg-[rgba(60,74,66,0.1)]" aria-hidden />
                     <div className="text-right">
                       <p className="text-[14px] font-semibold leading-5 text-[#e5e2e1]">OOO sent</p>
+                      <p className="text-[9px] font-normal uppercase leading-[13.5px] tracking-[0.45px] text-[rgba(187,202,191,0.4)]">
+                        OUTCOME
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              ) : null}
+
+              {showScenarioBookDinner ? (
+                <Link
+                  to="/graph/book-dinner"
+                  className="flex flex-col gap-4 rounded-2xl border border-[rgba(60,74,66,0.05)] bg-[#1c1b1b] p-[25px] text-left no-underline transition-colors hover:border-[rgba(60,74,66,0.18)] hover:bg-[#222121] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#131313]"
+                  aria-label="Book dinner orchestration — view graph"
+                >
+                  <div className="flex flex-col gap-2">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="text-[10px] font-bold uppercase leading-[15px] tracking-[1px] text-[rgba(187,202,191,0.5)]">
+                        COMPLETED
+                      </span>
+                      <span className="text-[10px] font-normal leading-[15px] text-[rgba(187,202,191,0.4)]">
+                        Recently
+                      </span>
+                    </div>
+                    <h4 className="text-[20px] font-semibold leading-7 tracking-[-0.5px] text-[#e5e2e1]">
+                      Dinner orchestration
+                    </h4>
+                    <p className="text-[15px] font-normal leading-[24px] text-[#bbcabf]">
+                      Reservation path, calendar checks, and hospitality follow-up logged from your preview run.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4 border-t border-transparent pt-2">
+                    <div className="flex size-8 items-center justify-center rounded-lg bg-[#201f1f] shadow-[0_0_0_2px_#1c1b1b]">
+                      <img alt="" className="h-2.5 w-2 object-contain" src={imgTaskCalendar} />
+                    </div>
+                    <div className="h-8 w-px bg-[rgba(60,74,66,0.1)]" aria-hidden />
+                    <div className="text-right">
+                      <p className="text-[14px] font-semibold leading-5 text-[#e5e2e1]">Graph done</p>
+                      <p className="text-[9px] font-normal uppercase leading-[13.5px] tracking-[0.45px] text-[rgba(187,202,191,0.4)]">
+                        OUTCOME
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              ) : null}
+
+              {showScenarioMessageTeam ? (
+                <Link
+                  to="/graph/message-team"
+                  className="flex flex-col gap-4 rounded-2xl border border-[rgba(60,74,66,0.05)] bg-[#1c1b1b] p-[25px] text-left no-underline transition-colors hover:border-[rgba(60,74,66,0.18)] hover:bg-[#222121] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#131313]"
+                  aria-label="Team message run — view graph"
+                >
+                  <div className="flex flex-col gap-2">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="text-[10px] font-bold uppercase leading-[15px] tracking-[1px] text-[rgba(187,202,191,0.5)]">
+                        COMPLETED
+                      </span>
+                      <span className="text-[10px] font-normal leading-[15px] text-[rgba(187,202,191,0.4)]">
+                        Recently
+                      </span>
+                    </div>
+                    <h4 className="text-[20px] font-semibold leading-7 tracking-[-0.5px] text-[#e5e2e1]">
+                      Team message run
+                    </h4>
+                    <p className="text-[15px] font-normal leading-[24px] text-[#bbcabf]">
+                      Drafted your weekly pod update and confirmed delivery timing from the graph.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4 border-t border-transparent pt-2">
+                    <div className="flex size-8 items-center justify-center rounded-lg bg-[#201f1f] shadow-[0_0_0_2px_#1c1b1b]">
+                      <img alt="" className="h-2 w-2.5 object-contain" src={imgTaskMail} />
+                    </div>
+                    <div className="h-8 w-px bg-[rgba(60,74,66,0.1)]" aria-hidden />
+                    <div className="text-right">
+                      <p className="text-[14px] font-semibold leading-5 text-[#e5e2e1]">Sent / scheduled</p>
+                      <p className="text-[9px] font-normal uppercase leading-[13.5px] tracking-[0.45px] text-[rgba(187,202,191,0.4)]">
+                        OUTCOME
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              ) : null}
+
+              {showScenarioSummarizeBrief ? (
+                <Link
+                  to="/graph/summarize-brief"
+                  className="flex flex-col gap-4 rounded-2xl border border-[rgba(60,74,66,0.05)] bg-[#1c1b1b] p-[25px] text-left no-underline transition-colors hover:border-[rgba(60,74,66,0.18)] hover:bg-[#222121] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#131313]"
+                  aria-label="Brief synthesis — view graph"
+                >
+                  <div className="flex flex-col gap-2">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="text-[10px] font-bold uppercase leading-[15px] tracking-[1px] text-[rgba(187,202,191,0.5)]">
+                        COMPLETED
+                      </span>
+                      <span className="text-[10px] font-normal leading-[15px] text-[rgba(187,202,191,0.4)]">
+                        Recently
+                      </span>
+                    </div>
+                    <h4 className="text-[20px] font-semibold leading-7 tracking-[-0.5px] text-[#e5e2e1]">
+                      Vendor brief synthesis
+                    </h4>
+                    <p className="text-[15px] font-normal leading-[24px] text-[#bbcabf]">
+                      Exec-ready brief ingested, cited, and exported per your governance choices.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4 border-t border-transparent pt-2">
+                    <div className="flex size-8 items-center justify-center rounded-lg bg-[#201f1f] shadow-[0_0_0_2px_#1c1b1b]">
+                      <img alt="" className="h-2.5 w-2 object-contain" src={imgTaskDoc} />
+                    </div>
+                    <div className="h-8 w-px bg-[rgba(60,74,66,0.1)]" aria-hidden />
+                    <div className="text-right">
+                      <p className="text-[14px] font-semibold leading-5 text-[#e5e2e1]">Exported</p>
                       <p className="text-[9px] font-normal uppercase leading-[13.5px] tracking-[0.45px] text-[rgba(187,202,191,0.4)]">
                         OUTCOME
                       </p>
