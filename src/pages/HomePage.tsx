@@ -46,6 +46,9 @@ const VALENTINE_INTENT =
 const PHONE_UPDATE_INTENT =
   /\b(?:give me a status update on my phone activit(?:y|ies|es)|give me an update on my phone activit(?:y|ies)|give me an update on my phone activity|give me an update|give (?:me )?(?:an )?update|provide (?:me )?(?:with )?(?:an )?update|provide me an update on my phone activit(?:y|ies)|provide me a status update on my phone activit(?:y|ies|es)|an update on my phone activit(?:y|ies)|update (?:on|about) my phone(?: activit(?:y|ies))?|updates? (?:on|about|for) my phone|phone activit(?:y|ies) (?:update|summary)|summar(?:y|ize|ise) (?:of )?my phone|what(?:'s| is) (?:happening |going )?on my phone|any updates? (?:on|about|for) my phone|phone update|activity update|check my phone)\b/i;
 
+/** Spoken intent → dinner reservation preview with Sarah (`PreviewPage` → `GraphPage`) */
+const DINNER_SARAH_INTENT = /schedule\s+a\s+dinner\s+with\s+sarah\b/i;
+
 export function HomePage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -78,7 +81,11 @@ export function HomePage() {
         navigate("/preview/update");
         return;
       }
-      navigate("/preview");
+      if (DINNER_SARAH_INTENT.test(t)) {
+        navigate("/preview");
+        return;
+      }
+      setSilenceProcessing(false);
     }, PROCESSING_BEFORE_NAV_MS);
   }, [navigate]);
 
@@ -198,8 +205,12 @@ export function HomePage() {
                   <>
                     {!finalText && !interimText && !micListening ? (
                       <p className="text-[rgba(187,202,191,0.5)]">
-                        Tap the microphone below to dictate. Your words will
-                        appear here.
+                        Tap the microphone below to dictate. Say{" "}
+                        <span className="text-[rgba(187,202,191,0.72)]">
+                          “Schedule a dinner with Sarah”
+                        </span>{" "}
+                        to start the reservation preview, or use the shortcut
+                        below.
                       </p>
                     ) : null}
                     {!finalText &&
@@ -228,6 +239,7 @@ export function HomePage() {
             <Link
               to="/preview"
               className="flex items-center gap-3 rounded-2xl border border-[rgba(60,74,66,0.1)] bg-[#1c1b1b] px-6 py-[17px]"
+              aria-label="Schedule a dinner with Sarah — open reservation preview"
             >
               <div className="relative h-[22px] w-[21px] shrink-0">
                 <img
@@ -237,7 +249,7 @@ export function HomePage() {
                 />
               </div>
               <span className="text-center text-[16px] font-medium leading-6 text-[#e5e2e1]">
-                Plan a meeting
+                Schedule a dinner with Sarah
               </span>
             </Link>
             <Link

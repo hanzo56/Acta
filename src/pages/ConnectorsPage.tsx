@@ -138,7 +138,7 @@ const CONNECTORS_RAW: {
     name: "Messages",
     icon: iconMessages,
     iconBox: "size-5",
-    defaultOn: false,
+    defaultOn: true,
   },
   {
     key: "openTable",

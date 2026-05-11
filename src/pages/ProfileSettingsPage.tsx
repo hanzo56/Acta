@@ -134,12 +134,12 @@ export function ProfileSettingsPage() {
             <p className="mt-1 text-center text-[14px] font-medium uppercase leading-5 tracking-[0.35px] text-[#bbcabf]/80">
               JULIAN.THORNE@ACTA.AI
             </p>
-            <button
-              type="button"
-              className="mt-6 rounded-xl border border-[rgba(60,74,66,0.1)] bg-[#201f1f] px-[25px] py-2.5 text-[14px] font-semibold leading-5 text-[#e5e2e1] transition-colors hover:bg-[#2a2929] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3]"
+            <Link
+              to="/profile/account"
+              className="mt-6 rounded-xl border border-[rgba(60,74,66,0.1)] bg-[#201f1f] px-[25px] py-2.5 text-center text-[14px] font-semibold leading-5 text-[#e5e2e1] transition-colors hover:bg-[#2a2929] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3]"
             >
               Edit Profile
-            </button>
+            </Link>
           </section>
 
           <div className="flex flex-col gap-4">

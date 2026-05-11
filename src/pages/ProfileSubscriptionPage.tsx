@@ -17,7 +17,7 @@ export function ProfileSubscriptionPage() {
     <div className="acta-shell bg-[#131313] text-[#e5e2e1]">
       <ProfileSubpageHeader title="Subscription" />
 
-      <main className="acta-main acta-main--inset-top w-full max-w-[672px] space-y-8 px-6 pb-12">
+      <main className="acta-main acta-main--inset-profile-top w-full max-w-[672px] space-y-8 px-6 pb-12">
         <div className="pt-2" />
 
         <section

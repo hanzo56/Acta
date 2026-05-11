@@ -179,25 +179,6 @@ export function SettingsPage() {
                   </span>
                 </Link>
 
-                {/* Meeting schedule — static */}
-                <div className="flex items-center justify-between gap-3 rounded-xl bg-[#0e0e0e] p-4">
-                  <div className="min-w-0">
-                    <p className="text-[10px] font-bold uppercase leading-[15px] tracking-[0.5px] text-[#bbcabf]">
-                      MEETING SCHEDULE
-                    </p>
-                    <p className="mt-0.5 truncate text-[14px] font-medium leading-5 text-[#e5e2e1]">
-                      Evenings preferred
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    className="relative size-[14px] shrink-0 opacity-80 hover:opacity-100"
-                    aria-label="Edit meeting schedule"
-                  >
-                    <img alt="" className="absolute inset-0 size-full max-w-none" src={imgEdit} />
-                  </button>
-                </div>
-
                 {/* Favorite contacts — editable list */}
                 <div className="rounded-xl bg-[#0e0e0e] p-4">
                   <div className="flex items-start justify-between gap-3">
@@ -340,25 +321,6 @@ export function SettingsPage() {
                       </div>
                     </fieldset>
                   ) : null}
-                </div>
-
-                {/* Project anchor */}
-                <div className="flex items-center justify-between gap-3 rounded-xl bg-[#0e0e0e] p-4">
-                  <div className="min-w-0">
-                    <p className="text-[10px] font-bold uppercase leading-[15px] tracking-[0.5px] text-[#bbcabf]">
-                      PROJECT ANCHOR
-                    </p>
-                    <p className="mt-0.5 truncate text-[14px] font-medium leading-5 text-[#e5e2e1]">
-                      Project Titan
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    className="relative size-[14px] shrink-0 opacity-80 hover:opacity-100"
-                    aria-label="Edit project anchor"
-                  >
-                    <img alt="" className="absolute inset-0 size-full max-w-none" src={imgEdit} />
-                  </button>
                 </div>
               </div>
             </div>
