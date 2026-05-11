@@ -150,6 +150,12 @@ function initialStepCompletedAt(
   return Array.from({ length: STEPS.length }, () => null);
 }
 
+function hasDinnerGraphSession(fromPreviewApprove: boolean): boolean {
+  if (fromPreviewApprove) return true;
+  if (readGraphFlowComplete()) return true;
+  return readGraphSequenceStart() != null;
+}
+
 /** Dinner reservation date (calendar card) */
 function reservationDateLabel() {
   const t = new Date(2026, 3, 21);
@@ -175,9 +181,7 @@ function initialStepStatuses(fromPreviewApprove: boolean): StepStatus[] {
   if (seqStart != null) {
     return computeStateFromElapsed(seqStart, Date.now()).stepStatuses;
   }
-  return Array.from({ length: STEPS.length }, (_, i) =>
-    i === 0 ? "loading" : "pending",
-  );
+  return Array.from({ length: STEPS.length }, () => "pending");
 }
 
 export function GraphPage() {
@@ -185,6 +189,8 @@ export function GraphPage() {
   const fromPreviewApprove =
     (location.state as { fromPreviewApprove?: boolean } | null)
       ?.fromPreviewApprove === true;
+
+  const showEmptyGraph = !hasDinnerGraphSession(fromPreviewApprove);
 
   const calendarCardRef = useRef<HTMLDivElement>(null);
   const [toriPhotoIndex, setToriPhotoIndex] = useState(0);
@@ -199,12 +205,13 @@ export function GraphPage() {
   /** Drive a 1s tick so the active step can show a live clock (real-time display). */
   const [, setClockTick] = useState(0);
   useEffect(() => {
+    if (showEmptyGraph) return;
     const id = window.setInterval(() => setClockTick((n) => n + 1), 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [showEmptyGraph]);
 
   useEffect(() => {
-    if (readGraphFlowComplete()) return;
+    if (showEmptyGraph || readGraphFlowComplete()) return;
 
     let sequenceStart = readGraphSequenceStart();
     if (sequenceStart == null) {
@@ -247,9 +254,10 @@ export function GraphPage() {
 
     return () => timeouts.forEach(clearTimeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- schedule once from initial snapshot; step progress updates timers via advanceFrom chain
-  }, []);
+  }, [showEmptyGraph]);
 
   useEffect(() => {
+    if (showEmptyGraph) return;
     if (!stepStatuses.length || !stepStatuses.every((s) => s === "done"))
       return;
     writeGraphFlowComplete();
@@ -257,7 +265,7 @@ export function GraphPage() {
       writeGraphStepTimes(stepCompletedAt);
       writeLastCompletedGraphNav("/graph", Math.max(...stepCompletedAt));
     }
-  }, [stepStatuses, stepCompletedAt]);
+  }, [showEmptyGraph, stepStatuses, stepCompletedAt]);
 
   const allDone = stepStatuses.every((s) => s === "done");
   const openTableDone = stepStatuses[3] === "done";
@@ -265,6 +273,7 @@ export function GraphPage() {
   const inviteAcceptedDone = stepStatuses[STEPS.length - 1] === "done";
 
   useEffect(() => {
+    if (showEmptyGraph) return;
     if (!inviteAcceptedDone || !confirmationDone) return;
     const id = window.setTimeout(() => {
       calendarCardRef.current?.scrollIntoView({
@@ -273,194 +282,218 @@ export function GraphPage() {
       });
     }, 120);
     return () => window.clearTimeout(id);
-  }, [inviteAcceptedDone, confirmationDone]);
+  }, [showEmptyGraph, inviteAcceptedDone, confirmationDone]);
 
   return (
     <div className="acta-shell text-[#e5e2e1]">
       <main className="acta-graph-body" aria-label="Graph flow">
         <div className="mx-auto flex w-full max-w-[672px] flex-col gap-8 px-6 pb-[max(2rem,calc(1.25rem+env(safe-area-inset-bottom,0px)))]">
-          <header className="flex flex-col gap-1">
-            <p className="text-[14px] font-normal leading-5 tracking-[0.35px] text-[#4edea3]">
-              {allDone ? "Complete" : "Running"}
-            </p>
-            <h1 className="text-[30px] font-normal leading-9 tracking-[-0.75px] text-[#e5e2e1]">
-              Dinner with Sarah
-            </h1>
-            <div className="pt-1">
-              <p className="text-[14px] font-normal leading-5 text-[#bbcabf]">
-                Orchestrating cross-platform logistics to finalize your evening
-                plans.
+          {showEmptyGraph ? (
+            <header className="flex flex-col gap-1 py-4">
+              <p className="text-[14px] font-normal leading-5 tracking-[0.35px] text-[#4edea3]">
+                Graph
               </p>
-            </div>
-          </header>
-
-          <ul className="flex flex-col gap-4">
-            {STEPS.map((step, i) => {
-              const t = stepCompletedAt[i];
-              const doneSubtitle =
-                step.doneMessage ??
-                (t != null ? formatStepCompletedTime(t) : "");
-              return (
-                <GraphStepRow
-                  key={step.title}
-                  title={step.title}
-                  icon={step.icon}
-                  iconSizeClass={step.iconSize}
-                  status={stepStatuses[i] ?? "pending"}
-                  doneSubtitle={doneSubtitle}
-                />
-              );
-            })}
-          </ul>
-
-          <div
-            id="tori-tori-gallery"
-            className={`overflow-hidden rounded-2xl border border-[rgba(60,74,66,0.1)] bg-[#1c1b1b] transition-opacity duration-500 ${
-              openTableDone ? "opacity-100" : "opacity-50"
-            }`}
-          >
-            <div className="relative isolate aspect-[4/3] w-full overflow-hidden bg-[#0f0f0f]">
-              {TORI_PHOTOS.map((photo, i) => (
-                <img
-                  key={photo.src}
-                  alt={photo.alt}
-                  src={photo.src}
-                  className={`absolute inset-0 size-full object-cover transition-opacity duration-300 ${
-                    i === toriPhotoIndex
-                      ? "opacity-100"
-                      : "pointer-events-none opacity-0"
-                  }`}
-                />
-              ))}
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[rgba(28,27,27,0.85)] via-transparent to-[rgba(0,0,0,0.15)]" />
-              <div className="absolute bottom-3 left-0 right-0 z-10 flex justify-center gap-1.5">
-                {TORI_PHOTOS.map((_, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    aria-label={`Photo ${i + 1} of ${TORI_PHOTOS.length}`}
-                    aria-current={i === toriPhotoIndex}
-                    className={`h-1.5 rounded-full transition-all ${
-                      i === toriPhotoIndex
-                        ? "w-5 bg-[#4edea3]"
-                        : "w-1.5 bg-[rgba(187,202,191,0.35)]"
-                    }`}
-                    onClick={() => setToriPhotoIndex(i)}
-                  />
-                ))}
-              </div>
-              <button
-                type="button"
-                aria-label="Previous photo"
-                className="absolute left-2 top-1/2 z-10 flex size-9 -translate-y-1/2 items-center justify-center rounded-full bg-[rgba(19,19,19,0.65)] text-lg leading-none text-[#e5e2e1] backdrop-blur-sm transition hover:bg-[rgba(19,19,19,0.85)]"
-                onClick={() =>
-                  setToriPhotoIndex(
-                    (v) => (v - 1 + TORI_PHOTOS.length) % TORI_PHOTOS.length,
-                  )
-                }
-              >
-                ‹
-              </button>
-              <button
-                type="button"
-                aria-label="Next photo"
-                className="absolute right-2 top-1/2 z-10 flex size-9 -translate-y-1/2 items-center justify-center rounded-full bg-[rgba(19,19,19,0.65)] text-lg leading-none text-[#e5e2e1] backdrop-blur-sm transition hover:bg-[rgba(19,19,19,0.85)]"
-                onClick={() =>
-                  setToriPhotoIndex((v) => (v + 1) % TORI_PHOTOS.length)
-                }
-              >
-                ›
-              </button>
-            </div>
-            <div className="space-y-3 px-5 py-5">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="text-[16px] font-medium leading-6 text-[#e5e2e1]">
-                    Tori Tori Shabu N Sushi
-                  </p>
-                  <p className="text-[12px] leading-4 text-[#bbcabf]">
-                    Arcadia, CA 91007
-                  </p>
-                </div>
-                <span className="shrink-0 rounded bg-[rgba(78,222,163,0.1)] px-2 py-1 text-[10px] leading-[15px] text-[#4edea3]">
-                  MATCHED
-                </span>
-              </div>
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[14px] font-medium">
-                <a
-                  href={YELP_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#4edea3] underline decoration-[rgba(78,222,163,0.35)] underline-offset-2 hover:decoration-[#4edea3]"
-                >
-                  Yelp
-                </a>
-                <Link
-                  to="/graph/menu"
-                  className="text-[#4edea3] underline decoration-[rgba(78,222,163,0.35)] underline-offset-2 hover:decoration-[#4edea3]"
-                >
-                  Menu
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {confirmationDone && (
-            <div
-              ref={calendarCardRef}
-              id="graph-calendar-card"
-              className="graph-calendar-enter scroll-mt-3 overflow-hidden rounded-2xl border border-[rgba(60,74,66,0.15)] bg-[#1c1b1b]"
-            >
-              <div className="border-b border-[rgba(60,74,66,0.1)] bg-[rgba(78,222,163,0.06)] px-5 py-3">
-                <div className="flex items-center gap-2">
-                  <div className="flex size-8 items-center justify-center rounded-lg bg-[rgba(78,222,163,0.12)]">
-                    <img
-                      alt=""
-                      className="h-5 w-[18px] object-contain"
-                      src={imgCalendar}
-                    />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[1px] text-[#bbcabf]">
-                      Calendar
-                    </p>
-                    <p className="text-[14px] font-medium leading-5 text-[#4edea3]">
-                      Event created
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-4 px-5 py-5">
-                <div>
-                  <p className="text-[18px] font-semibold leading-6 text-[#e5e2e1]">
-                    Dinner with Sarah
-                  </p>
-                  <p className="mt-1 text-[14px] leading-5 text-[#bbcabf]">
-                    {reservationDateLabel()} · 7:00 PM
-                  </p>
-                </div>
-                <div className="rounded-xl border border-[rgba(60,74,66,0.12)] bg-[#131313] px-4 py-3">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.5px] text-[#bbcabf]">
-                    Invitee
-                  </p>
-                  <p className="mt-1 text-[15px] font-medium leading-5 text-[#e5e2e1]">
-                    Sarah Jenkins
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => downloadDinnerWithSarahIcs()}
-                  className="w-full rounded-xl border border-[rgba(78,222,163,0.35)] bg-[rgba(78,222,163,0.08)] py-3.5 text-[14px] font-semibold leading-5 text-[#4edea3] transition hover:bg-[rgba(78,222,163,0.14)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#e5e2e1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1c1b1b]"
-                  aria-label="Download calendar file to add dinner event to your calendar app"
-                >
-                  Add to calendar
-                </button>
-                <p className="text-center text-[12px] leading-4 text-[rgba(187,202,191,0.65)]">
-                  Downloads an event file — open it to add this dinner to your phone or
-                  computer calendar.
+              <h1 className="text-[30px] font-normal leading-9 tracking-[-0.75px] text-[#e5e2e1]">
+                No request yet
+              </h1>
+              <div className="pt-2">
+                <p className="text-[14px] font-normal leading-5 text-[#bbcabf]">
+                  You have not made a request yet. Click the microphone button
+                  in the bar below to begin.
                 </p>
               </div>
-            </div>
+            </header>
+          ) : (
+            <>
+              <header className="flex flex-col gap-1">
+                <p className="text-[14px] font-normal leading-5 tracking-[0.35px] text-[#4edea3]">
+                  {allDone ? "Complete" : "Running"}
+                </p>
+                <h1 className="text-[30px] font-normal leading-9 tracking-[-0.75px] text-[#e5e2e1]">
+                  Dinner with Sarah
+                </h1>
+                <div className="pt-1">
+                  <p className="text-[14px] font-normal leading-5 text-[#bbcabf]">
+                    Orchestrating cross-platform logistics to finalize your
+                    evening plans.
+                  </p>
+                </div>
+              </header>
+
+              <ul className="flex flex-col gap-4">
+                {STEPS.map((step, i) => {
+                  const t = stepCompletedAt[i];
+                  const doneSubtitle =
+                    step.doneMessage ??
+                    (t != null ? formatStepCompletedTime(t) : "");
+                  return (
+                    <GraphStepRow
+                      key={step.title}
+                      title={step.title}
+                      icon={step.icon}
+                      iconSizeClass={step.iconSize}
+                      status={stepStatuses[i] ?? "pending"}
+                      doneSubtitle={doneSubtitle}
+                    />
+                  );
+                })}
+              </ul>
+            </>
+          )}
+
+          {!showEmptyGraph && (
+            <>
+              <div
+                id="tori-tori-gallery"
+                className={`overflow-hidden rounded-2xl border border-[rgba(60,74,66,0.1)] bg-[#1c1b1b] transition-opacity duration-500 ${
+                  openTableDone ? "opacity-100" : "opacity-50"
+                }`}
+              >
+                <div className="relative isolate aspect-[4/3] w-full overflow-hidden bg-[#0f0f0f]">
+                  {TORI_PHOTOS.map((photo, i) => (
+                    <img
+                      key={photo.src}
+                      alt={photo.alt}
+                      src={photo.src}
+                      className={`absolute inset-0 size-full object-cover transition-opacity duration-300 ${
+                        i === toriPhotoIndex
+                          ? "opacity-100"
+                          : "pointer-events-none opacity-0"
+                      }`}
+                    />
+                  ))}
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[rgba(28,27,27,0.85)] via-transparent to-[rgba(0,0,0,0.15)]" />
+                  <div className="absolute bottom-3 left-0 right-0 z-10 flex justify-center gap-1.5">
+                    {TORI_PHOTOS.map((_, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        aria-label={`Photo ${i + 1} of ${TORI_PHOTOS.length}`}
+                        aria-current={i === toriPhotoIndex}
+                        className={`h-1.5 rounded-full transition-all ${
+                          i === toriPhotoIndex
+                            ? "w-5 bg-[#4edea3]"
+                            : "w-1.5 bg-[rgba(187,202,191,0.35)]"
+                        }`}
+                        onClick={() => setToriPhotoIndex(i)}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    aria-label="Previous photo"
+                    className="absolute left-2 top-1/2 z-10 flex size-9 -translate-y-1/2 items-center justify-center rounded-full bg-[rgba(19,19,19,0.65)] text-lg leading-none text-[#e5e2e1] backdrop-blur-sm transition hover:bg-[rgba(19,19,19,0.85)]"
+                    onClick={() =>
+                      setToriPhotoIndex(
+                        (v) =>
+                          (v - 1 + TORI_PHOTOS.length) % TORI_PHOTOS.length,
+                      )
+                    }
+                  >
+                    ‹
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Next photo"
+                    className="absolute right-2 top-1/2 z-10 flex size-9 -translate-y-1/2 items-center justify-center rounded-full bg-[rgba(19,19,19,0.65)] text-lg leading-none text-[#e5e2e1] backdrop-blur-sm transition hover:bg-[rgba(19,19,19,0.85)]"
+                    onClick={() =>
+                      setToriPhotoIndex((v) => (v + 1) % TORI_PHOTOS.length)
+                    }
+                  >
+                    ›
+                  </button>
+                </div>
+                <div className="space-y-3 px-5 py-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-[16px] font-medium leading-6 text-[#e5e2e1]">
+                        Tori Tori Shabu N Sushi
+                      </p>
+                      <p className="text-[12px] leading-4 text-[#bbcabf]">
+                        Arcadia, CA 91007
+                      </p>
+                    </div>
+                    <span className="shrink-0 rounded bg-[rgba(78,222,163,0.1)] px-2 py-1 text-[10px] leading-[15px] text-[#4edea3]">
+                      MATCHED
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[14px] font-medium">
+                    <a
+                      href={YELP_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#4edea3] underline decoration-[rgba(78,222,163,0.35)] underline-offset-2 hover:decoration-[#4edea3]"
+                    >
+                      Yelp
+                    </a>
+                    <Link
+                      to="/graph/menu"
+                      className="text-[#4edea3] underline decoration-[rgba(78,222,163,0.35)] underline-offset-2 hover:decoration-[#4edea3]"
+                    >
+                      Menu
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+              {confirmationDone && (
+                <div
+                  ref={calendarCardRef}
+                  id="graph-calendar-card"
+                  className="graph-calendar-enter scroll-mt-3 overflow-hidden rounded-2xl border border-[rgba(60,74,66,0.15)] bg-[#1c1b1b]"
+                >
+                  <div className="border-b border-[rgba(60,74,66,0.1)] bg-[rgba(78,222,163,0.06)] px-5 py-3">
+                    <div className="flex items-center gap-2">
+                      <div className="flex size-8 items-center justify-center rounded-lg bg-[rgba(78,222,163,0.12)]">
+                        <img
+                          alt=""
+                          className="h-5 w-[18px] object-contain"
+                          src={imgCalendar}
+                        />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-[1px] text-[#bbcabf]">
+                          Calendar
+                        </p>
+                        <p className="text-[14px] font-medium leading-5 text-[#4edea3]">
+                          Event created
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-4 px-5 py-5">
+                    <div>
+                      <p className="text-[18px] font-semibold leading-6 text-[#e5e2e1]">
+                        Dinner with Sarah
+                      </p>
+                      <p className="mt-1 text-[14px] leading-5 text-[#bbcabf]">
+                        {reservationDateLabel()} · 7:00 PM
+                      </p>
+                    </div>
+                    <div className="rounded-xl border border-[rgba(60,74,66,0.12)] bg-[#131313] px-4 py-3">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.5px] text-[#bbcabf]">
+                        Invitee
+                      </p>
+                      <p className="mt-1 text-[15px] font-medium leading-5 text-[#e5e2e1]">
+                        Sarah Jenkins
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => downloadDinnerWithSarahIcs()}
+                      className="w-full rounded-xl border border-[rgba(78,222,163,0.35)] bg-[rgba(78,222,163,0.08)] py-3.5 text-[14px] font-semibold leading-5 text-[#4edea3] transition hover:bg-[rgba(78,222,163,0.14)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#e5e2e1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1c1b1b]"
+                      aria-label="Download calendar file to add dinner event to your calendar app"
+                    >
+                      Add to calendar
+                    </button>
+                    <p className="text-center text-[12px] leading-4 text-[rgba(187,202,191,0.65)]">
+                      Downloads an event file — open it to add this dinner to your
+                      phone or computer calendar.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </main>

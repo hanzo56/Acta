@@ -13,10 +13,10 @@ type ProfileSubpageHeaderProps = {
  */
 export function ProfileSubpageHeader({ title }: ProfileSubpageHeaderProps) {
   return (
-    <header className="acta-header-fixed z-20 flex h-16 w-full max-w-[390px] items-center justify-center border-b border-[rgba(60,74,66,0.1)] bg-[#131313]">
+    <header className="acta-header-fixed z-20 flex h-[var(--acta-profile-subpage-header-h)] w-full max-w-[390px] items-end justify-center border-b border-[rgba(60,74,66,0.1)] bg-[#131313] pb-3">
       <Link
         to="/profile"
-        className="absolute left-6 top-1/2 flex size-[34px] -translate-y-1/2 items-center justify-center rounded-full transition hover:bg-[rgba(255,255,255,0.06)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3]"
+        className="absolute left-6 bottom-3 flex size-[34px] items-center justify-center rounded-full transition hover:bg-[rgba(255,255,255,0.06)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4edea3]"
         aria-label="Back to profile"
       >
         <div className="size-[18px]">

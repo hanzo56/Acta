@@ -39,6 +39,8 @@ body {
 /* Mobile shell: content scrolls between fixed header + bottom nav */
 :root {
   --acta-header-h: 4rem;
+  /* Profile subpages (AccountDetails, Subscription, Notifications, Privacy): thicker bar under status */
+  --acta-profile-subpage-header-h: calc(4rem + 10px);
   --acta-nav-h: 5rem;
   /* Preview Approve bar: pt-6 + button + pb-12 + safe visual buffer */
   --acta-preview-footer-h: 8.5rem;
@@ -113,9 +115,14 @@ body {
   padding-bottom: calc(var(--acta-nav-h) + env(safe-area-inset-bottom, 0px));
 }
 
-/* Subpages: fixed header only, full scroll to bottom (no bottom nav) */
 .acta-main--inset-top {
   padding-top: calc(var(--acta-header-h) + env(safe-area-inset-top, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Profile subpages: match ProfileSubpageHeader height */
+.acta-main--inset-profile-top {
+  padding-top: calc(var(--acta-profile-subpage-header-h) + env(safe-area-inset-top, 0px));
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 

@@ -48,7 +48,7 @@ export function ProfileNotificationsPage() {
     <div className="acta-shell bg-[#131313] text-[#e5e2e1]">
       <ProfileSubpageHeader title="Notifications" />
 
-      <main className="acta-main acta-main--inset-top w-full max-w-[672px] space-y-8 px-0 pb-12">
+      <main className="acta-main acta-main--inset-profile-top w-full max-w-[672px] space-y-8 px-0 pb-12">
         <div className="px-6 pt-2">
           <section className="overflow-hidden rounded-3xl bg-[#1c1b1b] px-3">
             <h2 className="px-3 pb-0 pt-4 text-[11px] font-extrabold uppercase leading-[16.5px] tracking-[1.1px] text-[#bbcabf] opacity-60">

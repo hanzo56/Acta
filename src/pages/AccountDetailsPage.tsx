@@ -49,7 +49,7 @@ export function AccountDetailsPage() {
     <div className="acta-shell bg-[#131313] text-[#e5e2e1]">
       <ProfileSubpageHeader title="Account Details" />
 
-      <main className="acta-main acta-main--inset-top w-full max-w-[672px] px-6 pb-12">
+      <main className="acta-main acta-main--inset-profile-top w-full max-w-[672px] px-6 pb-12">
         <div className="flex flex-col gap-8 pt-2">
           <section className="overflow-hidden rounded-3xl bg-[#1c1b1b]">
             <h2 className="px-6 pt-5 text-center text-[11px] font-extrabold uppercase leading-[16.5px] tracking-[1.1px] text-[#bbcabf] opacity-60">
