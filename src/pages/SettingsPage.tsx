@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 import { ActaHeaderLogo } from '../components/ActaHeaderLogo'
 import { AppBottomNav } from '../components/AppBottomNav'
@@ -10,20 +10,6 @@ import {
 } from '../assets/actaIconUrls'
 const STORAGE_CONTACTS = 'acta.settings.favoriteContacts'
 const STORAGE_TONE = 'acta.settings.toneStyle'
-/** Kept in sync with ConnectorsPage */
-const STORAGE_CONNECTOR_TOGGLES = 'acta.settings.connectorToggles'
-
-function readMessagesConnectorActive(): boolean {
-  try {
-    const raw = localStorage.getItem(STORAGE_CONNECTOR_TOGGLES)
-    if (!raw) return true
-    const parsed = JSON.parse(raw) as Record<string, unknown>
-    if (typeof parsed.messages === 'boolean') return parsed.messages
-    return true
-  } catch {
-    return true
-  }
-}
 
 export type ToneStyleId = 'professional' | 'friendly' | 'detailed'
 
@@ -93,18 +79,12 @@ function formatContactLine(contacts: FavoriteContact[]): string {
 
 export function SettingsPage() {
   const baseId = useId()
-  const { pathname } = useLocation()
   const [contacts, setContacts] = useState<FavoriteContact[]>(loadContacts)
   const [toneStyle, setToneStyle] = useState<ToneStyleId>(loadTone)
   const [editingContacts, setEditingContacts] = useState(false)
   const [editingTone, setEditingTone] = useState(false)
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
-  const [messagesActive, setMessagesActive] = useState(true)
-
-  useEffect(() => {
-    setMessagesActive(readMessagesConnectorActive())
-  }, [pathname])
 
   useEffect(() => {
     saveContacts(contacts)
@@ -198,26 +178,6 @@ export function SettingsPage() {
                     →
                   </span>
                 </Link>
-
-                <div className="flex items-center justify-between gap-3 rounded-xl bg-[#0e0e0e] p-4">
-                  <div className="min-w-0">
-                    <p className="text-[10px] font-bold uppercase leading-[15px] tracking-[0.5px] text-[#bbcabf]">
-                      MESSAGES
-                    </p>
-                    <p className="mt-0.5 text-[14px] font-medium leading-5 text-[#e5e2e1]">
-                      Apple Messages
-                    </p>
-                  </div>
-                  {messagesActive ? (
-                    <span className="shrink-0 rounded-md bg-[rgba(78,222,163,0.1)] px-2 py-0.5 text-[10px] font-bold uppercase leading-[15px] tracking-[0.5px] text-[#4edea3]">
-                      Active
-                    </span>
-                  ) : (
-                    <span className="shrink-0 text-[10px] font-bold uppercase leading-[15px] tracking-[0.5px] text-[#ffb4ab]/70">
-                      Disconnected
-                    </span>
-                  )}
-                </div>
 
                 {/* Favorite contacts — editable list */}
                 <div className="rounded-xl bg-[#0e0e0e] p-4">
